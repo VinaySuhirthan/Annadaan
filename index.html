@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>XYZ — Welcome</title>
+<style>
+  :root{--g:#2f7a4e;--t:#2a9da6;--bg:#fff;--muted:#666}
+  body{font-family:Inter,Arial,Helvetica,sans-serif;margin:0;background:var(--bg);color:#111;display:flex;align-items:center;justify-content:center;height:100vh}
+  .card{width:360px;padding:28px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);text-align:center}
+  h1{margin:0 0 6px;font-size:20px}
+  p{color:var(--muted);margin:0 0 20px}
+  .btn{display:block;padding:12px 16px;border-radius:8px;margin:10px 0;text-decoration:none;color:#fff;background:var(--g)}
+  .btn.secondary{background:var(--t)}
+  footer{margin-top:12px;color:#999;font-size:13px}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Welcome to XYZ</h1>
+    <p>Select your role to continue</p>
+    <a href="donor-home.html" class="btn">I am a Food Donor</a>
+    <a href="#" class="btn secondary" onclick="alert('Volunteer/NGO flow not in this prototype')">I am a Volunteer / NGO</a>
+    <footer>Prototype — Donor flow only</footer>
+  </div>
+</body>
+</html>

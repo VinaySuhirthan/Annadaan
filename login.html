@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login</title>
+
+<style>
+body{
+  font-family: Arial, Helvetica, sans-serif;
+  background:#f7fbf9;
+  padding:24px;
+}
+.card{
+  max-width:420px;
+  margin:40px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+button{
+  background:#2f7a4e;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+.small{
+  font-size:13px;
+  color:#666;
+}
+.note{
+  color:#2a9da6;
+  font-size:13px;
+  text-align:center;
+  margin-top:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+<h3>Login</h3>
+
+<div id="step1">
+  <div class="small">Your name</div>
+  <input id="nameInput" placeholder="Enter your name">
+
+  <div class="small">Phone number</div>
+  <input id="phoneInput" placeholder="+91 9XXXXXXXXX">
+
+  <button onclick="sendOtp()">Send OTP</button>
+</div>
+
+<div id="step2" style="display:none">
+  <div class="small">Enter OTP</div>
+  <input id="otpInput" placeholder="1234">
+  <button onclick="verifyOtp()">Verify & Continue</button>
+  <div class="note">Demo OTP: <b>1234</b></div>
+</div>
+</div>
+
+<script>
+const nextPage =
+  new URLSearchParams(window.location.search).get("next")
+  || "donor-home.html";
+
+function sendOtp(){
+  const nameValue = document.getElementById("nameInput").value.trim();
+  const phoneValue = document.getElementById("phoneInput").value.trim();
+
+  if(!nameValue || !phoneValue){
+    alert("Please enter name and phone number");
+    return;
+  }
+
+  sessionStorage.setItem("otp", "1234");
+  sessionStorage.setItem("name", nameValue);
+  sessionStorage.setItem("phone", phoneValue);
+
+  document.getElementById("step1").style.display = "none";
+  document.getElementById("step2").style.display = "block";
+}
+
+function verifyOtp(){
+  const otpValue = document.getElementById("otpInput").value.trim();
+
+  if(otpValue !== "1234"){
+    alert("Invalid OTP");
+    return;
+  }
+
+  const donor = {
+    name: sessionStorage.getItem("name"),
+    phone: sessionStorage.getItem("phone")
+  };
+
+  localStorage.setItem("donor", JSON.stringify(donor));
+  sessionStorage.clear();
+
+  window.location.href = nextPage;
+}
+</script>
+
+</body>
+</html>
