@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NGO & Volunteer Login — Annadaan</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+
+    <style>
+        /* --- Global Styles from index.css --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #2D6A4F;
+            --primary-light: #40916C;
+            --primary-dark: #1B4332;
+            --secondary: #52B788;
+            --accent: #B7E4C7;
+            --background: #F8FAF9;
+            --surface: #FFFFFF;
+            --text-main: #1A1C1E;
+            --text-muted: #64748B;
+            --error: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+        }
+
+        .login-card {
+            max-width: 400px;
+            width: 100%;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .logo-circle {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 20px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(45, 106, 79, 0.2);
+        }
+
+        .logo-circle svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        header h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            margin-top: 0;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 28px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: #F1F5F9;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid #E2E8F0;
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background: #F8FAFC;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--accent);
+            background: white;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            width: 100%;
+            text-decoration: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(45, 106, 79, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .alert-info {
+            background: #EFF6FF;
+            border: 1.5px solid #BFDBFE;
+            color: #1E40AF;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .alert-info strong {
+            font-weight: 700;
+        }
+
+        small {
+            display: block;
+            margin-top: 4px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile specific */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .login-card {
+                max-width: 100%;
+            }
+
+            .card {
+                padding: 24px;
+            }
+
+            header h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="logo-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </div>
+
+        <header>
+            <h2>NGO & Volunteer Access</h2>
+            <p>Join us in distributing food to those in need</p>
+        </header>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab-btn active" id="login-tab">Login</button>
+                <button class="tab-btn" id="register-tab">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="active-form">
+                <div class="form-group">
+                    <label for="login-phone">Phone Number</label>
+                    <input type="tel" id="login-phone" maxlength="10" placeholder="9876543210" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="user-type">I am a</label>
+                    <select id="user-type" required>
+                        <option value="">Select type</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="ngo">NGO</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Login to Dashboard
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="register-form" style="display: none;">
+                <div class="form-group">
+                    <label for="register-type">Register as</label>
+                    <select id="register-type" required>
+                        <option value="">Select type</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="ngo">NGO</option>
+                    </select>
+                </div>
+
+                <!-- Volunteer Fields -->
+                <div id="volunteer-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="vol-name">Full Name</label>
+                        <input type="text" id="vol-name" placeholder="Your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vol-address">Address</label>
+                        <textarea id="vol-address" placeholder="Complete address" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vol-phone">Phone Number</label>
+                        <input type="tel" id="vol-phone" maxlength="10" placeholder="9876543210">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vol-location">Location (City/Area)</label>
+                        <input type="text" id="vol-location" placeholder="Your location">
+                        <small>Food will be shown within 20km radius</small>
+                    </div>
+                </div>
+
+                <!-- NGO Fields -->
+                <div id="ngo-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="ngo-name">Organization Name</label>
+                        <input type="text" id="ngo-name" placeholder="Organization name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-id">Organization ID</label>
+                        <input type="text" id="ngo-id" placeholder="Official registration ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-head">Organization Head</label>
+                        <input type="text" id="ngo-head" placeholder="Head person's name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-address">Organization Address</label>
+                        <textarea id="ngo-address" placeholder="Complete organization address" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-phone">Contact Number</label>
+                        <input type="tel" id="ngo-phone" maxlength="10" placeholder="9876543210">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-location">Organization Location</label>
+                        <input type="text" id="ngo-location" placeholder="Organization location">
+                        <small>Food will be shown within 20km radius</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Create Account
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="8.5" cy="7" r="4"></circle>
+                        <line x1="20" y1="8" x2="20" y2="14"></line>
+                        <line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="alert-info">
+                <strong>Note:</strong> Only NGOs can request food for emergencies. Volunteers can view and help
+                distribute.
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

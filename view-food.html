@@ -425,6 +425,8 @@
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
 </head>
 
 <body>
@@ -502,7 +504,7 @@
             currentUser = getCurrentUser(); // From script.js
 
             if (!currentUser) {
-                window.location.href = 'volunteer-login.html';
+                window.location.href = 'ngo-volunteer-auth.html';
                 return;
             }
 
@@ -522,14 +524,69 @@
             }
         }
 
-        function loadAvailableFood() {
+        async function loadAvailableFood() {
             const container = document.getElementById('food-container');
 
-            // Get all food items
-            allFoodItems = JSON.parse(localStorage.getItem('foodbridge_food')) || [];
+            // Check Supabase connection
+            if (!window.sb) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Database Connection Error</h3>
+                        <p>Cannot connect to database. Please check your internet connection.</p>
+                        <button onclick="location.reload()" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Retry
+                        </button>
+                    </div>
+                `;
+                return;
+            }
 
-            // Filter by availability
-            const availableFood = allFoodItems.filter(food => food.status === 'available');
+            let availableFood = []; // Initialize availableFood here
+
+            try {
+                // Fetch food from Supabase food_table  ONLY
+                const { data, error } = await window.sb.from('food_table')
+                    .select('*');
+
+                if (error) {
+                    console.error('Supabase food fetch error:', error);
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-database"></i>
+                            <h3>Error Loading Food</h3>
+                            <p>${error.message}</p>
+                            <button onclick="loadAvailableFood()" class="btn btn-primary">
+                                <i class="fas fa-sync-alt"></i> Retry
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                console.log('✅ Loaded food from Supabase:', data);
+                allFoodItems = data || [];
+
+                // Debug logging
+                console.log(`Total food items: ${allFoodItems.length}`);
+
+                // Show ALL food from Supabase - don't filter by status
+                // (Food in database should already be available)
+                availableFood = allFoodItems;
+
+                console.log(`Food to display: ${availableFood.length}`);
+
+            } catch (err) {
+                console.error('Food loading error:', err);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <h3>Error</h3>
+                        <p>${err.message}</p>
+                    </div>
+                `;
+                return;
+            }
 
             if (availableFood.length === 0) {
                 container.innerHTML = `
@@ -545,8 +602,12 @@
                 return;
             }
 
-            // Sort by distance (closest first)
-            availableFood.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+            // Sort by distance if available (closest first)
+            availableFood.sort((a, b) => {
+                const distA = parseFloat(a.distance) || 999;
+                const distB = parseFloat(b.distance) || 999;
+                return distA - distB;
+            });
 
             displayFoodItems(availableFood);
         }
@@ -557,9 +618,14 @@
             container.innerHTML = foodItems.map(food => `
         <div class="food-card glass">
           <div class="food-header">
-            <h3 class="food-title">${food.restaurant || 'Food Donor'}</h3>
+            <div>
+              <div style="font-size: 14px; color: var(--text-main); font-weight: 700; margin-bottom: 4px;">
+                ${food.donor_type === 'Others' && food.event_name ? food.event_name : (food.donor_type || 'Unknown Source')}
+              </div>
+              <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">${food.donor_phone || 'Phone not available'}</div>
+            </div>
             <span class="distance-badge">
-              <i class="fas fa-location-dot"></i> ${food.distance || 'N/A'}
+              <i class="fas fa-location-dot"></i> ${food.distance || 'Nearby'}
             </span>
           </div>
           
@@ -568,24 +634,24 @@
               <div class="detail-item">
                 <i class="fas fa-utensils"></i>
                 <div>
-                  <strong>${food.foodType || 'Food Item'}</strong>
-                  <div class="text-muted">${food.category || 'Category'}</div>
+                  <strong>Food Type</strong>
+                  <div class="text-muted">${food.food_type || 'Not specified'}</div>
                 </div>
               </div>
               
               <div class="detail-item">
-                <i class="fas fa-weight-hanging"></i>
+                <i class="fas fa-users"></i>
                 <div>
-                  <strong>${food.quantity || 'N/A'}</strong>
-                  <div class="text-muted">Serves ${food.serves || '50'} people</div>
+                  <strong>People Capacity</strong>
+                  <div class="text-muted">Serves ${food.serves || 'N/A'} people</div>
                 </div>
               </div>
               
               <div class="detail-item">
                 <i class="fas fa-clock"></i>
                 <div>
-                  <strong>Available Until</strong>
-                  <div class="text-muted">${food.availableUntil || 'Not specified'}</div>
+                  <strong>Fresh for ${food.valid_hours || 'N/A'} hours</strong>
+                  <div class="text-muted">Pick up soon for best quality</div>
                 </div>
               </div>
               
@@ -593,16 +659,10 @@
                 <i class="fas fa-map-marker-alt"></i>
                 <div>
                   <strong>Location</strong>
-                  <div class="text-muted">${food.location || 'Not specified'}</div>
+                  <div class="text-muted">${food.address || 'Not specified'}</div>
                 </div>
               </div>
             </div>
-            
-            ${food.description ? `
-              <div class="food-description">
-                <i class="fas fa-info-circle"></i> ${food.description}
-              </div>
-            ` : ''}
             
             <div class="food-actions">
               <button onclick="viewLocation('${food.id}')" class="btn btn-secondary">

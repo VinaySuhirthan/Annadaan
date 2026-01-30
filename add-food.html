@@ -272,6 +272,10 @@
           </svg>
           <span style="font-size: 13px; color: #94A3B8; font-weight: 500;">Tap to upload photo</span>
           <img id="preview" style="display: none;">
+          <button id="clearImageBtn" onclick="clearImage(event)"
+            style="display: none; position: absolute; top: 10px; right: 10px; background: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; z-index: 10; font-size: 18px; font-weight: bold;">
+            ×
+          </button>
         </div>
         <input id="media" type="file" accept="image/*" style="display: none;">
 
@@ -291,6 +295,22 @@
             <option value="6">6 hours</option>
             <option value="12">12 hours</option>
           </select>
+        </div>
+
+        <div class="form-group">
+          <label>Donor Type</label>
+          <select id="donorType">
+            <option value="">Select donor type</option>
+            <option value="Restaurant">Restaurant</option>
+            <option value="Hostel">Hostel</option>
+            <option value="Weddings">Weddings</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="customEventGroup" style="display: none;">
+          <label>Specify Event/Occasion</label>
+          <input id="customEvent" placeholder="e.g. Birthday party, Corporate event">
         </div>
 
         <div class="form-group">
@@ -344,8 +364,34 @@
         preview.src = e.target.result;
         preview.style.display = "block";
         preview.dataset.src = e.target.result;
+        document.getElementById("clearImageBtn").style.display = "block";
       };
       reader.readAsDataURL(file);
+    };
+
+    // Clear image function
+    function clearImage(event) {
+      event.stopPropagation(); // Prevent triggering the upload area click
+      const preview = document.getElementById("preview");
+      const media = document.getElementById("media");
+      const clearBtn = document.getElementById("clearImageBtn");
+
+      preview.src = "";
+      preview.style.display = "none";
+      preview.dataset.src = "";
+      media.value = "";
+      clearBtn.style.display = "none";
+    }
+
+    // Handle donor type change
+    document.getElementById("donorType").onchange = (e) => {
+      const customEventGroup = document.getElementById("customEventGroup");
+      if (e.target.value === "Others") {
+        customEventGroup.style.display = "block";
+      } else {
+        customEventGroup.style.display = "none";
+        document.getElementById("customEvent").value = "";
+      }
     };
 
     document.getElementById("locBtn").onclick = () => {
@@ -368,9 +414,12 @@
       const postBtn = document.getElementById("postBtn");
       const foodType = document.querySelector(".type-toggle .active").textContent;
       const serves = document.getElementById("serves").value;
+      const donorType = document.getElementById("donorType").value;
+      const customEvent = document.getElementById("customEvent").value;
       const address = document.getElementById("address").value;
 
-      if (!serves || !address) return alert("Please fill all details");
+      if (!serves || !address || !donorType) return alert("Please fill all details");
+      if (donorType === "Others" && !customEvent) return alert("Please specify the event/occasion");
 
       postBtn.disabled = true;
       postBtn.textContent = "Posting...";
@@ -407,8 +456,11 @@
       const newFood = {
         id: crypto.randomUUID(),
         donor_phone: donor.phone,
+        donor_type: donorType,
+        event_name: donorType === "Others" ? customEvent : null,
         food_type: foodType,
         serves: parseInt(serves),
+        valid_hours: parseInt(document.getElementById("validHours").value) || null,
         address: address,
         photo_url: photoUrl,
         status: "Posted",

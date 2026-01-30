@@ -520,7 +520,7 @@
             let user = JSON.parse(localStorage.getItem('currentUser'));
 
             if (!user || (user.type !== 'volunteer' && user.type !== 'ngo')) {
-                window.location.href = 'volunteer-login.html';
+                window.location.href = 'ngo-volunteer-auth.html';
                 return;
             }
 

@@ -1,17 +1,17 @@
 // FoodBridge System - Main JavaScript
 
 // Initialize application
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     initializeApp();
 });
 
 function initializeApp() {
     // Initialize data storage
     initDataStorage();
-    
+
     // Setup login/register tabs
     setupTabs();
-    
+
     // Setup form submissions
     setupForms();
 }
@@ -21,12 +21,12 @@ function initDataStorage() {
     if (!localStorage.getItem('foodbridge_users')) {
         localStorage.setItem('foodbridge_users', JSON.stringify([]));
     }
-    
+
     // Initialize food items if not exists
     if (!localStorage.getItem('foodbridge_food')) {
         initSampleFoodData();
     }
-    
+
     // Initialize requests if not exists
     if (!localStorage.getItem('foodbridge_requests')) {
         localStorage.setItem('foodbridge_requests', JSON.stringify([]));
@@ -176,7 +176,7 @@ function initSampleFoodData() {
             serves: 55
         }
     ];
-    
+
     localStorage.setItem('foodbridge_food', JSON.stringify(sampleFood));
 }
 
@@ -206,7 +206,7 @@ function setupTabs() {
     }
 
     if (registerType) {
-        registerType.addEventListener('change', function() {
+        registerType.addEventListener('change', function () {
             const type = this.value;
             volunteerFields.style.display = type === 'volunteer' ? 'block' : 'none';
             ngoFields.style.display = type === 'ngo' ? 'block' : 'none';
@@ -218,49 +218,83 @@ function setupForms() {
     // Login Form
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            
             const phone = document.getElementById('login-phone').value.trim();
             const userType = document.getElementById('user-type').value;
-            
+
+            if (!phone || !userType) {
+                showAlert('Please fill all fields', 'error');
+                return;
+            }
+
             if (!validatePhone(phone)) {
                 showAlert('Please enter a valid 10-digit phone number', 'error');
                 return;
             }
-            
-            if (!userType) {
-                showAlert('Please select user type', 'error');
+
+            // Check if Supabase is available
+            if (!window.sb) {
+                showAlert('Database connection not available. Please check your internet connection.', 'error');
                 return;
             }
-            
-            const user = authenticateUser(phone, userType);
-            
-            if (user) {
-                setCurrentUser(user);
-                showAlert('Login successful!', 'success');
-                
-                setTimeout(() => {
-                    if (user.type === 'ngo') {
-                        window.location.href = 'ngo-dashboard.html';
+
+            // Authenticate from Supabase ONLY
+            try {
+                const tableName = userType === 'ngo' ? 'ngo_table' : 'volunteer_table';
+                console.log(`Authenticating ${userType} from Supabase ${tableName}...`);
+
+                const { data, error } = await window.sb.from(tableName)
+                    .select('*')
+                    .eq('phone', phone)
+                    .eq('type', userType)
+                    .single();
+
+                if (error) {
+                    console.error('Supabase login error:', error);
+
+                    if (error.code === 'PGRST116') {
+                        // No rows returned - user doesn't exist
+                        showAlert('No account found with this phone number. Please register first.', 'error');
                     } else {
-                        window.location.href = 'volunteer-dashboard.html';
+                        showAlert('Login failed: ' + error.message, 'error');
                     }
+                    return;
+                }
+
+                if (!data) {
+                    showAlert('No account found with this phone number. Please register first.', 'error');
+                    return;
+                }
+
+                console.log('✅ User authenticated from Supabase:', data);
+
+                // Set current user and redirect
+                setCurrentUser(data);
+
+                const dashboard = userType === 'ngo' ? 'ngo-dashboard.html' : 'volunteer-dashboard.html';
+
+                showAlert('Login successful!', 'success');
+
+                setTimeout(() => {
+                    window.location.href = dashboard;
                 }, 1000);
-            } else {
-                showAlert('User not found. Please register first.', 'error');
+
+            } catch (err) {
+                console.error('Login failed:', err);
+                showAlert('Login failed: ' + err.message, 'error');
             }
         });
     }
-    
+
     // Registration Form
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
+        registerForm.addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const type = document.getElementById('register-type').value;
-            
+
             if (type === 'volunteer') {
                 registerVolunteer();
             } else if (type === 'ngo') {
@@ -281,30 +315,44 @@ function authenticateUser(phone, type) {
     return users.find(user => user.phone === phone && user.type === type);
 }
 
-function registerVolunteer() {
+async function registerVolunteer() {
     const name = document.getElementById('vol-name').value.trim();
     const address = document.getElementById('vol-address').value.trim();
     const phone = document.getElementById('vol-phone').value.trim();
     const location = document.getElementById('vol-location').value.trim();
-    
+
     // Validation
     if (!name || !address || !phone || !location) {
         showAlert('Please fill all fields', 'error');
         return;
     }
-    
+
     if (!validatePhone(phone)) {
         showAlert('Please enter a valid 10-digit phone number', 'error');
         return;
     }
-    
-    // Check if user already exists
-    const existingUser = authenticateUser(phone, 'volunteer');
-    if (existingUser) {
-        showAlert('Volunteer with this phone already exists', 'error');
-        return;
+
+    // Check if volunteer already exists in Supabase
+    if (window.sb) {
+        try {
+            const { data: existing } = await window.sb.from('volunteer_table')
+                .select('phone')
+                .eq('phone', phone)
+                .single();
+
+            if (existing) {
+                showAlert('Volunteer with this phone already exists', 'error');
+                return;
+            }
+        } catch (err) {
+            // If error.code is 'PGRST116' (no rows found), it's not an error, just means user doesn't exist.
+            // For other errors, log them but allow registration to proceed if it's not a conflict.
+            if (err.code !== 'PGRST116') {
+                console.error('Supabase check for existing volunteer error:', err);
+            }
+        }
     }
-    
+
     // Create volunteer object
     const volunteer = {
         id: 'V' + Date.now(),
@@ -313,70 +361,155 @@ function registerVolunteer() {
         address: address,
         phone: phone,
         location: location,
-        registeredAt: new Date().toISOString(),
+        registered_at: new Date().toISOString(),
         status: 'active'
     };
-    
-    // Save user
-    saveUser(volunteer);
-    
-    showAlert('Volunteer registration successful!', 'success');
-    
-    setTimeout(() => {
-        setCurrentUser(volunteer);
-        window.location.href = 'volunteer-dashboard.html';
-    }, 1500);
+
+    console.log('Registering volunteer to Supabase:', volunteer);
+
+    // Save to Supabase ONLY
+    if (!window.sb) {
+        showAlert('Database connection not available. Please check your internet connection.', 'error');
+        return;
+    }
+
+    try {
+        const { data, error } = await window.sb.from('volunteer_table').insert([volunteer]).select();
+
+        if (error) {
+            console.error('❌ Supabase volunteer insert error:', error);
+
+            let errorMsg = 'Registration failed: ' + error.message;
+            if (error.code === '42P01') {
+                errorMsg = 'Database table not found. Please contact administrator.';
+            } else if (error.code === '23505') { // Unique constraint violation
+                errorMsg = 'A volunteer with this phone number already exists.';
+            } else if (error.hint) {
+                errorMsg += '\n\n' + error.hint;
+            }
+
+            showAlert(errorMsg, 'error');
+            return;
+        }
+
+        console.log('✅ Volunteer saved to Supabase successfully:', data);
+
+        // Set current user from Supabase data
+        setCurrentUser(data[0]);
+
+        showAlert('Volunteer registration successful!', 'success');
+
+        setTimeout(() => {
+            window.location.href = 'volunteer-dashboard.html';
+        }, 1500);
+
+    } catch (err) {
+        console.error('❌ Unexpected error:', err);
+        showAlert('Registration failed: ' + err.message, 'error');
+    }
 }
 
-function registerNGO() {
+
+async function registerNGO() {
     const name = document.getElementById('ngo-name').value.trim();
     const orgId = document.getElementById('ngo-id').value.trim();
     const head = document.getElementById('ngo-head').value.trim();
     const address = document.getElementById('ngo-address').value.trim();
     const phone = document.getElementById('ngo-phone').value.trim();
     const location = document.getElementById('ngo-location').value.trim();
-    
+
     // Validation
     if (!name || !orgId || !head || !address || !phone || !location) {
         showAlert('Please fill all fields', 'error');
         return;
     }
-    
+
     if (!validatePhone(phone)) {
         showAlert('Please enter a valid 10-digit phone number', 'error');
         return;
     }
-    
-    // Check if NGO already exists
-    const existingUser = authenticateUser(phone, 'ngo');
-    if (existingUser) {
-        showAlert('NGO with this phone already exists', 'error');
-        return;
+
+    // Check if NGO already exists in Supabase
+    if (window.sb) {
+        try {
+            const { data: existing } = await window.sb.from('ngo_table')
+                .select('phone')
+                .eq('phone', phone)
+                .single();
+
+            if (existing) {
+                showAlert('NGO with this phone already exists', 'error');
+                return;
+            }
+        } catch (err) {
+            // If error.code is 'PGRST116' (no rows found), it's not an error, just means user doesn't exist.
+            // For other errors, log them but allow registration to proceed if it's not a conflict.
+            if (err.code !== 'PGRST116') {
+                console.error('Supabase check for existing NGO error:', err);
+                // Optionally, you could show an alert here if you want to block registration on any DB error
+                // showAlert('Error checking for existing NGO. Please try again.', 'error');
+                // return;
+            }
+        }
     }
-    
+
+
     // Create NGO object
     const ngo = {
         id: 'N' + Date.now(),
         type: 'ngo',
         name: name,
-        orgId: orgId,
+        org_id: orgId,
         head: head,
         address: address,
         phone: phone,
         location: location,
-        registeredAt: new Date().toISOString(),
+        registered_at: new Date().toISOString(),
         status: 'active'
     };
-    
-    // Save user
-    saveUser(ngo);
-    
-    showAlert('NGO registration successful!', 'success');
-    
-    setTimeout(() => {
-        setCurrentUser(ngo);
-        window.location.href = 'ngo-dashboard.html';
-    }, 1500);
+
+    console.log('Registering NGO to Supabase:', ngo);
+
+    // Save to Supabase ONLY
+    if (!window.sb) {
+        showAlert('Database connection not available. Please check your internet connection.', 'error');
+        return;
+    }
+
+    try {
+        const { data, error } = await window.sb.from('ngo_table').insert([ngo]).select();
+
+        if (error) {
+            console.error('❌ Supabase NGO insert error:', error);
+
+            let errorMsg = 'Registration failed: ' + error.message;
+            if (error.code === '42P01') {
+                errorMsg = 'Database table not found. Please contact administrator.';
+            } else if (error.code === '23505') { // Unique constraint violation
+                errorMsg = 'An NGO with this phone number already exists.';
+            } else if (error.hint) {
+                errorMsg += '\n\n' + error.hint;
+            }
+
+            showAlert(errorMsg, 'error');
+            return;
+        }
+
+        console.log('✅ NGO saved to Supabase successfully:', data);
+
+        // Set current user from Supabase data
+        setCurrentUser(data[0]);
+
+        showAlert('NGO registration successful!', 'success');
+
+        setTimeout(() => {
+            window.location.href = 'ngo-dashboard.html';
+        }, 1500);
+
+    } catch (err) {
+        console.error('❌ Unexpected error:', err);
+        showAlert('Registration failed: ' + err.message, 'error');
+    }
 }
 
 function saveUser(user) {
@@ -405,7 +538,7 @@ function showAlert(message, type = 'info') {
     // Remove existing alerts
     const existingAlerts = document.querySelectorAll('.custom-alert');
     existingAlerts.forEach(alert => alert.remove());
-    
+
     // Create alert element
     const alertDiv = document.createElement('div');
     alertDiv.className = `custom-alert alert-${type}`;
@@ -425,21 +558,21 @@ function showAlert(message, type = 'info') {
         animation: slideIn 0.3s ease;
         border-left: 4px solid ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'};
     `;
-    
+
     const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
     alertDiv.innerHTML = `
         <i class="fas fa-${icon}"></i>
         <span>${message}</span>
     `;
-    
+
     document.body.appendChild(alertDiv);
-    
+
     // Remove after 3 seconds
     setTimeout(() => {
         alertDiv.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => alertDiv.remove(), 300);
     }, 3000);
-    
+
     // Add animations
     const style = document.createElement('style');
     style.textContent = `
@@ -460,18 +593,18 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Earth's radius in km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
 }
 
 // Filter food within 20km radius
 function filterFoodByDistance(foodItems, userLocation, maxDistance = 20) {
     if (!userLocation) return foodItems;
-    
+
     // For demo, we'll use the distance property
     // In real app, you would calculate actual distance using coordinates
     return foodItems.filter(food => {
@@ -488,12 +621,12 @@ function formatDate(dateString) {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 1) return 'Just now';
     if (diffMins < 60) return `${diffMins} minutes ago`;
     if (diffHours < 24) return `${diffHours} hours ago`;
     if (diffDays < 7) return `${diffDays} days ago`;
-    
+
     return date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -516,24 +649,24 @@ function checkAuth() {
 function loadUserInfo() {
     const user = getCurrentUser();
     if (!user) return;
-    
+
     const userAvatar = document.getElementById('user-avatar');
     const userName = document.getElementById('user-name');
     const userType = document.getElementById('user-type');
     const userLocation = document.getElementById('user-location');
-    
+
     if (userAvatar) {
         userAvatar.textContent = user.name.charAt(0).toUpperCase();
     }
-    
+
     if (userName) {
         userName.textContent = user.name;
     }
-    
+
     if (userType) {
         userType.textContent = user.type === 'ngo' ? 'NGO' : 'Volunteer';
     }
-    
+
     if (userLocation) {
         userLocation.textContent = user.location || 'Location not set';
     }
