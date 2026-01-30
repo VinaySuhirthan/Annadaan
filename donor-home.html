@@ -350,10 +350,21 @@
   <div class="container">
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <span class="user-name" id="sideName"></span>
-        <span class="user-phone" id="sidePhone"></span>
+      <div class="sidebar-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+        <div
+          style="width: 48px; height: 48px; background: #E2E8F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div>
+          <span class="user-name" id="sideName"></span>
+          <span class="user-phone" id="sidePhone"></span>
+        </div>
       </div>
+      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 0 0 16px 0;">
 
       <div class="nav-item" onclick="showDashboard()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
