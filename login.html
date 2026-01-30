@@ -1,137 +1,317 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Donor Login</title>
 
-<style>
-body{
-  font-family: Arial, Helvetica, sans-serif;
-  background:#f7fbf9;
-  padding:20px;
-}
-.card{
-  max-width:420px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 8px 30px rgba(0,0,0,.08);
-}
-h3{margin-top:0}
-label{
-  font-size:13px;
-  font-weight:600;
-  margin-top:12px;
-  display:block;
-}
-input,button{
-  width:100%;
-  padding:12px;
-  margin-top:6px;
-  border-radius:8px;
-  border:1px solid #ddd;
-  font-size:14px;
-}
-button{
-  background:#2f7a4e;
-  color:#fff;
-  border:none;
-  margin-top:16px;
-  cursor:pointer;
-}
-.note{
-  font-size:13px;
-  color:#2a9da6;
-  text-align:center;
-  margin-top:10px;
-}
-</style>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Donor Login — Annadaan</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+
+  <style>
+    /* --- Global Styles from index.css --- */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #2D6A4F;
+      --primary-light: #40916C;
+      --primary-dark: #1B4332;
+      --secondary: #52B788;
+      --accent: #B7E4C7;
+      --background: #F8FAF9;
+      --surface: #FFFFFF;
+      --text-main: #1A1C1E;
+      --text-muted: #64748B;
+      --error: #EF4444;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--surface);
+      box-shadow: var(--shadow-premium);
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      width: 100%;
+      text-decoration: none;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid #E2E8F0;
+      font-family: inherit;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      background: #F8FAFC;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--accent);
+      background: white;
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* --- End Global Styles --- */
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    }
+
+    .login-card {
+      max-width: 400px;
+      width: 100%;
+      animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .logo-circle {
+      width: 64px;
+      height: 64px;
+      background: var(--primary);
+      border-radius: 20px;
+      margin: 0 auto 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 16px rgba(45, 106, 79, 0.2);
+    }
+
+    .logo-circle svg {
+      width: 32px;
+      height: 32px;
+      color: white;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .otp-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--accent);
+      color: var(--primary-dark);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      margin-top: 16px;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="card">
+  <div class="login-card">
+    <div class="logo-circle">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+    </div>
 
-<h3>Donor Login</h3>
+    <header>
+      <h2>Welcome Back</h2>
+      <p>Sign in to start donating surplus food</p>
+    </header>
 
-<!-- STEP 1 -->
-<div id="step1">
-  <label>Name *</label>
-  <input id="nameInput" placeholder="Full name">
+    <div class="card glass">
+      <!-- STEP 1 -->
+      <div id="step1">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input id="nameInput" placeholder="John Doe">
+        </div>
 
-  <label>Phone Number *</label>
-  <input id="phoneInput" maxlength="10" placeholder="10-digit phone number">
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label>Phone Number</label>
+          <input id="phoneInput" type="tel" maxlength="10" placeholder="9876543210">
+        </div>
 
-  <button onclick="sendOtp()">Send OTP</button>
-</div>
+        <button class="btn btn-primary" onclick="sendOtp()">
+          Send OTP
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
 
-<!-- STEP 2 -->
-<div id="step2" style="display:none">
-  <label>Enter OTP</label>
-  <input id="otpInput" placeholder="1234">
-  <button onclick="verifyOtp()">Verify & Continue</button>
-  <div class="note">Demo OTP: <b>1234</b></div>
-</div>
+      <!-- STEP 2 -->
+      <div id="step2" style="display:none">
+        <div class="form-group">
+          <label>Verification Code</label>
+          <input id="otpInput" type="text" maxlength="4" placeholder="••••"
+            style="text-align: center; letter-spacing: 0.5em; font-size: 20px; font-weight: 700;">
+        </div>
 
-</div>
+        <button class="btn btn-primary" onclick="verifyOtp()">
+          Verify & Continue
+        </button>
 
-<script>
-const nextPage =
-  new URLSearchParams(location.search).get("next")
-  || "donor-home.html";
+        <center>
+          <div class="otp-badge">Demo OTP: 1234</div>
+        </center>
+      </div>
+    </div>
+  </div>
 
-function validPhone(p){
-  return /^[0-9]{10}$/.test(p);
-}
+  <script>
+    const nextPage =
+      new URLSearchParams(location.search).get("next")
+      || "donor-home.html";
 
-function sendOtp(){
-  const name = nameInput.value.trim();
-  const phone = phoneInput.value.trim();
+    function validPhone(p) {
+      return /^[0-9]{10}$/.test(p);
+    }
 
-  if(!name){
-    alert("Enter your name");
-    return;
-  }
-  if(!validPhone(phone)){
-    alert("Enter a valid 10-digit phone number");
-    return;
-  }
+    function sendOtp() {
+      const name = nameInput.value.trim();
+      const phone = phoneInput.value.trim();
 
-  sessionStorage.setItem("otp","1234");
-  sessionStorage.setItem("loginData", JSON.stringify({
-    name,
-    phone,
-    createdAt: Date.now()
-  }));
+      if (!name) {
+        alert("Enter your name");
+        return;
+      }
+      if (!validPhone(phone)) {
+        alert("Enter a valid 10-digit phone number");
+        return;
+      }
 
-  step1.style.display="none";
-  step2.style.display="block";
-}
+      sessionStorage.setItem("temp_donor", JSON.stringify({ name, phone }));
+      step1.style.display = "none";
+      step2.style.display = "block";
+    }
 
-function verifyOtp(){
-  if(otpInput.value.trim() !== "1234"){
-    alert("Invalid OTP");
-    return;
-  }
+    async function verifyOtp() {
+      const otp = otpInput.value.trim();
+      if (otp === "1234") { // Demo OTP
+        const temp = JSON.parse(sessionStorage.getItem("temp_donor"));
 
-  const data = JSON.parse(sessionStorage.getItem("loginData"));
+        // Check if donor exists or create new
+        const { data, error } = await window.sb.from('donor_table')
+          .select('*')
+          .eq('phone', temp.phone)
+          .single();
 
-  // Create donor profile with minimal info
-  const donor = {
-    name: data.name,
-    phone: data.phone,
-    createdAt: data.createdAt
-    // other profile fields added later
-  };
+        if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows'
+          console.error("Database Error:", error);
+          return alert(`Database error: ${error.message}\n\nHint: ${error.hint || 'Make sure you have created the "donor_table" in Supabase.'}`);
+        }
 
-  localStorage.setItem("donor", JSON.stringify(donor));
-  sessionStorage.clear();
+        let donorData;
+        if (data) {
+          donorData = data;
+        } else {
+          const { data: newUser, error: createError } = await window.sb.from('donor_table')
+            .insert([{ phone: temp.phone, name: temp.name }])
+            .select()
+            .single();
 
-  location.href = nextPage;
-}
-</script>
+          if (createError) {
+            console.error("Creation Error:", createError);
+            return alert(`Error creating profile: ${createError.message}`);
+          }
+          donorData = newUser;
+        }
+
+        localStorage.setItem("donor", JSON.stringify(donorData));
+        location.href = nextPage;
+      } else {
+        alert("Invalid OTP! Try 1234");
+      }
+    }
+  </script>
 
 </body>
+
 </html>

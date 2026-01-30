@@ -1,210 +1,407 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Add Surplus Food</title>
 
-<style>
-  body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f7fbf9;
-    margin:0;
-    padding:18px;
-  }
-  .card{
-    max-width:600px;
-    margin:12px auto;
-    background:#fff;
-    padding:18px;
-    border-radius:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  }
-  h3{margin-top:0}
-  label{
-    display:block;
-    margin-top:14px;
-    font-weight:600;
-  }
-  input, select{
-    width:100%;
-    padding:10px;
-    margin-top:6px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    font-size:14px;
-  }
-  .row{
-    display:flex;
-    gap:10px;
-    margin-top:6px;
-  }
-  .type-btn{
-    flex:1;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ddd;
-    background:#f1f1f1;
-    cursor:pointer;
-    font-weight:600;
-  }
-  .active{
-    background:#e8f7ec;
-    border-color:#2f7a4e;
-    color:#2f7a4e;
-  }
-  .preview{
-    width:200px;
-    height:140px;
-    object-fit:cover;
-    border-radius:8px;
-    margin-top:10px;
-    display:none;
-    border:1px dashed #ccc;
-  }
-  .btn{
-    margin-top:20px;
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#2f7a4e;
-    color:#fff;
-    font-size:15px;
-    cursor:pointer;
-  }
-  .small{
-    font-size:13px;
-    color:#666;
-    margin-top:4px;
-  }
-</style>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Post Surplus Food — Annadaan</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <style>
+    /* --- Global Styles from index.css --- */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --primary: #2D6A4F;
+      --primary-light: #40916C;
+      --primary-dark: #1B4332;
+      --secondary: #52B788;
+      --accent: #B7E4C7;
+      --background: #F8FAF9;
+      --surface: #FFFFFF;
+      --text-main: #1A1C1E;
+      --text-muted: #64748B;
+      --error: #EF4444;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--background);
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      background: var(--surface);
+      box-shadow: var(--shadow-premium);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      width: 100%;
+      text-decoration: none;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid #E2E8F0;
+      font-family: inherit;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      background: #F8FAFC;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--accent);
+      background: white;
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* --- End Global Styles --- */
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: white;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .form-header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+      border-radius: 0 0 40px 40px;
+      margin-bottom: 24px;
+    }
+
+    .type-toggle {
+      display: flex;
+      background: #F1F5F9;
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 24px;
+    }
+
+    .type-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: inherit;
+    }
+
+    .type-btn.active {
+      background: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .type-btn.veg.active {
+      color: #10B981;
+    }
+
+    .type-btn.non-veg.active {
+      color: #EF4444;
+    }
+
+    .image-upload-area {
+      width: 100%;
+      height: 180px;
+      border: 2px dashed #CBD5E1;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      background: #F8FAFC;
+      margin-bottom: 24px;
+      transition: all 0.2s;
+    }
+
+    .image-upload-area:hover {
+      border-color: var(--primary);
+    }
+
+    .image-upload-area img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 2;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h3>Post Surplus Food</h3>
+  <div class="container" style="background: var(--background);">
+    <div class="back-btn" onclick="location.href='donor-home.html'">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </div>
 
-  <!-- FOOD TYPE -->
-  <label>Food Type</label>
-  <div class="row">
-    <button id="vegBtn" class="type-btn active">Veg</button>
-    <button id="nonVegBtn" class="type-btn">Non-Veg</button>
+    <div class="form-header">
+      <h3>Post Surplus Food</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-top: 4px;">Fill in the details to share your meal</p>
+    </div>
+
+    <div style="padding: 0 20px 40px;">
+      <div class="card glass">
+        <!-- FOOD TYPE -->
+        <label>Food Type</label>
+        <div class="type-toggle">
+          <button id="vegBtn" class="type-btn veg active">Veg</button>
+          <button id="nonVegBtn" class="type-btn non-veg">Non-Veg</button>
+        </div>
+
+        <!-- PHOTO -->
+        <label>Food Photo</label>
+        <div class="image-upload-area" onclick="document.getElementById('media').click()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+            style="color: #94A3B8; margin-bottom: 8px;">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span style="font-size: 13px; color: #94A3B8; font-weight: 500;">Tap to upload photo</span>
+          <img id="preview" style="display: none;">
+        </div>
+        <input id="media" type="file" accept="image/*" style="display: none;">
+
+        <!-- DETAILS -->
+        <div class="form-group">
+          <label>How many people can it serve?</label>
+          <input id="serves" type="number" min="1" placeholder="e.g. 10">
+        </div>
+
+        <div class="form-group">
+          <label>How long will it stay fresh?</label>
+          <select id="validHours">
+            <option value="">Select duration</option>
+            <option value="1">1 hour</option>
+            <option value="2">2 hours</option>
+            <option value="4">4 hours</option>
+            <option value="6">6 hours</option>
+            <option value="12">12 hours</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Pick-up Location</label>
+          <div style="display: flex; gap: 8px;">
+            <input id="address" placeholder="Address or GPS" style="flex: 1;">
+            <button id="locBtn" class="btn btn-outline" style="width: auto; padding: 12px;"><svg
+                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg></button>
+          </div>
+        </div>
+
+        <button id="postBtn" class="btn btn-primary" style="margin-top: 10px;">
+          Post Donation
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- VALIDITY -->
-  <label>How long will the food remain good?</label>
-  <select id="validHours">
-    <option value="">Select duration</option>
-    <option value="1">1 hour</option>
-    <option value="2">2 hours</option>
-    <option value="3">3 hours</option>
-    <option value="4">4 hours</option>
-    <option value="6">6 hours</option>
-  </select>
+  <script>
+    const donor = JSON.parse(localStorage.getItem("donor"));
+    if (!donor) window.location.href = "login.html?next=add-food.html";
 
-  <!-- SERVES -->
-  <label>How many people can it serve?</label>
-  <input id="serves" type="number" min="1" placeholder="e.g. 20">
+    let foodType = "Veg";
+    const vegBtn = document.getElementById("vegBtn");
+    const nonVegBtn = document.getElementById("nonVegBtn");
 
-  <!-- LOCATION -->
-  <label>Location</label>
-  <div class="small">Auto-detect or enter manually</div>
-  <div class="row">
-    <input id="location" placeholder="Current location">
-    <button id="locBtn" class="type-btn">Find</button>
-  </div>
-
-  <!-- MEDIA UPLOAD (MOVED TO LAST) -->
-  <label>Upload Food Photo / Video</label>
-  <input id="media" type="file" accept="image/*,video/*">
-  <img id="preview" class="preview">
-
-  <button id="postBtn" class="btn">Post Food</button>
-</div>
-
-<script>
-  const donor = JSON.parse(localStorage.getItem("donor"));
-  if(!donor){
-    window.location.href = "login.html?next=add-food.html";
-  }
-
-  let foodType = "Veg";
-
-  const vegBtn = document.getElementById("vegBtn");
-  const nonVegBtn = document.getElementById("nonVegBtn");
-
-  vegBtn.onclick = () => {
-    foodType = "Veg";
-    vegBtn.classList.add("active");
-    nonVegBtn.classList.remove("active");
-  };
-
-  nonVegBtn.onclick = () => {
-    foodType = "Non-Veg";
-    nonVegBtn.classList.add("active");
-    vegBtn.classList.remove("active");
-  };
-
-  const media = document.getElementById("media");
-  const preview = document.getElementById("preview");
-
-  media.onchange = () => {
-    const file = media.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.src = e.target.result;
-      preview.style.display = "block";
-      preview.dataset.src = e.target.result;
+    vegBtn.onclick = () => {
+      foodType = "Veg";
+      vegBtn.classList.add("active");
+      nonVegBtn.classList.remove("active");
     };
-    reader.readAsDataURL(file);
-  };
 
-  document.getElementById("locBtn").onclick = () => {
-    if(!navigator.geolocation){
-      alert("Geolocation not supported");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(pos => {
-      const lat = pos.coords.latitude.toFixed(5);
-      const lng = pos.coords.longitude.toFixed(5);
-      document.getElementById("location").value = lat + ", " + lng;
-    }, () => {
-      alert("Location permission denied");
-    });
-  };
+    nonVegBtn.onclick = () => {
+      foodType = "Non-Veg";
+      nonVegBtn.classList.add("active");
+      vegBtn.classList.remove("active");
+    };
 
-  document.getElementById("postBtn").onclick = () => {
-    const validHours = document.getElementById("validHours").value;
-    const serves = document.getElementById("serves").value;
-    const location = document.getElementById("location").value.trim();
+    const media = document.getElementById("media");
+    const preview = document.getElementById("preview");
 
-    if(!validHours || !serves || !location){
-      alert("Please fill all details");
-      return;
-    }
+    media.onchange = () => {
+      const file = media.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+        preview.dataset.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
 
-    const foodListings = JSON.parse(localStorage.getItem("foodListings") || "[]");
+    document.getElementById("locBtn").onclick = () => {
+      if (!navigator.geolocation) {
+        alert("Geolocation not supported");
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude.toFixed(5);
+        const lng = pos.coords.longitude.toFixed(5);
+        document.getElementById("address").value = lat + ", " + lng;
+        window.currentLat = lat;
+        window.currentLng = lng;
+      }, () => {
+        alert("Location permission denied");
+      });
+    };
 
-    foodListings.push({
-      id: "f_" + Date.now(),
-      donorPhone: donor.phone,
-      type: foodType,
-      photo: preview.dataset.src || "",
-      validHours: Number(validHours),
-      serves: Number(serves),
-      location,
-      postedAt: Date.now(),
-      status: "Posted"
-    });
+    document.getElementById("postBtn").onclick = async () => {
+      const postBtn = document.getElementById("postBtn");
+      const foodType = document.querySelector(".type-toggle .active").textContent;
+      const serves = document.getElementById("serves").value;
+      const address = document.getElementById("address").value;
 
-    localStorage.setItem("foodListings", JSON.stringify(foodListings));
-    alert("Food posted successfully");
-    window.location.href = "donor-home.html";
-  };
-</script>
+      if (!serves || !address) return alert("Please fill all details");
+
+      postBtn.disabled = true;
+      postBtn.textContent = "Posting...";
+
+      const newFood = {
+        id: crypto.randomUUID(),
+        donor_phone: donor.phone,
+        food_type: foodType,
+        serves: parseInt(serves),
+        address: address,
+        photo_url: preview.src && preview.src.startsWith("data:") ? preview.src : null,
+        status: "Posted",
+        latitude: window.currentLat || null,
+        longitude: window.currentLng || null
+      };
+
+      const { error } = await window.sb.from('food_table').insert([newFood]);
+
+      if (error) {
+        console.error(error);
+        alert("Error saving to database");
+        postBtn.disabled = false;
+        postBtn.textContent = "Post Donation";
+        return;
+      }
+
+      alert("Food posted successfully!");
+      location.href = "donor-home.html";
+    };
+  </script>
 
 </body>
+
 </html>
