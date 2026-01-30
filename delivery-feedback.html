@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Feedback - FoodBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div>
+                <a href="my-requests.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Requests
+                </a>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-star"></i>
+                <span>Delivery Feedback</span>
+            </div>
+        </div>
+
+        <header class="header">
+            <h1><i class="fas fa-comment-medical"></i> Delivery Feedback & Impact Tracking</h1>
+            <p>Share your experience and track the impact of food distribution</p>
+        </header>
+
+        <!-- Delivery Summary -->
+        <div class="card" id="delivery-summary">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Feedback Form -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--dark);">
+                <i class="fas fa-chart-line"></i> Impact Tracking
+            </h2>
+            
+            <form id="feedback-form">
+                <!-- Restaurant Rating -->
+                <div class="form-group">
+                    <label><i class="fas fa-star"></i> Restaurant Rating *</label>
+                    <p style="color: var(--gray); margin-bottom: 10px;">How would you rate your experience with the restaurant?</p>
+                    <div class="rating-stars">
+                        <input type="radio" id="star5" name="rating" value="5">
+                        <label for="star5" title="Excellent">★</label>
+                        <input type="radio" id="star4" name="rating" value="4">
+                        <label for="star4" title="Good">★</label>
+                        <input type="radio" id="star3" name="rating" value="3">
+                        <label for="star3" title="Average">★</label>
+                        <input type="radio" id="star2" name="rating" value="2">
+                        <label for="star2" title="Poor">★</label>
+                        <input type="radio" id="star1" name="rating" value="1">
+                        <label for="star1" title="Very Poor">★</label>
+                    </div>
+                </div>
+
+                <!-- Distribution Details -->
+                <div class="form-group">
+                    <label for="distributed-area"><i class="fas fa-map"></i> Distributed Area *</label>
+                    <input type="text" id="distributed-area" placeholder="Where was the food distributed? (e.g., Homeless shelter, Community center)" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="food-type-distributed"><i class="fas fa-utensils"></i> Type of Food Distributed *</label>
+                    <input type="text" id="food-type-distributed" placeholder="What type of food was distributed?" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="delivery-time"><i class="fas fa-clock"></i> Time of Delivery *</label>
+                    <input type="datetime-local" id="delivery-time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="people-served"><i class="fas fa-users"></i> Number of People Served *</label>
+                    <input type="number" id="people-served" min="1" max="1000" required>
+                </div>
+
+                <!-- Demographics -->
+                <div class="form-group">
+                    <label><i class="fas fa-user-friends"></i> Demographics Served</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px;">
+                        <div>
+                            <input type="number" id="children-count" min="0" placeholder="Children">
+                            <label style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Children</label>
+                        </div>
+                        <div>
+                            <input type="number" id="adults-count" min="0" placeholder="Adults">
+                            <label style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Adults</label>
+                        </div>
+                        <div>
+                            <input type="number" id="seniors-count" min="0" placeholder="Seniors">
+                            <label style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Seniors</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Questions -->
+                <div class="form-group">
+                    <label for="food-quality"><i class="fas fa-heart"></i> Food Quality</label>
+                    <select id="food-quality">
+                        <option value="">Select quality</option>
+                        <option value="excellent">Excellent - Fresh and tasty</option>
+                        <option value="good">Good - Edible and satisfactory</option>
+                        <option value="average">Average - Some issues but edible</option>
+                        <option value="poor">Poor - Major quality issues</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="packaging"><i class="fas fa-box"></i> Packaging Condition</label>
+                    <select id="packaging">
+                        <option value="">Select condition</option>
+                        <option value="excellent">Excellent - Well packaged</option>
+                        <option value="good">Good - Adequate packaging</option>
+                        <option value="average">Average - Some packaging issues</option>
+                        <option value="poor">Poor - Poorly packaged</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="distribution-challenges"><i class="fas fa-exclamation-circle"></i> Challenges Faced</label>
+                    <textarea id="distribution-challenges" rows="3" placeholder="Any challenges faced during distribution?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="success-stories"><i class="fas fa-smile"></i> Success Stories</label>
+                    <textarea id="success-stories" rows="3" placeholder="Any positive stories or impact observed?"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="improvement-suggestions"><i class="fas fa-lightbulb"></i> Suggestions for Improvement</label>
+                    <textarea id="improvement-suggestions" rows="3" placeholder="How can we improve the food donation process?"></textarea>
+                </div>
+
+                <!-- Photos (conceptual) -->
+                <div class="form-group">
+                    <label><i class="fas fa-camera"></i> Distribution Photos (Optional)</label>
+                    <div style="border: 2px dashed var(--border); border-radius: 10px; padding: 30px; text-align: center; color: var(--gray);">
+                        <i class="fas fa-cloud-upload-alt fa-3x" style="margin-bottom: 15px;"></i>
+                        <p>Upload photos of the distribution (if available)</p>
+                        <p style="font-size: 0.9rem;">Note: This is a demo feature</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Why Feedback Matters:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Helps restaurants improve their donation process</li>
+                            <li>Provides impact data for reporting and funding</li>
+                            <li>Identifies areas for system improvement</li>
+                            <li>Encourages more restaurants to donate</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-paper-plane"></i> Submit Feedback & Complete Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentRequest = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user || user.type !== 'ngo') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            loadDeliveryData();
+            setupFeedbackForm();
+        });
+
+        function loadDeliveryData() {
+            currentRequest = JSON.parse(localStorage.getItem('currentRequest'));
+            const container = document.getElementById('delivery-summary');
+            
+            if (!currentRequest) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No delivery data found. Please select a completed request.
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <h3 style="color: var(--dark); margin-bottom: 15px;">
+                    <i class="fas fa-truck"></i> Delivery Summary
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Restaurant</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.restaurant}</p>
+                    </div>
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Food Collected</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.foodType}</p>
+                    </div>
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Quantity</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.quantity}</p>
+                    </div>
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Pickup Date</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.pickupFormatted || 'Not scheduled'}</p>
+                    </div>
+                </div>
+                
+                ${currentRequest.emergency ? `
+                    <div style="background: #FEF3C7; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #92400E; margin: 0;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Emergency Distribution:</strong> ${currentRequest.emergencyReason}
+                        </p>
+                    </div>
+                ` : ''}
+                
+                <div style="background: var(--primary-light); padding: 12px; border-radius: 8px;">
+                    <p style="color: var(--primary-dark); margin: 0;">
+                        <i class="fas fa-info-circle"></i>
+                        Please provide feedback about this food distribution to help improve the system.
+                    </p>
+                </div>
+            `;
+            
+            // Set default delivery time to now
+            const now = new Date();
+            const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('delivery-time').value = localDateTime;
+            
+            // Auto-populate food type
+            document.getElementById('food-type-distributed').value = currentRequest.foodType;
+        }
+
+        function setupFeedbackForm() {
+            const form = document.getElementById('feedback-form');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate required fields
+                const rating = document.querySelector('input[name="rating"]:checked');
+                const distributedArea = document.getElementById('distributed-area').value.trim();
+                const deliveryTime = document.getElementById('delivery-time').value;
+                const peopleServed = document.getElementById('people-served').value;
+                
+                if (!rating) {
+                    showAlert('Please rate the restaurant', 'error');
+                    return;
+                }
+                
+                if (!distributedArea || !deliveryTime || !peopleServed) {
+                    showAlert('Please fill all required fields', 'error');
+                    return;
+                }
+                
+                // Collect feedback data
+                const feedback = {
+                    requestId: currentRequest.id,
+                    restaurant: currentRequest.restaurant,
+                    rating: rating.value,
+                    distributedArea: distributedArea,
+                    foodTypeDistributed: document.getElementById('food-type-distributed').value.trim(),
+                    deliveryTime: deliveryTime,
+                    peopleServed: parseInt(peopleServed),
+                    demographics: {
+                        children: parseInt(document.getElementById('children-count').value) || 0,
+                        adults: parseInt(document.getElementById('adults-count').value) || 0,
+                        seniors: parseInt(document.getElementById('seniors-count').value) || 0
+                    },
+                    foodQuality: document.getElementById('food-quality').value,
+                    packaging: document.getElementById('packaging').value,
+                    challenges: document.getElementById('distribution-challenges').value.trim(),
+                    successStories: document.getElementById('success-stories').value.trim(),
+                    suggestions: document.getElementById('improvement-suggestions').value.trim(),
+                    submittedAt: new Date().toISOString(),
+                    ngoId: currentRequest.ngoId,
+                    ngoName: currentRequest.ngoName
+                };
+                
+                // Save feedback
+                let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
+                allFeedback.push(feedback);
+                localStorage.setItem('foodbridge_feedback', JSON.stringify(allFeedback));
+                
+                // Update request status to completed
+                const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
+                const requestIndex = requests.findIndex(req => req.id === currentRequest.id);
+                
+                if (requestIndex !== -1) {
+                    requests[requestIndex].status = 'completed';
+                    requests[requestIndex].completedAt = new Date().toISOString();
+                    requests[requestIndex].feedback = feedback;
+                    localStorage.setItem('foodbridge_requests', JSON.stringify(requests));
+                }
+                
+                // Show success message
+                const successMessage = `
+                    🎉 Thank You for Your Feedback!
+                    
+                    Your feedback helps:
+                    • Improve the food donation system
+                    • Encourage more restaurants to donate
+                    • Track real impact in the community
+                    
+                    📊 Impact Summary:
+                    • Restaurant: ${currentRequest.restaurant}
+                    • People Served: ${peopleServed}
+                    • Distribution Area: ${distributedArea}
+                    • Your Rating: ${'★'.repeat(rating.value)}
+                    
+                    📈 Your contribution has been recorded!
+                `;
+                
+                showAlert('Feedback submitted successfully!', 'success');
+                
+                setTimeout(() => {
+                    alert(successMessage);
+                    window.location.href = 'my-requests.html';
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+</html>

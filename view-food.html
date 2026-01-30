@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Available Food — Annadaan</title>
+
+    <style>
+        /* --- Global Styles from index.css --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #2D6A4F;
+            --primary-light: #40916C;
+            --primary-dark: #1B4332;
+            --secondary: #52B788;
+            --accent: #B7E4C7;
+            --background: #F8FAF9;
+            --surface: #FFFFFF;
+            --text-main: #1A1C1E;
+            --text-muted: #64748B;
+            --error: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Mesh Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .mesh-bg div {
+            position: absolute;
+            filter: blur(80px);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: move 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            background: #dcfce7;
+            top: -10%;
+            right: -5%;
+        }
+
+        .blob2 {
+            width: 350px;
+            height: 350px;
+            background: #f0fdf4;
+            bottom: -5%;
+            left: -5%;
+            animation-delay: -5s;
+        }
+
+        .blob3 {
+            width: 300px;
+            height: 300px;
+            background: #fef9c3;
+            top: 30%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(50px, 100px) scale(1.1);
+            }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            letter-spacing: -1px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 16px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #64748b;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1.5px solid #E2E8F0;
+            font-family: inherit;
+            font-size: 14px;
+            background: #F8FAFC;
+            transition: all 0.2s;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+            background: white;
+        }
+
+        /* Food Cards */
+        .food-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .food-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .food-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(45, 106, 79, 0.08);
+        }
+
+        .food-header {
+            padding: 16px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .food-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            flex: 1;
+        }
+
+        .distance-badge {
+            background: linear-gradient(135deg, #3B82F6, #60A5FA);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .food-content {
+            padding: 16px;
+        }
+
+        .food-details {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .detail-item i {
+            width: 20px;
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .detail-item strong {
+            display: block;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .detail-item .text-muted {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .food-description {
+            background: #f0fdf4;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+        }
+
+        .food-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 1.5px solid #E2E8F0;
+        }
+
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: var(--primary);
+        }
+
+        /* Alert */
+        .alert {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #1e40af;
+        }
+
+        .alert i {
+            flex-shrink: 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #E2E8F0;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #E2E8F0;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 60px auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .filter-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .food-actions {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="mesh-bg">
+        <div class="blob1"></div>
+        <div class="blob2"></div>
+        <div class="blob3"></div>
+    </div>
+
+    <div class="container">
+        <a href="#" onclick="goBack(); return false;" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="header">
+            <h1><span>Available</span> Food</h1>
+            <p>Showing food within 20km radius</p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-section glass">
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label><i class="fas fa-filter"></i> Distance</label>
+                    <select id="distance-filter" onchange="filterFood()">
+                        <option value="20">Within 20km</option>
+                        <option value="10">Within 10km</option>
+                        <option value="5">Within 5km</option>
+                        <option value="all">All distances</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-utensil-spoon"></i> Food Type</label>
+                    <select id="type-filter" onchange="filterFood()">
+                        <option value="all">All types</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="non-vegetarian">Non-Vegetarian</option>
+                        <option value="bakery">Bakery</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-sort"></i> Sort by</label>
+                    <select id="sort-filter" onchange="filterFood()">
+                        <option value="distance">Nearest first</option>
+                        <option value="time">Expiring soon</option>
+                        <option value="quantity">Most quantity</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Volunteer Info -->
+        <div id="volunteer-info" class="alert" style="display: none;">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Volunteer Access:</strong> You can view available food and help with distribution. Only NGOs can
+                request food for emergencies.
+            </div>
+        </div>
+
+        <!-- Food Cards -->
+        <div id="food-container" class="food-grid">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let allFoodItems = [];
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check for currentUser from script.js
+            currentUser = getCurrentUser(); // From script.js
+
+            if (!currentUser) {
+                window.location.href = 'volunteer-login.html';
+                return;
+            }
+
+            // Show volunteer info if user is a volunteer
+            if (currentUser.type === 'volunteer') {
+                document.getElementById('volunteer-info').style.display = 'flex';
+            }
+
+            loadAvailableFood();
+        });
+
+        function goBack() {
+            if (currentUser.type === 'ngo') {
+                window.location.href = 'ngo-dashboard.html';
+            } else {
+                window.location.href = 'volunteer-dashboard.html';
+            }
+        }
+
+        function loadAvailableFood() {
+            const container = document.getElementById('food-container');
+
+            // Get all food items
+            allFoodItems = JSON.parse(localStorage.getItem('foodbridge_food')) || [];
+
+            // Filter by availability
+            const availableFood = allFoodItems.filter(food => food.status === 'available');
+
+            if (availableFood.length === 0) {
+                container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-utensils"></i>
+            <h3>No Food Available</h3>
+            <p>There is currently no surplus food available within 20km radius.</p>
+            <button onclick="loadAvailableFood()" class="btn btn-primary">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+        `;
+                return;
+            }
+
+            // Sort by distance (closest first)
+            availableFood.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+
+            displayFoodItems(availableFood);
+        }
+
+        function displayFoodItems(foodItems) {
+            const container = document.getElementById('food-container');
+
+            container.innerHTML = foodItems.map(food => `
+        <div class="food-card glass">
+          <div class="food-header">
+            <h3 class="food-title">${food.restaurant || 'Food Donor'}</h3>
+            <span class="distance-badge">
+              <i class="fas fa-location-dot"></i> ${food.distance || 'N/A'}
+            </span>
+          </div>
+          
+          <div class="food-content">
+            <div class="food-details">
+              <div class="detail-item">
+                <i class="fas fa-utensils"></i>
+                <div>
+                  <strong>${food.foodType || 'Food Item'}</strong>
+                  <div class="text-muted">${food.category || 'Category'}</div>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-weight-hanging"></i>
+                <div>
+                  <strong>${food.quantity || 'N/A'}</strong>
+                  <div class="text-muted">Serves ${food.serves || '50'} people</div>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <strong>Available Until</strong>
+                  <div class="text-muted">${food.availableUntil || 'Not specified'}</div>
+                </div>
+              </div>
+              
+              <div class="detail-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div>
+                  <strong>Location</strong>
+                  <div class="text-muted">${food.location || 'Not specified'}</div>
+                </div>
+              </div>
+            </div>
+            
+            ${food.description ? `
+              <div class="food-description">
+                <i class="fas fa-info-circle"></i> ${food.description}
+              </div>
+            ` : ''}
+            
+            <div class="food-actions">
+              <button onclick="viewLocation('${food.id}')" class="btn btn-secondary">
+                <i class="fas fa-map-marker-alt"></i> View Location
+              </button>
+              
+              ${currentUser.type === 'ngo' ? `
+                <button onclick="requestFood('${food.id}')" class="btn btn-primary">
+                  <i class="fas fa-hand-holding-heart"></i> Request
+                </button>
+              ` : `
+                <button onclick="volunteerHelp('${food.id}')" class="btn btn-primary">
+                  <i class="fas fa-hands-helping"></i> Volunteer
+                </button>
+              `}
+            </div>
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function filterFood() {
+            const maxDistance = document.getElementById('distance-filter').value;
+            const foodType = document.getElementById('type-filter').value;
+            const sortBy = document.getElementById('sort-filter').value;
+
+            let filteredFood = allFoodItems.filter(food => food.status === 'available');
+
+            // Filter by distance
+            if (maxDistance !== 'all') {
+                filteredFood = filteredFood.filter(food => {
+                    const distance = parseFloat(food.distance);
+                    return !isNaN(distance) && distance <= parseInt(maxDistance);
+                });
+            }
+
+            // Filter by type
+            if (foodType !== 'all') {
+                filteredFood = filteredFood.filter(food =>
+                    food.category === foodType || food.foodType.toLowerCase().includes(foodType)
+                );
+            }
+
+            // Sort
+            switch (sortBy) {
+                case 'distance':
+                    filteredFood.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+                    break;
+                case 'time':
+                    filteredFood.sort((a, b) => {
+                        const timeA = a.availableUntil.includes('Today') ? 0 : 1;
+                        const timeB = b.availableUntil.includes('Today') ? 0 : 1;
+                        return timeA - timeB;
+                    });
+                    break;
+                case 'quantity':
+                    filteredFood.sort((a, b) => {
+                        const qtyA = parseInt(a.quantity) || 0;
+                        const qtyB = parseInt(b.quantity) || 0;
+                        return qtyB - qtyA;
+                    });
+                    break;
+            }
+
+            if (filteredFood.length === 0) {
+                document.getElementById('food-container').innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <h3>No Matching Food</h3>
+            <p>No food matches your filters. Try adjusting your criteria.</p>
+          </div>
+        `;
+                return;
+            }
+
+            displayFoodItems(filteredFood);
+        }
+
+        function viewLocation(foodId) {
+            const food = allFoodItems.find(f => f.id === foodId);
+            if (food) {
+                alert(`📍 ${food.restaurant}\n\nLocation: ${food.location}\nDistance: ${food.distance} from you`);
+            }
+        }
+
+        function requestFood(foodId) {
+            alert('Request food feature - NGO functionality');
+        }
+
+        function volunteerHelp(foodId) {
+            const food = allFoodItems.find(f => f.id === foodId);
+            if (!food) return;
+
+            const availability = prompt(`Volunteering to help with distribution from ${food.restaurant}\n\nPlease specify your availability:\n(e.g., Today evening, Tomorrow morning, This week)`);
+
+            if (!availability || availability.trim() === '') {
+                alert('Volunteering cancelled');
+                return;
+            }
+
+            alert(`✅ Thank you for volunteering!\n\nYour availability: ${availability}\n\nThe NGO will contact you if help is needed.`);
+        }
+
+        // Fallback for checkAuth if script.js is not loaded
+        function checkAuth() {
+            return currentUser;
+        }
+    </script>
+
+</body>
+
+</html>

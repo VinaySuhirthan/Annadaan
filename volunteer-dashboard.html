@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <title>Volunteer Dashboard — Annadaan</title>
+
+    <style>
+        /* --- Global Styles from index.css --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #2D6A4F;
+            --primary-light: #40916C;
+            --primary-dark: #1B4332;
+            --secondary: #52B788;
+            --accent: #B7E4C7;
+            --background: #F8FAF9;
+            --surface: #FFFFFF;
+            --text-main: #1A1C1E;
+            --text-muted: #64748B;
+            --error: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --radius-full: 9999px;
+
+            --bg-main: #ffffff;
+            --acc-soft: #f0fdf4;
+            --acc-bright: #2d6a4f;
+            --acc-glow: rgba(45, 106, 79, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: var(--bg-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Immersive Mesh Background */
+        .mesh-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .mesh-bg div {
+            position: absolute;
+            filter: blur(80px);
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: move 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            background: #dcfce7;
+            top: -10%;
+            right: -5%;
+            animation-delay: 0s;
+        }
+
+        .blob2 {
+            width: 350px;
+            height: 350px;
+            background: #f0fdf4;
+            bottom: -5%;
+            left: -5%;
+            animation-delay: -5s;
+        }
+
+        .blob3 {
+            width: 300px;
+            height: 300px;
+            background: #fef9c3;
+            top: 30%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(50px, 100px) scale(1.1);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            letter-spacing: -1px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* User Info Card */
+        .user-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        }
+
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .user-details h3 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: #1a1a1a;
+        }
+
+        .user-details p {
+            font-size: 13px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout {
+            margin-left: auto;
+            padding: 8px 16px;
+            background: #fee;
+            color: #dc2626;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: #fecaca;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .dashboard-card:hover::before {
+            left: 150%;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: #ffffff;
+            box-shadow: 0 20px 40px rgba(45, 106, 79, 0.08);
+            border-color: rgba(45, 106, 79, 0.2);
+        }
+
+        .dashboard-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: #f0fdf4;
+            color: #2d6a4f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+            transition: all 0.3s;
+        }
+
+        .dashboard-card:hover .dashboard-icon {
+            background: #2d6a4f;
+            color: #ffffff;
+            transform: rotate(5deg);
+        }
+
+        .dashboard-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        .dashboard-card p {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 0;
+        }
+
+        /* Alert */
+        .alert {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #1e40af;
+        }
+
+        .alert i {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .alert strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .alert ul {
+            margin-top: 8px;
+            padding-left: 20px;
+        }
+
+        .alert li {
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="mesh-bg">
+        <div class="blob1"></div>
+        <div class="blob2"></div>
+        <div class="blob3"></div>
+    </div>
+
+    <div class="container">
+        <div class="header animate-fade-in">
+            <h1><span>Volunteer</span> Dashboard</h1>
+            <p>Help distribute surplus food to those in need</p>
+        </div>
+
+        <!-- User Info Card -->
+        <div class="user-card glass animate-fade-in" style="animation-delay: 0.1s;">
+            <div class="user-avatar" id="user-avatar">V</div>
+            <div class="user-details">
+                <h3 id="user-name">Volunteer Name</h3>
+                <p><i class="fas fa-map-marker-alt"></i> <span id="user-location">Location</span></p>
+            </div>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+
+        <!-- Volunteer Stats -->
+        <div class="stats-grid">
+            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.2s;">
+                <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <div class="stat-number" id="food-helped">0</div>
+                <div class="stat-label">Distributions</div>
+            </div>
+            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.25s;">
+                <div class="stat-icon" style="background: #E0F2FE; color: #0284C7;">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="people-helped">0</div>
+                <div class="stat-label">People Served</div>
+            </div>
+            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.3s;">
+                <div class="stat-icon" style="background: #FEF3C7; color: #F59E0B;">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-number" id="volunteer-rating">5.0</div>
+                <div class="stat-label">Your Rating</div>
+            </div>
+            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.35s;">
+                <div class="stat-icon" style="background: #D1FAE5; color: var(--success);">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-number" id="hours-volunteered">0</div>
+                <div class="stat-label">Hours</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.4s;"
+                onclick="window.location.href='view-food.html'">
+                <div class="dashboard-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>View Available Food</h3>
+                <p>Browse surplus food within 20km radius</p>
+            </div>
+
+            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.45s;"
+                onclick="alert('My Volunteering page coming soon!')">
+                <div class="dashboard-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>My Volunteering</h3>
+                <p>View your upcoming commitments</p>
+            </div>
+
+            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.5s;"
+                onclick="alert('Feedback page coming soon!')">
+                <div class="dashboard-icon">
+                    <i class="fas fa-comment-medical"></i>
+                </div>
+                <h3>Provide Feedback</h3>
+                <p>Share your volunteering experience</p>
+            </div>
+
+            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.55s;"
+                onclick="alert('Achievements page coming soon!')">
+                <div class="dashboard-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3>Achievements</h3>
+                <p>Track your volunteering milestones</p>
+            </div>
+        </div>
+
+        <!-- Volunteer Guidelines -->
+        <div class="alert animate-fade-in" style="animation-delay: 0.6s;">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Volunteer Guidelines:</strong>
+                <ul>
+                    <li>Only NGOs can request food for emergencies</li>
+                    <li>Volunteers help with food pickup and distribution</li>
+                    <li>Always follow food safety guidelines</li>
+                    <li>Report any issues to the NGO coordinator</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Load volunteer dashboard data
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if user is logged in - script.js uses 'currentUser'
+            let user = JSON.parse(localStorage.getItem('currentUser'));
+
+            if (!user || (user.type !== 'volunteer' && user.type !== 'ngo')) {
+                window.location.href = 'volunteer-login.html';
+                return;
+            }
+
+            loadUserInfo();
+            loadVolunteerStats();
+        });
+
+        function loadUserInfo() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (!user) return;
+
+            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+            document.getElementById('user-name').textContent = user.name;
+            document.getElementById('user-location').textContent = user.location || 'Location not set';
+        }
+
+        function loadVolunteerStats() {
+            // For demo - in real app, this would come from backend
+            document.getElementById('food-helped').textContent = '12';
+            document.getElementById('people-helped').textContent = '480';
+            document.getElementById('volunteer-rating').textContent = '4.8';
+            document.getElementById('hours-volunteered').textContent = '36';
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                window.location.href = 'index.html';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

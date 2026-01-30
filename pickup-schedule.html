@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Pickup - FoodBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div>
+                <a href="my-requests.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Requests
+                </a>
+            </div>
+            <div class="user-info">
+                <i class="fas fa-truck-pickup"></i>
+                <span>Schedule Pickup</span>
+            </div>
+        </div>
+
+        <header class="header">
+            <h1><i class="fas fa-calendar-alt"></i> Schedule Food Pickup</h1>
+            <p>Arrange pickup time and details for your requested food</p>
+        </header>
+
+        <!-- Request Summary -->
+        <div class="card" id="request-summary">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Pickup Form -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--dark);">
+                <i class="fas fa-clock"></i> Pickup Details
+            </h2>
+            
+            <form id="pickup-form">
+                <div class="form-group">
+                    <label for="pickup-date"><i class="fas fa-calendar-day"></i> Pickup Date *</label>
+                    <input type="date" id="pickup-date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pickup-time"><i class="fas fa-clock"></i> Pickup Time *</label>
+                    <select id="pickup-time" required>
+                        <option value="">Select time slot</option>
+                        <option value="09:00-10:00">09:00 AM - 10:00 AM</option>
+                        <option value="10:00-11:00">10:00 AM - 11:00 AM</option>
+                        <option value="11:00-12:00">11:00 AM - 12:00 PM</option>
+                        <option value="12:00-13:00">12:00 PM - 01:00 PM</option>
+                        <option value="14:00-15:00">02:00 PM - 03:00 PM</option>
+                        <option value="15:00-16:00">03:00 PM - 04:00 PM</option>
+                        <option value="16:00-17:00">04:00 PM - 05:00 PM</option>
+                        <option value="17:00-18:00">05:00 PM - 06:00 PM</option>
+                        <option value="18:00-19:00">06:00 PM - 07:00 PM</option>
+                        <option value="19:00-20:00">07:00 PM - 08:00 PM</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pickup-person"><i class="fas fa-user"></i> Pickup Person Name *</label>
+                    <input type="text" id="pickup-person" placeholder="Name of person collecting food" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pickup-contact"><i class="fas fa-phone"></i> Pickup Person Contact *</label>
+                    <input type="tel" id="pickup-contact" placeholder="10-digit phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicle-type"><i class="fas fa-truck"></i> Vehicle Type</label>
+                    <select id="vehicle-type">
+                        <option value="car">Car</option>
+                        <option value="van">Van</option>
+                        <option value="truck">Truck</option>
+                        <option value="bike">Motorcycle</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicle-number"><i class="fas fa-car"></i> Vehicle Number (Optional)</label>
+                    <input type="text" id="vehicle-number" placeholder="Vehicle registration number">
+                </div>
+
+                <div class="form-group">
+                    <label for="special-instructions"><i class="fas fa-sticky-note"></i> Special Instructions</label>
+                    <textarea id="special-instructions" rows="3" placeholder="Any special instructions for pickup"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user-friends"></i> Number of Helpers</label>
+                    <input type="number" id="helpers-count" min="1" max="10" value="2">
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Pickup Guidelines:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Arrive on time for your scheduled pickup</li>
+                            <li>Bring your ID and this confirmation</li>
+                            <li>Carry appropriate containers for food</li>
+                            <li>Follow restaurant staff instructions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-calendar-check"></i> Confirm Pickup Schedule
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        let currentRequest = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user || user.type !== 'ngo') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            loadRequestData();
+            setupPickupForm();
+        });
+
+        function loadRequestData() {
+            currentRequest = JSON.parse(localStorage.getItem('currentRequest'));
+            const container = document.getElementById('request-summary');
+            
+            if (!currentRequest) {
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        No request found. Please go back and select a request.
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <h3 style="color: var(--dark); margin-bottom: 15px;">
+                    <i class="fas fa-clipboard-check"></i> Request Summary
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Restaurant</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.restaurant}</p>
+                    </div>
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Food Type</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.foodType}</p>
+                    </div>
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Quantity</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.quantity}</p>
+                    </div>
+                    <div>
+                        <label style="color: var(--gray); font-size: 0.9rem;">Location</label>
+                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.location}</p>
+                    </div>
+                </div>
+                
+                ${currentRequest.emergency ? `
+                    <div style="background: #FEF3C7; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                        <p style="color: #92400E; margin: 0;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Emergency Request:</strong> ${currentRequest.emergencyReason}
+                        </p>
+                    </div>
+                ` : ''}
+            `;
+            
+            // Set minimum date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+            document.getElementById('pickup-date').min = minDate;
+            
+            // Set default date to tomorrow
+            document.getElementById('pickup-date').value = minDate;
+        }
+
+        function setupPickupForm() {
+            const form = document.getElementById('pickup-form');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                const pickupDate = document.getElementById('pickup-date').value;
+                const pickupTime = document.getElementById('pickup-time').value;
+                const pickupPerson = document.getElementById('pickup-person').value.trim();
+                const pickupContact = document.getElementById('pickup-contact').value.trim();
+                
+                if (!pickupDate || !pickupTime || !pickupPerson || !pickupContact) {
+                    showAlert('Please fill all required fields', 'error');
+                    return;
+                }
+                
+                if (!/^\d{10}$/.test(pickupContact)) {
+                    showAlert('Please enter a valid 10-digit phone number', 'error');
+                    return;
+                }
+                
+                // Update request with pickup details
+                const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
+                const requestIndex = requests.findIndex(req => req.id === currentRequest.id);
+                
+                if (requestIndex === -1) {
+                    showAlert('Request not found', 'error');
+                    return;
+                }
+                
+                // Format pickup date and time
+                const date = new Date(pickupDate);
+                const formattedDate = date.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                const pickupDetails = {
+                    pickupDate: pickupDate,
+                    pickupTime: pickupTime,
+                    pickupFormatted: `${formattedDate}, ${pickupTime}`,
+                    pickupPerson: pickupPerson,
+                    pickupContact: pickupContact,
+                    vehicleType: document.getElementById('vehicle-type').value,
+                    vehicleNumber: document.getElementById('vehicle-number').value.trim(),
+                    specialInstructions: document.getElementById('special-instructions').value.trim(),
+                    helpersCount: document.getElementById('helpers-count').value,
+                    status: 'accepted',
+                    scheduledAt: new Date().toISOString()
+                };
+                
+                // Update request
+                Object.assign(requests[requestIndex], pickupDetails);
+                localStorage.setItem('foodbridge_requests', JSON.stringify(requests));
+                
+                // Update food status
+                const foodItems = JSON.parse(localStorage.getItem('foodbridge_food')) || [];
+                const foodIndex = foodItems.findIndex(f => f.id === currentRequest.foodId);
+                if (foodIndex !== -1) {
+                    foodItems[foodIndex].status = 'accepted';
+                    localStorage.setItem('foodbridge_food', JSON.stringify(foodItems));
+                }
+                
+                // Show success message
+                const confirmationMessage = `
+                    ✅ Pickup Scheduled Successfully!
+                    
+                    📅 Date: ${formattedDate}
+                    ⏰ Time: ${pickupTime}
+                    
+                    👤 Pickup Person: ${pickupPerson}
+                    📱 Contact: ${pickupContact}
+                    
+                    🚚 Vehicle: ${document.getElementById('vehicle-type').value}
+                    
+                    📍 Restaurant: ${currentRequest.restaurant}
+                    📦 Food: ${currentRequest.foodType} (${currentRequest.quantity})
+                    
+                    💡 Please save this confirmation and arrive on time.
+                `;
+                
+                showAlert('Pickup scheduled successfully!', 'success');
+                
+                // Show detailed confirmation
+                setTimeout(() => {
+                    alert(confirmationMessage);
+                    window.location.href = 'my-requests.html';
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+</html>

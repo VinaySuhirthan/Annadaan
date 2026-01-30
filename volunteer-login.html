@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodBridge - Connect Surplus Food</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-utensils"></i> FoodBridge</h1>
+            <p>Connecting surplus food with those in need within your community</p>
+        </header>
+
+        <div class="card form-container">
+            <div class="tabs">
+                <button class="tab-btn active" id="login-tab">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="tab-btn" id="register-tab">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="active-form">
+                <div class="form-group">
+                    <label for="login-phone"><i class="fas fa-phone"></i> Phone Number</label>
+                    <input type="tel" id="login-phone" placeholder="Enter 10-digit phone number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-type"><i class="fas fa-users"></i> I am a</label>
+                    <select id="user-type" required>
+                        <option value="">Select type</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="ngo">NGO</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                </button>
+            </form>
+
+            <!-- Registration Form -->
+            <form id="register-form" style="display: none;">
+                <div class="form-group">
+                    <label for="register-type"><i class="fas fa-user-tag"></i> Register as</label>
+                    <select id="register-type" required>
+                        <option value="">Select type</option>
+                        <option value="volunteer">Volunteer</option>
+                        <option value="ngo">NGO</option>
+                    </select>
+                </div>
+
+                <!-- Volunteer Fields -->
+                <div id="volunteer-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="vol-name"><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="vol-name" placeholder="Your full name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vol-address"><i class="fas fa-map-marker-alt"></i> Address</label>
+                        <textarea id="vol-address" placeholder="Complete address" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vol-phone"><i class="fas fa-phone"></i> Phone Number</label>
+                        <input type="tel" id="vol-phone" placeholder="10-digit phone number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vol-location"><i class="fas fa-location-dot"></i> Location (City/Area)</label>
+                        <input type="text" id="vol-location" placeholder="Your location for distance calculation">
+                        <small style="color: var(--gray); font-size: 0.9rem;">Food will be shown within 20km
+                            radius</small>
+                    </div>
+                </div>
+
+                <!-- NGO Fields -->
+                <div id="ngo-fields" style="display: none;">
+                    <div class="form-group">
+                        <label for="ngo-name"><i class="fas fa-building"></i> Organization Name</label>
+                        <input type="text" id="ngo-name" placeholder="Organization name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-id"><i class="fas fa-id-card"></i> Organization ID</label>
+                        <input type="text" id="ngo-id" placeholder="Official registration ID">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-head"><i class="fas fa-user-tie"></i> Organization Head</label>
+                        <input type="text" id="ngo-head" placeholder="Head person's name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-address"><i class="fas fa-map-marker-alt"></i> Organization Address</label>
+                        <textarea id="ngo-address" placeholder="Complete organization address" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-phone"><i class="fas fa-phone"></i> Contact Number</label>
+                        <input type="tel" id="ngo-phone" placeholder="10-digit phone number">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ngo-location"><i class="fas fa-location-dot"></i> Organization Location</label>
+                        <input type="text" id="ngo-location" placeholder="Organization location">
+                        <small style="color: var(--gray); font-size: 0.9rem;">Food will be shown within 20km
+                            radius</small>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <div class="alert alert-info mt-30">
+                <i class="fas fa-info-circle"></i>
+                <strong>Note:</strong> Only NGOs can request food for emergencies. Volunteers can view and help
+                distribute.
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

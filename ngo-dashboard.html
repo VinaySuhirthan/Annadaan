@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGO Dashboard - FoodBridge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">N</div>
+                <div class="user-details">
+                    <h3 id="user-name">Organization Name</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span id="user-location">Location</span></p>
+                </div>
+            </div>
+            <div>
+                <button onclick="logout()" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <header class="header">
+            <h1><i class="fas fa-hands-helping"></i> NGO Dashboard</h1>
+            <p>Manage food requests and distributions</p>
+        </header>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card" onclick="window.location.href='view-food.html'">
+                <div class="dashboard-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h3>View Available Food</h3>
+                <p>Browse surplus food available within 20km radius and request for emergencies</p>
+                <div class="btn btn-secondary mt-20">
+                    <i class="fas fa-eye"></i> View Food
+                </div>
+            </div>
+
+            <div class="dashboard-card" onclick="window.location.href='my-requests.html'">
+                <div class="dashboard-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <h3>My Requests</h3>
+                <p>Track your food requests, pickup status, and delivery progress</p>
+                <div class="btn btn-secondary mt-20">
+                    <i class="fas fa-tasks"></i> View Requests
+                </div>
+            </div>
+
+            <div class="dashboard-card" onclick="window.location.href='delivery-feedback.html'">
+                <div class="dashboard-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>Provide Feedback</h3>
+                <p>Rate restaurants and provide impact tracking after distribution</p>
+                <div class="btn btn-secondary mt-20">
+                    <i class="fas fa-comment-alt"></i> Give Feedback
+                </div>
+            </div>
+
+            <div class="dashboard-card" onclick="window.location.href='statistics.html'">
+                <div class="dashboard-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Statistics & Reports</h3>
+                <p>View your organization's impact and distribution analytics</p>
+                <div class="btn btn-secondary mt-20">
+                    <i class="fas fa-chart-bar"></i> View Statistics
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--dark);">
+                <i class="fas fa-chart-pie"></i> Quick Overview
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="stat-number" id="total-requests">0</div>
+                    <div class="stat-label">Total Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #E0F2FE; color: var(--secondary);">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-number" id="completed-requests">0</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #FEF3C7; color: var(--warning);">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number" id="pending-requests">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #D1FAE5; color: var(--success);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="people-served">0</div>
+                    <div class="stat-label">People Served</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <h2 style="margin-bottom: 20px; color: var(--dark);">
+                <i class="fas fa-history"></i> Recent Activity
+            </h2>
+            <div id="recent-activity">
+                <p style="color: var(--gray); text-align: center; padding: 20px;">
+                    No recent activity
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Load NGO dashboard data
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = checkAuth();
+            if (!user || user.type !== 'ngo') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            loadUserInfo();
+            loadDashboardStats();
+            loadRecentActivity();
+        });
+
+        function loadDashboardStats() {
+            const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
+            const currentUser = getCurrentUser();
+            
+            // Filter requests for this NGO
+            const ngoRequests = requests.filter(req => req.ngoId === currentUser.id);
+            
+            // Calculate stats
+            const total = ngoRequests.length;
+            const completed = ngoRequests.filter(req => req.status === 'completed').length;
+            const pending = ngoRequests.filter(req => req.status === 'pending' || req.status === 'accepted').length;
+            
+            // Calculate estimated people served
+            const foodItems = JSON.parse(localStorage.getItem('foodbridge_food')) || [];
+            let peopleServed = 0;
+            
+            ngoRequests.forEach(req => {
+                if (req.status === 'completed') {
+                    const food = foodItems.find(f => f.id === req.foodId);
+                    if (food && food.serves) {
+                        peopleServed += food.serves;
+                    }
+                }
+            });
+            
+            // Update UI
+            document.getElementById('total-requests').textContent = total;
+            document.getElementById('completed-requests').textContent = completed;
+            document.getElementById('pending-requests').textContent = pending;
+            document.getElementById('people-served').textContent = peopleServed;
+        }
+
+        function loadRecentActivity() {
+            const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
+            const currentUser = getCurrentUser();
+            
+            // Filter requests for this NGO (last 5)
+            const ngoRequests = requests
+                .filter(req => req.ngoId === currentUser.id)
+                .sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate))
+                .slice(0, 5);
+            
+            const container = document.getElementById('recent-activity');
+            
+            if (ngoRequests.length === 0) {
+                container.innerHTML = `
+                    <p style="color: var(--gray); text-align: center; padding: 20px;">
+                        No recent activity. Make your first food request!
+                    </p>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="timeline">
+                    ${ngoRequests.map(req => `
+                        <div class="timeline-item">
+                            <h4 style="color: var(--dark); margin-bottom: 5px;">
+                                ${req.restaurant} - ${req.foodType}
+                            </h4>
+                            <p style="color: var(--gray); margin-bottom: 5px;">
+                                ${req.quantity} • ${formatDate(req.requestDate)}
+                            </p>
+                            <span class="status-badge status-${req.status}">
+                                <i class="fas fa-${getStatusIcon(req.status)}"></i>
+                                ${req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'pending': return 'clock';
+                case 'accepted': return 'check-circle';
+                case 'picked': return 'truck-pickup';
+                case 'completed': return 'check-double';
+                default: return 'info-circle';
+            }
+        }
+    </script>
+</body>
+</html>
