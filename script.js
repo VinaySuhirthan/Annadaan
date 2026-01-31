@@ -526,63 +526,286 @@ function getCurrentUser() {
     return JSON.parse(localStorage.getItem('currentUser'));
 }
 
-function logout() {
-    localStorage.removeItem('currentUser');
-    showAlert('Logged out successfully', 'success');
-    setTimeout(() => {
-        window.location.href = 'index.html';
-    }, 1000);
+async function logout() {
+    if (typeof showConfirm !== 'undefined') {
+        if (await showConfirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    } else {
+        // Fallback if showConfirm missing
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    }
 }
 
 function showAlert(message, type = 'info') {
-    // Remove existing alerts
-    const existingAlerts = document.querySelectorAll('.custom-alert');
-    existingAlerts.forEach(alert => alert.remove());
+    return new Promise((resolve) => {
+        // Remove existing modals
+        const existingModals = document.querySelectorAll('.custom-modal-overlay');
+        existingModals.forEach(modal => modal.remove());
 
-    // Create alert element
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `custom-alert alert-${type}`;
-    alertDiv.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 25px;
-        background: ${type === 'success' ? '#D1FAE5' : type === 'error' ? '#FEE2E2' : '#DBEAFE'};
-        color: ${type === 'success' ? '#065F46' : type === 'error' ? '#991B1B' : '#1E40AF'};
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        animation: slideIn 0.3s ease;
-        border-left: 4px solid ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'};
-    `;
+        // Create modal overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-modal-overlay';
 
-    const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
-    alertDiv.innerHTML = `
-        <i class="fas fa-${icon}"></i>
-        <span>${message}</span>
-    `;
+        // Icon selection
+        const iconClass = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+        const iconColor = type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6';
+        const btnColor = type === 'success' ? '#059669' : type === 'error' ? '#DC2626' : '#2563EB';
 
-    document.body.appendChild(alertDiv);
+        overlay.innerHTML = `
+            <div class="custom-modal-card">
+                <div class="modal-icon" style="color: ${iconColor}">
+                    <i class="fas fa-${iconClass}"></i>
+                </div>
+                <p class="modal-message">${message}</p>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-primary" id="modal-ok-btn">OK</button>
+                </div>
+            </div>
+        `;
 
-    // Remove after 3 seconds
-    setTimeout(() => {
-        alertDiv.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => alertDiv.remove(), 300);
-    }, 3000);
+        document.body.appendChild(overlay);
 
-    // Add animations
+        const okBtn = overlay.querySelector('#modal-ok-btn');
+        okBtn.style.backgroundColor = btnColor;
+
+        okBtn.onclick = () => {
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.remove();
+                resolve();
+            }, 200);
+        };
+
+        // Auto focus
+        okBtn.focus();
+
+        injectModalStyles();
+    });
+}
+
+function showConfirm(message) {
+    return new Promise((resolve) => {
+        const existingModals = document.querySelectorAll('.custom-modal-overlay');
+        existingModals.forEach(modal => modal.remove());
+
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-modal-overlay';
+
+        overlay.innerHTML = `
+            <div class="custom-modal-card">
+                <div class="modal-icon" style="color: #F59E0B">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <p class="modal-message">${message}</p>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-secondary" id="modal-cancel-btn">No</button>
+                    <button class="modal-btn modal-btn-primary" id="modal-confirm-btn">Yes</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const confirmBtn = overlay.querySelector('#modal-confirm-btn');
+        const cancelBtn = overlay.querySelector('#modal-cancel-btn');
+
+        confirmBtn.onclick = () => {
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.remove();
+                resolve(true);
+            }, 200);
+        };
+
+        cancelBtn.onclick = () => {
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.remove();
+                resolve(false);
+            }, 200);
+        };
+
+        // Auto focus confirm
+        confirmBtn.focus();
+
+        injectModalStyles();
+    });
+}
+
+function showPrompt(message, placeholder = '') {
+    return new Promise((resolve) => {
+        const existingModals = document.querySelectorAll('.custom-modal-overlay');
+        existingModals.forEach(modal => modal.remove());
+
+        const overlay = document.createElement('div');
+        overlay.className = 'custom-modal-overlay';
+
+        overlay.innerHTML = `
+            <div class="custom-modal-card">
+                <div class="modal-icon" style="color: #3B82F6">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <p class="modal-message">${message}</p>
+                <input type="text" class="modal-input" placeholder="${placeholder}" id="modal-input-field">
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-secondary" id="modal-cancel-btn">Cancel</button>
+                    <button class="modal-btn modal-btn-primary" id="modal-submit-btn">Submit</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const input = overlay.querySelector('#modal-input-field');
+        const submitBtn = overlay.querySelector('#modal-submit-btn');
+        const cancelBtn = overlay.querySelector('#modal-cancel-btn');
+
+        const submit = () => {
+            const value = input.value;
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.remove();
+                resolve(value);
+            }, 200);
+        };
+
+        const cancel = () => {
+            overlay.classList.add('fade-out');
+            setTimeout(() => {
+                overlay.remove();
+                resolve(null);
+            }, 200);
+        };
+
+        submitBtn.onclick = submit;
+        cancelBtn.onclick = cancel;
+
+        input.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') submit();
+            if (e.key === 'Escape') cancel();
+        });
+
+        input.focus();
+
+        injectModalStyles();
+    });
+}
+
+function injectModalStyles() {
+    if (document.getElementById('custom-modal-styles')) return;
+
     const style = document.createElement('style');
+    style.id = 'custom-modal-styles';
     style.textContent = `
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .custom-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s ease-out;
         }
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+
+        .custom-modal-overlay.fade-out {
+            animation: fadeOut 0.2s ease-in forwards;
+        }
+
+        .custom-modal-card {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            transform: scale(0.9);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            color: #1f2937;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modal-input:focus {
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            flex: 1;
+        }
+
+        .modal-btn-primary {
+            background: #1f2937;
+            color: white;
+        }
+
+        .modal-btn-secondary {
+            background: #F3F4F6;
+            color: #4B5563;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
         }
     `;
     document.head.appendChild(style);

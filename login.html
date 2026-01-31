@@ -259,11 +259,11 @@
       const phone = phoneInput.value.trim();
 
       if (!name) {
-        alert("Enter your name");
+        showAlert("Enter your name", "error");
         return;
       }
       if (!validPhone(phone)) {
-        alert("Enter a valid 10-digit phone number");
+        showAlert("Enter a valid 10-digit phone number", "error");
         return;
       }
 
@@ -285,7 +285,7 @@
 
         if (error && error.code !== 'PGRST116') { // PGRST116 is 'no rows'
           console.error("Database Error:", error);
-          return alert(`Database error: ${error.message}\n\nHint: ${error.hint || 'Make sure you have created the "donor_table" in Supabase.'}`);
+          return showAlert(`Database error: ${error.message}<br><br>Hint: ${error.hint || 'Make sure you have created the "donor_table" in Supabase.'}`, "error");
         }
 
         let donorData;
@@ -299,7 +299,7 @@
 
           if (createError) {
             console.error("Creation Error:", createError);
-            return alert(`Error creating profile: ${createError.message}`);
+            return showAlert(`Error creating profile: ${createError.message}`, "error");
           }
           donorData = newUser;
         }
@@ -307,11 +307,12 @@
         localStorage.setItem("donor", JSON.stringify(donorData));
         location.href = nextPage;
       } else {
-        alert("Invalid OTP! Try 1234");
+        showAlert("Invalid OTP! Try 1234", "error");
       }
     }
   </script>
 
+  <script src="script.js"></script>
 </body>
 
 </html>

@@ -449,13 +449,15 @@
                 <div class="stat-number" id="volunteer-rating">5.0</div>
                 <div class="stat-label">Your Rating</div>
             </div>
-            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.35s; cursor: pointer;" id="greenCreditsCard">
+            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.35s; cursor: pointer;"
+                id="greenCreditsCard">
                 <div class="stat-icon" style="background: #D1FAE5; color: var(--success);">
                     <i class="fas fa-leaf"></i>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
-                  <div class="stat-number" id="green-credits">0</div>
-                  <button id="greenCreditsBtn" style="background: transparent; border: none; color: var(--primary); font-size: 18px; cursor: pointer;">➜</button>
+                    <div class="stat-number" id="green-credits">0</div>
+                    <button id="greenCreditsBtn"
+                        style="background: transparent; border: none; color: var(--primary); font-size: 18px; cursor: pointer;">➜</button>
                 </div>
                 <div class="stat-label">Green Credits</div>
             </div>
@@ -482,7 +484,7 @@
             </div>
 
             <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.5s;"
-                onclick="alert('Feedback page coming soon!')">
+                onclick="showAlert('Feedback page coming soon!', 'info')">
                 <div class="dashboard-icon">
                     <i class="fas fa-comment-medical"></i>
                 </div>
@@ -491,7 +493,7 @@
             </div>
 
             <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.55s;"
-                onclick="alert('Achievements page coming soon!')">
+                onclick="showAlert('Achievements page coming soon!', 'info')">
                 <div class="dashboard-icon">
                     <i class="fas fa-trophy"></i>
                 </div>
@@ -506,37 +508,49 @@
                 <i class="fas fa-map-marked-alt"></i>
             </div>
             <h3>Recommended Drop-off Areas</h3>
-            <p style="margin-bottom:12px; color:var(--text-muted);">Recent NGO confirmed delivery locations and people served — useful when deciding where to distribute.</p>
+            <p style="margin-bottom:12px; color:var(--text-muted);">Recent NGO confirmed delivery locations and people
+                served — useful when deciding where to distribute.</p>
             <div id="recommendationsList">
                 <div style="color:var(--text-muted);">Loading recommendations...</div>
             </div>
         </div>
 
         <!-- Report Location Floating Action -->
-        <button id="reportLocationBtn" title="Report Location" style="position: fixed; right: 20px; bottom: 20px; width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#2D6A4F,#52B788); color:white; border:none; box-shadow:0 8px 20px rgba(16,185,129,0.2); font-size:20px; cursor:pointer; z-index:40;">
+        <button id="reportLocationBtn" title="Report Location"
+            style="position: fixed; right: 20px; bottom: 20px; width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#2D6A4F,#52B788); color:white; border:none; box-shadow:0 8px 20px rgba(16,185,129,0.2); font-size:20px; cursor:pointer; z-index:40;">
             <i class="fas fa-map-marker-alt"></i>
         </button>
 
         <!-- Report Modal (hidden) -->
-        <div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:50; align-items:center; justify-content:center;">
+        <div id="reportModal"
+            style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:50; align-items:center; justify-content:center;">
             <div style="background:white; width:92%; max-width:420px; padding:16px; border-radius:12px;">
                 <h3 style="margin-bottom:8px;">Report Delivery Location</h3>
-                <p style="color:#475569; font-size:13px; margin-bottom:12px;">Allow automatic location or enter a donation ID to attach this location.</p>
+                <p style="color:#475569; font-size:13px; margin-bottom:12px;">Allow automatic location or enter a
+                    donation ID to attach this location.</p>
 
                 <div style="display:flex; gap:8px; margin-bottom:12px;">
-                    <button id="autoLocBtn" class="btn" style="flex:1; padding:10px; background:#10B981; color:white; border-radius:8px; border:none;">Use Current Location</button>
-                    <button id="manualShowBtn" class="btn" style="flex:1; padding:10px; background:#E2E8F0; color:#0F172A; border-radius:8px; border:none;">Manual</button>
+                    <button id="autoLocBtn" class="btn"
+                        style="flex:1; padding:10px; background:#10B981; color:white; border-radius:8px; border:none;">Use
+                        Current Location</button>
+                    <button id="manualShowBtn" class="btn"
+                        style="flex:1; padding:10px; background:#E2E8F0; color:#0F172A; border-radius:8px; border:none;">Manual</button>
                 </div>
 
                 <div id="manualInputs" style="display:none; margin-bottom:12px;">
-                    <input id="foodIdInput" placeholder="Donation ID (optional)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
-                    <input id="latInput" placeholder="Latitude" style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
-                    <input id="lngInput" placeholder="Longitude" style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE;">
+                    <input id="foodIdInput" placeholder="Donation ID (optional)"
+                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
+                    <input id="latInput" placeholder="Latitude"
+                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
+                    <input id="lngInput" placeholder="Longitude"
+                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE;">
                 </div>
 
                 <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
-                    <button id="cancelReport" style="padding:8px 12px; background:#F1F5F9; border-radius:8px; border:none;">Cancel</button>
-                    <button id="submitManual" style="padding:8px 12px; background:#2563EB; color:white; border-radius:8px; border:none; display:none;">Submit</button>
+                    <button id="cancelReport"
+                        style="padding:8px 12px; background:#F1F5F9; border-radius:8px; border:none;">Cancel</button>
+                    <button id="submitManual"
+                        style="padding:8px 12px; background:#2563EB; color:white; border-radius:8px; border:none; display:none;">Submit</button>
                 </div>
             </div>
         </div>
@@ -679,9 +693,9 @@
             }
         }
 
-        function suggestRoute(lat, lng) {
-            if (!confirm('Open Google Maps to this drop-off area?')) return;
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,'_blank');
+        async function suggestRoute(lat, lng) {
+            if (!await showConfirm('Open Google Maps to this drop-off area?')) return;
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
         }
 
         function loadVolunteerStats() {
@@ -797,8 +811,8 @@
             return R * c;
         }
 
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
+        async function logout() {
+            if (await showConfirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('currentUser');
                 window.location.href = 'index.html';
             }
@@ -830,7 +844,7 @@
 
         autoLocBtn && autoLocBtn.addEventListener('click', () => {
             if (!navigator.geolocation) {
-                alert('Geolocation not supported in this browser');
+                showAlert('Geolocation not supported in this browser', 'error');
                 return;
             }
             autoLocBtn.disabled = true;
@@ -838,7 +852,7 @@
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
                 // Ask for optional donation id
-                const donationId = prompt('Enter donation ID to attach location (optional). Leave blank to save as a separate report.');
+                const donationId = await showPrompt('Enter donation ID to attach location (optional). Leave blank to save as a separate report.', 'Donation ID');
 
                 try {
                     if (donationId) {
@@ -848,25 +862,25 @@
                             .eq('id', donationId);
 
                         if (error) throw error;
-                        alert('Location saved to donation. Thank you!');
+                        showAlert('Location saved to donation. Thank you!', 'success');
                     } else {
                         // Insert into delivery_reports for later NGO confirmation
                         const user = JSON.parse(localStorage.getItem('currentUser')) || {};
                         const { error } = await window.sb.from('delivery_reports')
                             .insert([{ reporter_id: user.id || user.phone || user.name || 'unknown', reporter_type: 'volunteer', lat, lng }]);
                         if (error) throw error;
-                        alert('Location recorded. NGO will confirm delivery.');
+                        showAlert('Location recorded. NGO will confirm delivery.', 'success');
                     }
                 } catch (e) {
                     console.error(e);
-                    alert('Error saving location. See console for details.');
+                    showAlert('Error saving location. See console for details.', 'error');
                 } finally {
                     autoLocBtn.disabled = false;
                     reportModal.style.display = 'none';
                 }
             }, (err) => {
                 autoLocBtn.disabled = false;
-                alert('Unable to retrieve location: ' + err.message);
+                showAlert('Unable to retrieve location: ' + err.message, 'error');
             }, { enableHighAccuracy: true, timeout: 10000 });
         });
 
@@ -876,7 +890,7 @@
             const lng = parseFloat(document.getElementById('lngInput').value.trim());
 
             if (!lat || !lng) {
-                alert('Please provide valid latitude and longitude');
+                showAlert('Please provide valid latitude and longitude', 'error');
                 return;
             }
 
@@ -886,17 +900,17 @@
                         .update({ delivery_lat: lat, delivery_lng: lng, delivery_reported_by: 'volunteer' })
                         .eq('id', donationId);
                     if (error) throw error;
-                    alert('Location saved to donation.');
+                    showAlert('Location saved to donation.', 'success');
                 } else {
                     const user = JSON.parse(localStorage.getItem('currentUser')) || {};
                     const { error } = await window.sb.from('delivery_reports')
                         .insert([{ reporter_id: user.id || user.phone || user.name || 'unknown', reporter_type: 'volunteer', lat, lng }]);
                     if (error) throw error;
-                    alert('Location recorded.');
+                    showAlert('Location recorded.', 'success');
                 }
             } catch (e) {
                 console.error(e);
-                alert('Error saving location.');
+                showAlert('Error saving location.', 'error');
             } finally {
                 reportModal.style.display = 'none';
                 manualInputs.style.display = 'none';

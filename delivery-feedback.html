@@ -47,8 +47,11 @@
                 <div class="form-group">
                     <label><i class="fas fa-map-marker-alt"></i> Delivery Location (current)</label>
                     <div style="display:flex; gap:8px; margin-top:8px;">
-                        <button type="button" id="captureLocationBtn" class="btn btn-primary">Use Current Location</button>
-                        <div id="locationStatus" style="padding:8px 10px; border:1px solid #E6E9EE; border-radius:8px; min-width:140px; display:flex; align-items:center;">Not captured</div>
+                        <button type="button" id="captureLocationBtn" class="btn btn-primary">Use Current
+                            Location</button>
+                        <div id="locationStatus"
+                            style="padding:8px 10px; border:1px solid #E6E9EE; border-radius:8px; min-width:140px; display:flex; align-items:center;">
+                            Not captured</div>
                     </div>
                     <input type="hidden" id="feedback-lat">
                     <input type="hidden" id="feedback-lng">
@@ -56,17 +59,20 @@
 
                 <div class="form-group">
                     <label for="people-served"><i class="fas fa-users"></i> Number of people served *</label>
-                    <input type="number" id="people-served" min="1" required style="padding:8px; border-radius:8px; border:1px solid #E6E9EE; width:100%;">
+                    <input type="number" id="people-served" min="1" required
+                        style="padding:8px; border-radius:8px; border:1px solid #E6E9EE; width:100%;">
                 </div>
 
                 <div class="form-group">
                     <label for="notes"><i class="fas fa-sticky-note"></i> Notes (optional)</label>
-                    <textarea id="notes" rows="3" placeholder="Any brief notes about delivery" style="padding:8px; border-radius:8px; border:1px solid #E6E9EE; width:100%;"></textarea>
+                    <textarea id="notes" rows="3" placeholder="Any brief notes about delivery"
+                        style="padding:8px; border-radius:8px; border:1px solid #E6E9EE; width:100%;"></textarea>
                 </div>
 
                 <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
                     <button type="button" id="cancelFeedback" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-paper-plane"></i> Submit Feedback</button>
+                    <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-paper-plane"></i> Submit
+                        Feedback</button>
                 </div>
             </form>
         </div>
@@ -167,7 +173,7 @@
 
             // Capture current geolocation (user must allow)
             captureBtn && captureBtn.addEventListener('click', () => {
-                if (!navigator.geolocation) return alert('Geolocation not supported');
+                if (!navigator.geolocation) return showAlert('Geolocation not supported', 'error');
                 captureBtn.disabled = true;
                 locationStatus.textContent = 'Locating...';
                 navigator.geolocation.getCurrentPosition((pos) => {
@@ -179,7 +185,7 @@
                     captureBtn.disabled = false;
                 }, (err) => {
                     console.error('Geolocation error', err);
-                    alert('Unable to get location: ' + err.message);
+                    showAlert('Unable to get location: ' + err.message, 'error');
                     locationStatus.textContent = 'Not captured';
                     captureBtn.disabled = false;
                 }, { enableHighAccuracy: true, timeout: 10000 });
@@ -211,7 +217,7 @@
                 }
 
                 if (!foodId) {
-                    alert('No associated donation found. Please open feedback from the request page.');
+                    showAlert('No associated donation found. Please open feedback from the request page.', 'error');
                     return;
                 }
 
@@ -247,7 +253,7 @@
                         setTimeout(() => window.location.href = 'my-requests.html', 900);
                     } catch (e2) {
                         console.error('Local save failed', e2);
-                        alert('Unable to save feedback. Please try again later.');
+                        showAlert('Unable to save feedback. Please try again later.', 'error');
                     }
                 }
             });

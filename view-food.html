@@ -705,11 +705,11 @@
                     map.setView([lat, lon], 13);
                     marker.setLatLng([lat, lon]);
                 } else {
-                    alert('Location not found');
+                    showAlert('Location not found', 'error');
                 }
             } catch (error) {
                 console.error('Search error:', error);
-                alert('Error searching location');
+                showAlert('Error searching location', 'error');
             } finally {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
@@ -759,7 +759,7 @@
             const addressDisplay = document.getElementById('user-address');
 
             if (!navigator.geolocation) {
-                alert('Geolocation is not supported by your browser');
+                showAlert('Geolocation is not supported by your browser', 'error');
                 return;
             }
 
@@ -804,7 +804,7 @@
                     else if (error.code === 2) msg = 'Location unavailable.';
                     else if (error.code === 3) msg = 'Location request timed out.';
 
-                    alert(msg);
+                    showAlert(msg, 'error');
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> Detect Location';
                 }
@@ -1211,7 +1211,8 @@
             const food = allFoodItems.find(f => f.id === foodId);
             if (food) {
                 // If we have coordinates, openness in maps would be cool, but alert is fine for now as per previous code
-                alert(`📍 ${food.restaurant || food.donor_type || 'Food Source'}\n\nLocation: ${food.location || food.address}\nDistance: ${food.distance || 'Unknown'} from you`);
+                // alert(`📍 ${food.restaurant || food.donor_type || 'Food Source'}\n\nLocation: ${food.location || food.address}\nDistance: ${food.distance || 'Unknown'} from you`);
+                showAlert(`📍 ${food.restaurant || food.donor_type || 'Food Source'}<br><br>Location: ${food.location || food.address}<br>Distance: ${food.distance || 'Unknown'} from you`, 'info');
             }
         }
 
@@ -1222,7 +1223,7 @@
 
             const confirmMsg = `Do you want to request this food for distribution?\n\nSource: ${food.donor_type || 'Donor'}\nLocation: ${food.address}\nServes: ${food.serves} people`;
 
-            if (!confirm(confirmMsg)) return;
+            if (!await showConfirm(confirmMsg)) return;
 
             try {
                 // Update status in Supabase
@@ -1250,18 +1251,18 @@
                     }
                 }
 
-                alert('✅ Request sent to donor! You will be notified once the donor accepts your request.');
+                showAlert('✅ Request sent to donor! You will be notified once the donor accepts your request.', 'success');
                 window.location.href = 'my-requests.html';
 
             } catch (err) {
                 console.error('Request error:', err);
-                alert('An error occurred: ' + err.message);
+                showAlert('An error occurred: ' + err.message, 'error');
             }
         }
 
         async function requestFood(foodId) {
             if (currentUser.type !== 'ngo') {
-                alert('Only NGOs can request food.');
+                showAlert('Only NGOs can request food.', 'error');
                 return;
             }
             await handleClaim(foodId);
@@ -1273,7 +1274,7 @@
 
             const confirmMsg = `Do you want to volunteer to deliver this food?\n\nSource: ${food.donor_type || 'Donor'}\nLocation: ${food.address}`;
 
-            if (!confirm(confirmMsg)) return;
+            if (!await showConfirm(confirmMsg)) return;
 
             try {
                 // Update status in Supabase
@@ -1291,16 +1292,16 @@
 
                 if (error) {
                     console.error('Error during volunteer request:', error);
-                    alert('Error: ' + error.message);
+                    showAlert('Error: ' + error.message, 'error');
                     return;
                 }
 
-                alert('✅ You have volunteered! The donor will be notified.');
+                showAlert('✅ You have volunteered! The donor will be notified.', 'success');
                 window.location.href = 'my-volunteering.html';
 
             } catch (err) {
                 console.error('Volunteer error:', err);
-                alert('An error occurred: ' + err.message);
+                showAlert('An error occurred: ' + err.message, 'error');
             }
         }
 

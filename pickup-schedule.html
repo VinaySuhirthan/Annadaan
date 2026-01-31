@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Pickup - FoodBridge</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <!-- Navigation Bar -->
@@ -38,7 +41,7 @@
             <h2 style="margin-bottom: 20px; color: var(--dark);">
                 <i class="fas fa-clock"></i> Pickup Details
             </h2>
-            
+
             <form id="pickup-form">
                 <div class="form-group">
                     <label for="pickup-date"><i class="fas fa-calendar-day"></i> Pickup Date *</label>
@@ -90,7 +93,8 @@
 
                 <div class="form-group">
                     <label for="special-instructions"><i class="fas fa-sticky-note"></i> Special Instructions</label>
-                    <textarea id="special-instructions" rows="3" placeholder="Any special instructions for pickup"></textarea>
+                    <textarea id="special-instructions" rows="3"
+                        placeholder="Any special instructions for pickup"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -122,13 +126,13 @@
     <script>
         let currentRequest = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const user = checkAuth();
             if (!user || user.type !== 'ngo') {
                 window.location.href = 'index.html';
                 return;
             }
-            
+
             loadRequestData();
             setupPickupForm();
         });
@@ -136,7 +140,7 @@
         function loadRequestData() {
             currentRequest = JSON.parse(localStorage.getItem('currentRequest'));
             const container = document.getElementById('request-summary');
-            
+
             if (!currentRequest) {
                 container.innerHTML = `
                     <div class="alert alert-warning">
@@ -146,7 +150,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = `
                 <h3 style="color: var(--dark); margin-bottom: 15px;">
                     <i class="fas fa-clipboard-check"></i> Request Summary
@@ -180,48 +184,48 @@
                     </div>
                 ` : ''}
             `;
-            
+
             // Set minimum date to tomorrow
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const minDate = tomorrow.toISOString().split('T')[0];
             document.getElementById('pickup-date').min = minDate;
-            
+
             // Set default date to tomorrow
             document.getElementById('pickup-date').value = minDate;
         }
 
         function setupPickupForm() {
             const form = document.getElementById('pickup-form');
-            
-            form.addEventListener('submit', function(e) {
+
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 // Validate form
                 const pickupDate = document.getElementById('pickup-date').value;
                 const pickupTime = document.getElementById('pickup-time').value;
                 const pickupPerson = document.getElementById('pickup-person').value.trim();
                 const pickupContact = document.getElementById('pickup-contact').value.trim();
-                
+
                 if (!pickupDate || !pickupTime || !pickupPerson || !pickupContact) {
                     showAlert('Please fill all required fields', 'error');
                     return;
                 }
-                
+
                 if (!/^\d{10}$/.test(pickupContact)) {
                     showAlert('Please enter a valid 10-digit phone number', 'error');
                     return;
                 }
-                
+
                 // Update request with pickup details
                 const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
                 const requestIndex = requests.findIndex(req => req.id === currentRequest.id);
-                
+
                 if (requestIndex === -1) {
                     showAlert('Request not found', 'error');
                     return;
                 }
-                
+
                 // Format pickup date and time
                 const date = new Date(pickupDate);
                 const formattedDate = date.toLocaleDateString('en-US', {
@@ -230,7 +234,7 @@
                     month: 'long',
                     day: 'numeric'
                 });
-                
+
                 const pickupDetails = {
                     pickupDate: pickupDate,
                     pickupTime: pickupTime,
@@ -244,11 +248,11 @@
                     status: 'accepted',
                     scheduledAt: new Date().toISOString()
                 };
-                
+
                 // Update request
                 Object.assign(requests[requestIndex], pickupDetails);
                 localStorage.setItem('foodbridge_requests', JSON.stringify(requests));
-                
+
                 // Update food status
                 const foodItems = JSON.parse(localStorage.getItem('foodbridge_food')) || [];
                 const foodIndex = foodItems.findIndex(f => f.id === currentRequest.foodId);
@@ -256,7 +260,7 @@
                     foodItems[foodIndex].status = 'accepted';
                     localStorage.setItem('foodbridge_food', JSON.stringify(foodItems));
                 }
-                
+
                 // Show success message
                 const confirmationMessage = `
                     ✅ Pickup Scheduled Successfully!
@@ -274,16 +278,17 @@
                     
                     💡 Please save this confirmation and arrive on time.
                 `;
-                
+
                 showAlert('Pickup scheduled successfully!', 'success');
-                
+
                 // Show detailed confirmation
                 setTimeout(() => {
-                    alert(confirmationMessage);
+                    showAlert(confirmationMessage.replace(/\n/g, '<br>'), 'success');
                     window.location.href = 'my-requests.html';
                 }, 1000);
             });
         }
     </script>
 </body>
+
 </html>

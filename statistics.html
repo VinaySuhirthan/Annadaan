@@ -3,128 +3,392 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
     <title>Statistics & Reports - Annadaan</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            padding: 24px 20px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 20px;
+            background: white;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 0 20px 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .card h2,
+        .card h3 {
+            color: #1e293b;
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .card h4 {
+            color: #1e293b;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .chart-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 16px 0;
+        }
+
+        .chart-img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .detail-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-secondary {
+            background: #0ea5e9;
+        }
+
+        .badge-warning {
+            background: #f59e0b;
+        }
+
+        .feedback-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .emergency-box {
+            background: rgba(245, 158, 11, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .emergency-count {
+            font-size: 36px;
+            font-weight: 700;
+            color: #92400E;
+            margin-bottom: 8px;
+        }
+
+        .section-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .export-buttons .btn {
+            width: 100%;
+            font-size: 12px;
+            padding: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1e293b;
+        }
+
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                text-align: left;
+            }
+
+            .stat-icon {
+                margin: 0;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <!-- Navigation Bar -->
         <div class="nav-bar">
-            <div>
-                <a href="ngo-dashboard.html" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                </a>
-            </div>
+            <a href="ngo-dashboard.html" class="btn btn-secondary" style="padding: 8px 12px;">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
             <div class="user-info">
                 <i class="fas fa-chart-bar"></i>
-                <span>Statistics & Reports</span>
+                <span>Statistics</span>
             </div>
         </div>
 
-        <header class="header">
-            <h1 style="font-weight: 700; letter-spacing: -0.01em;"><i class="fas fa-chart-line"></i> Impact Statistics
-            </h1>
-            <p style="font-weight: 400;">Track your organization's impact and food distribution analytics</p>
-        </header>
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> Impact Statistics</h1>
+            <p>Track your organization's impact and food distribution analytics</p>
+        </div>
 
         <!-- Summary Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);">
+                <div class="stat-icon" style="background: #D1FAE5; color: #10b981;">
                     <i class="fas fa-utensils"></i>
                 </div>
-                <div class="stat-number" id="total-distributions">0</div>
-                <div class="stat-label">Total Distributions</div>
+                <div>
+                    <div class="stat-number" id="total-distributions">0</div>
+                    <div class="stat-label">Distributions</div>
+                </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon" style="background: #E0F2FE; color: var(--secondary);">
+                <div class="stat-icon" style="background: #E0F2FE; color: #0ea5e9;">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-number" id="total-people-served">0</div>
-                <div class="stat-label">People Served</div>
+                <div>
+                    <div class="stat-number" id="total-people-served">0</div>
+                    <div class="stat-label">People Served</div>
+                </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon" style="background: #FEF3C7; color: var(--warning);">
+                <div class="stat-icon" style="background: #FEF3C7; color: #f59e0b;">
                     <i class="fas fa-weight-hanging"></i>
                 </div>
-                <div class="stat-number" id="total-food-collected">0 kg</div>
-                <div class="stat-label">Food Collected</div>
+                <div>
+                    <div class="stat-number" id="total-food-collected">0 kg</div>
+                    <div class="stat-label">Food Collected</div>
+                </div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon" style="background: #D1FAE5; color: var(--success);">
+                <div class="stat-icon" style="background: #DBEAFE; color: #1e40af;">
                     <i class="fas fa-star"></i>
                 </div>
-                <div class="stat-number" id="avg-restaurant-rating">0.0</div>
-                <div class="stat-label">Avg Restaurant Rating</div>
+                <div>
+                    <div class="stat-number" id="avg-restaurant-rating">0.0</div>
+                    <div class="stat-label">Avg Rating</div>
+                </div>
             </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="dashboard-grid" style="margin: 40px 0;">
-            <div class="card">
-                <h3 style="color: var(--dark); margin-bottom: 20px;">
-                    <i class="fas fa-chart-pie"></i> Distribution by Food Type
-                </h3>
-                <div id="food-type-chart"
-                    style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
-                    <p>Chart will be displayed here</p>
-                </div>
+        <div class="card">
+            <h3><i class="fas fa-map-marker-alt"></i> Impact by District</h3>
+            <div class="chart-container">
+                <img src="pie.png" alt="Impact by District Pie Chart" class="chart-img">
             </div>
+            <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 12px;">
+                Distribution spread across 6 districts
+            </p>
+        </div>
 
-            <div class="card">
-                <h3 style="color: var(--dark); margin-bottom: 20px;">
-                    <i class="fas fa-chart-bar"></i> Monthly Impact Trend
-                </h3>
-                <div id="monthly-trend-chart"
-                    style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
-                    <p>Chart will be displayed here</p>
-                </div>
+        <div class="card">
+            <h3><i class="fas fa-chart-bar"></i> People Fed Overview</h3>
+            <div class="chart-container">
+                <img src="bar.png" alt="People Fed Bar Chart" class="chart-img">
             </div>
+            <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 12px;">
+                Daily distribution trends over the last 30 days
+            </p>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-fire"></i> Correlation Heatmap</h3>
+            <div class="chart-container">
+                <img src="heatmap.png" alt="Correlation Heatmap" class="chart-img">
+            </div>
+            <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 12px;">
+                Hunger Index factors correlation analysis
+            </p>
         </div>
 
         <!-- Detailed Statistics -->
         <div class="card">
-            <h2 style="margin-bottom: 20px; color: var(--dark);">
-                <i class="fas fa-list-alt"></i> Detailed Statistics
-            </h2>
+            <h2><i class="fas fa-list-alt"></i> Detailed Statistics</h2>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div class="section-grid">
                 <!-- Emergency Distribution -->
                 <div>
-                    <h4 style="color: var(--dark); margin-bottom: 15px;">
-                        <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Emergency
-                        Distributions
+                    <h4>
+                        <i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Emergency Distributions
                     </h4>
-                    <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 2rem; font-weight: 700; color: #92400E; text-align: center;"
-                            id="emergency-count">0</div>
-                        <p style="text-align: center; color: #92400E; margin-top: 5px; font-weight: 500;">Emergency
-                            Requests</p>
+                    <div class="emergency-box">
+                        <div class="emergency-count" id="emergency-count">0</div>
+                        <p style="color: #92400E; margin: 0; font-weight: 500; font-size: 14px;">Emergency Requests</p>
                     </div>
                 </div>
 
                 <!-- Top Restaurants -->
                 <div>
-                    <h4 style="color: var(--dark); margin-bottom: 15px;">
-                        <i class="fas fa-crown" style="color: var(--warning);"></i> Top Restaurants
+                    <h4>
+                        <i class="fas fa-crown" style="color: #f59e0b;"></i> Top Restaurants
                     </h4>
-                    <div id="top-restaurants"
-                        style="background: var(--light); padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
-                        <p style="color: var(--gray); text-align: center;">Loading...</p>
+                    <div id="top-restaurants" class="detail-box" style="max-height: 250px; overflow-y: auto;">
+                        <p style="color: #64748b; text-align: center;">Loading...</p>
                     </div>
                 </div>
 
                 <!-- Distribution Areas -->
                 <div>
-                    <h4 style="color: var(--dark); margin-bottom: 15px;">
-                        <i class="fas fa-map-marker-alt" style="color: var(--danger);"></i> Top Distribution Areas
+                    <h4>
+                        <i class="fas fa-map-marker-alt" style="color: #ef4444;"></i> Top Distribution Areas
                     </h4>
-                    <div id="top-areas"
-                        style="background: var(--light); padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
-                        <p style="color: var(--gray); text-align: center;">Loading...</p>
+                    <div id="top-areas" class="detail-box" style="max-height: 250px; overflow-y: auto;">
+                        <p style="color: #64748b; text-align: center;">Loading...</p>
                     </div>
                 </div>
             </div>
@@ -132,11 +396,9 @@
 
         <!-- Recent Feedback -->
         <div class="card">
-            <h2 style="margin-bottom: 20px; color: var(--dark);">
-                <i class="fas fa-comment-dots"></i> Recent Feedback
-            </h2>
+            <h2><i class="fas fa-comment-dots"></i> Recent Feedback</h2>
             <div id="recent-feedback">
-                <p style="color: var(--gray); text-align: center; padding: 20px;">
+                <p style="color: #64748b; text-align: center; padding: 20px;">
                     No feedback available yet
                 </p>
             </div>
@@ -144,21 +406,19 @@
 
         <!-- Export Reports -->
         <div class="card">
-            <h2 style="margin-bottom: 20px; color: var(--dark);">
-                <i class="fas fa-file-export"></i> Export Reports
-            </h2>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+            <h2><i class="fas fa-file-export"></i> Export Reports</h2>
+            <div class="export-buttons">
                 <button onclick="exportReport('monthly')" class="btn btn-secondary">
-                    <i class="fas fa-calendar"></i> Monthly Report
+                    <i class="fas fa-calendar"></i> Monthly
                 </button>
                 <button onclick="exportReport('quarterly')" class="btn btn-secondary">
-                    <i class="fas fa-chart-bar"></i> Quarterly Report
+                    <i class="fas fa-chart-bar"></i> Quarterly
                 </button>
                 <button onclick="exportReport('annual')" class="btn btn-secondary">
-                    <i class="fas fa-chart-line"></i> Annual Report
+                    <i class="fas fa-chart-line"></i> Annual
                 </button>
                 <button onclick="exportReport('impact')" class="btn btn-primary">
-                    <i class="fas fa-file-pdf"></i> Impact Report (PDF)
+                    <i class="fas fa-file-pdf"></i> Impact PDF
                 </button>
             </div>
         </div>
@@ -247,7 +507,7 @@
             const container = document.getElementById('top-restaurants');
 
             if (topRestaurants.length === 0) {
-                container.innerHTML = '<p style="color: var(--gray); text-align: center;">No restaurant data</p>';
+                container.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">No restaurant data</p>';
                 return;
             }
 
@@ -257,14 +517,14 @@
                     : 'N/A';
 
                 return `
-                    <div style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                    <div class="detail-item">
                         <div>
-                            <strong style="color: var(--dark);">${index + 1}. ${restaurant}</strong>
-                            <div style="font-size: 0.9rem; color: var(--gray);">
-                                ${'★'.repeat(Math.round(avgRating))} ${avgRating}
+                            <strong style="color: #1e293b; font-size: 14px;">${index + 1}. ${restaurant}</strong>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                                <span style="color: #fbbf24;">${'★'.repeat(Math.round(avgRating))}</span> ${avgRating}
                             </div>
                         </div>
-                        <span style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.9rem;">
+                        <span class="badge">
                             ${count} dist
                         </span>
                     </div>
@@ -290,16 +550,14 @@
             const container = document.getElementById('top-areas');
 
             if (topAreas.length === 0) {
-                container.innerHTML = '<p style="color: var(--gray); text-align: center;">No area data</p>';
+                container.innerHTML = '<p style="color: #64748b; text-align: center; padding: 20px;">No area data</p>';
                 return;
             }
 
             container.innerHTML = topAreas.map(([area, count], index) => `
-                <div style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong style="color: var(--dark);">${index + 1}. ${area}</strong>
-                    </div>
-                    <span style="background: var(--secondary); color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.9rem;">
+                <div class="detail-item">
+                    <strong style="color: #1e293b; font-size: 14px;">${index + 1}. ${area}</strong>
+                    <span class="badge badge-secondary">
                         ${count}
                     </span>
                 </div>
@@ -316,7 +574,7 @@
 
             if (recentFeedback.length === 0) {
                 container.innerHTML = `
-                    <p style="color: var(--gray); text-align: center; padding: 20px;">
+                    <p style="color: #64748b; text-align: center; padding: 20px;">
                         No feedback available. Complete a distribution to provide feedback.
                     </p>
                 `;
@@ -324,32 +582,32 @@
             }
 
             container.innerHTML = recentFeedback.map(fb => `
-                <div style="background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div class="feedback-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <h4 style="color: var(--dark); margin: 0;">${fb.restaurant}</h4>
+                        <h4 style="color: #1e293b; margin: 0; font-size: 15px;">${fb.restaurant}</h4>
                         <div>
                             <span style="color: #FBBF24;">${'★'.repeat(fb.rating)}</span>
-                            <span style="color: var(--gray); font-size: 0.9rem;">${fb.rating}/5</span>
+                            <span style="color: #64748b; font-size: 12px;">${fb.rating}/5</span>
                         </div>
                     </div>
                     
-                    <p style="color: var(--gray); margin-bottom: 10px;">
+                    <p style="color: #64748b; margin-bottom: 10px; font-size: 13px;">
                         <i class="fas fa-map-marker-alt"></i> ${fb.distributedArea}
-                        <span style="margin: 0 10px;">•</span>
-                        <i class="fas fa-users"></i> ${fb.peopleServed} people served
+                        <span style="margin: 0 8px;">•</span>
+                        <i class="fas fa-users"></i> ${fb.peopleServed} people
                     </p>
                     
                     ${fb.successStories ? `
-                        <div style="background: #D1FAE5; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
-                            <p style="color: #065F46; margin: 0; font-size: 0.9rem;">
-                                <i class="fas fa-smile"></i> <strong>Success Story:</strong> ${fb.successStories}
+                        <div style="background: #D1FAE5; padding: 10px; border-radius: 8px; margin-bottom: 8px;">
+                            <p style="color: #065F46; margin: 0; font-size: 12px;">
+                                <i class="fas fa-smile"></i> <strong>Success:</strong> ${fb.successStories}
                             </p>
                         </div>
                     ` : ''}
                     
                     ${fb.suggestions ? `
-                        <div style="background: #DBEAFE; padding: 10px; border-radius: 6px;">
-                            <p style="color: #1E40AF; margin: 0; font-size: 0.9rem;">
+                        <div style="background: #DBEAFE; padding: 10px; border-radius: 8px;">
+                            <p style="color: #1E40AF; margin: 0; font-size: 12px;">
                                 <i class="fas fa-lightbulb"></i> <strong>Suggestion:</strong> ${fb.suggestions}
                             </p>
                         </div>
@@ -399,45 +657,43 @@
 
             // Create report content
             const reportContent = `
-                FoodBridge Impact Report
-                ========================
-                
-                Organization: ${currentUser.name}
-                Report Period: ${timePeriod}
-                Generated: ${new Date().toLocaleString()}
-                
-                📊 Summary Statistics
-                --------------------
-                Total Distributions: ${totalDistributions}
-                Total People Served: ${totalPeopleServed}
-                Average Restaurant Rating: ${avgRating}/5
-                
-                📈 Detailed Breakdown
-                --------------------
-                ${filteredData.map((fb, index) => `
-                ${index + 1}. ${fb.restaurant}
-                   • Date: ${new Date(fb.deliveryTime).toLocaleDateString()}
-                   • Area: ${fb.distributedArea}
-                   • People Served: ${fb.peopleServed}
-                   • Rating: ${'★'.repeat(fb.rating)} (${fb.rating}/5)
-                   ${fb.successStories ? `• Success: ${fb.successStories}` : ''}
-                `).join('\n')}
-                
-                🌟 Key Highlights
-                ----------------
-                • Emergency Distributions: ${ngoRequests.filter(req => req.emergency).length}
-                • Food Saved from Waste: ~${totalDistributions * 25} kg
-                • Community Impact Score: ${calculateImpactScore(filteredData)}
-                
-                Thank you for making a difference!
-                =================================
+FoodBridge Impact Report
+========================
+
+Organization: ${currentUser.name}
+Report Period: ${timePeriod}
+Generated: ${new Date().toLocaleString()}
+
+📊 Summary Statistics
+--------------------
+Total Distributions: ${totalDistributions}
+Total People Served: ${totalPeopleServed}
+Average Restaurant Rating: ${avgRating}/5
+
+📈 Detailed Breakdown
+--------------------
+${filteredData.map((fb, index) => `
+${index + 1}. ${fb.restaurant}
+   • Date: ${new Date(fb.deliveryTime).toLocaleDateString()}
+   • Area: ${fb.distributedArea}
+   • People Served: ${fb.peopleServed}
+   • Rating: ${'★'.repeat(fb.rating)} (${fb.rating}/5)
+   ${fb.successStories ? `• Success: ${fb.successStories}` : ''}
+`).join('\n')}
+
+🌟 Key Highlights
+----------------
+• Emergency Distributions: ${ngoRequests.filter(req => req.emergency).length}
+• Food Saved from Waste: ~${totalDistributions * 25} kg
+• Community Impact Score: ${calculateImpactScore(filteredData)}
+
+Thank you for making a difference!
+=================================
             `;
 
             // Show report
-            alert(reportContent);
+            showAlert(reportContent.replace(/\n/g, '<br>'), 'info');
             showAlert(`${type.charAt(0).toUpperCase() + type.slice(1)} report generated!`, 'success');
-
-            // In a real app, this would generate a PDF or CSV file
         }
 
         function calculateImpactScore(feedback) {

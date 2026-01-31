@@ -507,7 +507,7 @@
       const locBtn = document.getElementById("locBtn");
 
       if (!navigator.geolocation) {
-        alert("Geolocation not supported");
+        showAlert("Geolocation not supported", "error");
         return;
       }
 
@@ -550,7 +550,7 @@
 
       }, (err) => {
         console.error(err);
-        alert("Location permission denied or unavailable");
+        showAlert("Location permission denied or unavailable", "error");
         locBtn.innerHTML = originalContent;
         document.getElementById("address").value = "";
       });
@@ -615,11 +615,11 @@
           map.setView([lat, lon], 13);
           marker.setLatLng([lat, lon]);
         } else {
-          alert('Location not found');
+          showAlert('Location not found', 'error');
         }
       } catch (error) {
         console.error('Search error:', error);
-        alert('Error searching location');
+        showAlert('Error searching location', 'error');
       } finally {
         btn.innerHTML = originalText;
         btn.disabled = false;
@@ -666,8 +666,8 @@
       const customEvent = document.getElementById("customEvent").value;
       const address = document.getElementById("address").value;
 
-      if (!serves || !address || !donorType) return alert("Please fill all details");
-      if (donorType === "Others" && !customEvent) return alert("Please specify the event/occasion");
+      if (!serves || !address || !donorType) return showAlert("Please fill all details", "error");
+      if (donorType === "Others" && !customEvent) return showAlert("Please specify the event/occasion", "error");
 
       postBtn.disabled = true;
       postBtn.textContent = "Posting...";
@@ -694,7 +694,7 @@
           photoUrl = publicUrl;
         } catch (error) {
           console.error("Error uploading image:", error);
-          alert("Error uploading image. Please try again.");
+          showAlert("Error uploading image. Please try again.", "error");
           postBtn.disabled = false;
           postBtn.textContent = "Post Donation";
           return;
@@ -718,17 +718,18 @@
 
       if (error) {
         console.error(error);
-        alert("Error saving to database");
+        showAlert("Error saving to database", "error");
         postBtn.disabled = false;
         postBtn.textContent = "Post Donation";
         return;
       }
 
-      alert("Food posted successfully!");
+      showAlert("Food posted successfully!", "success");
       location.href = "donor-home.html";
     };
   </script>
 
+  <script src="script.js"></script>
 </body>
 
 </html>

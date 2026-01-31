@@ -212,10 +212,13 @@
 
     <!-- PROMPT: Pending Delivered Feedback -->
     <div id="feedbackPrompt" style="display:none; max-width:1200px; margin: 16px auto; padding: 0 24px;">
-        <div class="card" style="background: #FEF3C7; border: 1px solid #FCD34D; display:flex; align-items:center; gap:12px;">
+        <div class="card"
+            style="background: #FEF3C7; border: 1px solid #FCD34D; display:flex; align-items:center; gap:12px;">
             <div style="flex:1;">
-                <strong style="color:#92400E;">You have <span id="pendingCount">0</span> delivered donation(s) missing feedback.</strong>
-                <div style="color:#92400E; font-size:13px; margin-top:6px;">Please confirm delivery details to improve recommendations and reporting.</div>
+                <strong style="color:#92400E;">You have <span id="pendingCount">0</span> delivered donation(s) missing
+                    feedback.</strong>
+                <div style="color:#92400E; font-size:13px; margin-top:6px;">Please confirm delivery details to improve
+                    recommendations and reporting.</div>
             </div>
             <div style="display:flex; gap:8px;">
                 <button id="reviewPendingBtn" class="btn btn-primary">Review Now</button>
@@ -253,7 +256,9 @@
             <div class="dashboard-icon">
                 <i class="fas fa-comment-dots"></i>
             </div>
-            <h3>Deliveries & Feedback <span id="pendingBadge" style="display:none; background:#FEF3C7; color:#92400E; padding:4px 8px; border-radius:8px; margin-left:8px; font-size:12px; font-weight:700;">Pending</span></h3>
+            <h3>Deliveries & Feedback <span id="pendingBadge"
+                    style="display:none; background:#FEF3C7; color:#92400E; padding:4px 8px; border-radius:8px; margin-left:8px; font-size:12px; font-weight:700;">Pending</span>
+            </h3>
             <p>Rate donors and provide feedback on your recent distributions. (Feedback helps recommendations)</p>
         </div>
     </div>
@@ -438,8 +443,8 @@
             }
         }
 
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
+        async function logout() {
+            if (await showConfirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('currentUser');
                 window.location.href = 'index.html';
             }

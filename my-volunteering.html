@@ -309,12 +309,12 @@
 
                 if (error) throw error;
 
-                alert(`Status updated to: ${newStatus}`);
+                showAlert(`Status updated to: ${newStatus}`, 'success');
                 loadDeliveries();
 
             } catch (err) {
                 console.error('Error updating status:', err);
-                alert('Error: ' + err.message);
+                showAlert('Error: ' + err.message, 'error');
                 btn.innerHTML = originalText;
                 btn.disabled = false;
             }

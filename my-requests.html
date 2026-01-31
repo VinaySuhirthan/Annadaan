@@ -554,7 +554,7 @@
 
                 if (error) throw error;
 
-                allRequests = (data || []).filter(item => item.ngo_phone === currentUser.phone || ['NGO Requested','Accepted','Picked Up','Delivered'].includes(item.status));
+                allRequests = (data || []).filter(item => item.ngo_phone === currentUser.phone || ['NGO Requested', 'Accepted', 'Picked Up', 'Delivered'].includes(item.status));
 
                 if (allRequests.length === 0) {
                     container.innerHTML = `
@@ -738,11 +738,11 @@
 
                 if (error) throw error;
 
-                alert('Request cancelled successfully');
+                showAlert('Request cancelled successfully', 'info');
                 loadMyRequests();
             } catch (err) {
                 console.error('Error cancelling request:', err);
-                alert('Error: ' + err.message);
+                showAlert('Error: ' + err.message, 'error');
             }
         }
 
@@ -754,11 +754,11 @@
 
                 if (error) throw error;
 
-                alert(`Status successfully updated to: ${newStatus}`);
+                showAlert(`Status successfully updated to: ${newStatus}`, 'success');
                 loadMyRequests();
             } catch (err) {
                 console.error('Error updating status:', err);
-                alert('Error: ' + err.message);
+                showAlert('Error: ' + err.message, 'error');
             }
         }
 
@@ -772,11 +772,11 @@
 
                 if (error) throw error;
 
-                alert('✅ Delivery confirmed! Thank you for helping those in need.');
+                showAlert('✅ Delivery confirmed! Thank you for helping those in need.', 'success');
                 loadMyRequests();
             } catch (err) {
                 console.error('Error confirming delivery:', err);
-                alert('Error: ' + err.message);
+                showAlert('Error: ' + err.message, 'error');
             }
         }
 

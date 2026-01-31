@@ -183,7 +183,7 @@
     const foodId = params.get("id");
 
     async function loadStatus() {
-      if (!foodId) return alert("No donation ID provided");
+      if (!foodId) return showAlert("No donation ID provided", "error");
 
       const { data: food, error } = await window.sb.from('food_table')
         .select('*')
@@ -338,7 +338,7 @@
           console.error(error);
           btn.disabled = false;
           btn.innerHTML = oldText;
-          return alert("Error updating status");
+          return showAlert("Error updating status", "error");
         }
         loadStatus();
       }
@@ -518,7 +518,7 @@
             const lng = lngEl ? parseFloat(lngEl.value) || null : null;
             const notes = notesEl ? notesEl.value.trim() || null : null;
 
-            if (!people || people <= 0) return alert('Please enter number of people served');
+            if (!people || people <= 0) return showAlert('Please enter number of people served', 'error');
 
             submitBtn.disabled = true;
             const oldText = submitBtn.textContent;
@@ -534,12 +534,12 @@
             const { error } = await window.sb.from('food_table').update(updates).eq('id', foodId);
             if (error) throw error;
 
-            alert('Thank you — feedback saved.');
+            showAlert('Thank you — feedback saved.', 'success');
             // Refresh UI
             loadStatus();
           } catch (e) {
             console.error('Error saving feedback:', e);
-            alert('Error saving feedback. Changes may be saved locally.');
+            showAlert('Error saving feedback. Changes may be saved locally.', 'error');
             // Local fallback
             try {
               let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
@@ -603,7 +603,7 @@
 
       } catch (err) {
         console.error(err);
-        alert("Error updating status: " + err.message);
+        showAlert("Error updating status: " + err.message, "error");
       }
     }
 
@@ -617,6 +617,7 @@
 
     loadStatus();
   </script>
+  <script src="script.js"></script>
 </body>
 
 </html>
