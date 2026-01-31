@@ -425,8 +425,74 @@
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-client.js"></script>
+    <style>
+        /* Map Modal Styles */
+        #map-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #map-modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .map-content {
+            width: 90%;
+            max-width: 500px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #map-modal.show .map-content {
+            transform: scale(1);
+        }
+
+        #map {
+            flex: 1;
+            width: 100%;
+        }
+
+        .map-header {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .map-footer {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+        }
+    </style>
 </head>
 
 <body>
@@ -435,6 +501,35 @@
         <div class="blob1"></div>
         <div class="blob2"></div>
         <div class="blob3"></div>
+    </div>
+
+    <!-- Map Modal -->
+    <div id="map-modal">
+        <div class="map-content">
+            <div class="map-header">
+                <h3 style="margin:0; font-size:18px;">📌 Pin Location</h3>
+                <button onclick="closeMap()"
+                    style="background:none; border:none; cursor:pointer; font-size:20px;">&times;</button>
+            </div>
+            <div style="padding: 10px; border-bottom: 1px solid #e2e8f0; display: flex; gap: 8px;">
+                <input type="text" id="map-search-input" placeholder="Search area (e.g. Anna Nagar)"
+                    style="flex:1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+                    onkeypress="if(event.key === 'Enter') searchMapLocation()">
+                <button onclick="searchMapLocation()"
+                    style="padding: 8px 12px; background: #2D6A4F; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    Search
+                </button>
+            </div>
+            <div id="map"></div>
+            <div class="map-footer">
+                <div style="flex:1; font-size:12px; color:#64748b;">
+                    Drag marker to adjust location
+                </div>
+                <button onclick="confirmMapLocation()" class="btn btn-primary" style="padding: 8px 20px;">
+                    Confirm
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -465,7 +560,6 @@
                         <option value="all">All types</option>
                         <option value="vegetarian">Vegetarian</option>
                         <option value="non-vegetarian">Non-Vegetarian</option>
-                        <option value="bakery">Bakery</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -475,6 +569,27 @@
                         <option value="time">Expiring soon</option>
                         <option value="quantity">Most quantity</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Location Detection -->
+            <div
+                style="margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 200px;">
+                    <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 4px;"> <i
+                            class="fas fa-map-marker-alt"></i> Your Location</div>
+                    <div id="user-address" style="font-size: 14px; color: #1a1a1a; font-weight: 500;">Location not
+                        detected</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="openMap()" class="btn btn-secondary" style="padding: 8px 12px; font-size: 13px;"
+                        title="Pin on Map">
+                        <i class="fas fa-map-pin"></i>
+                    </button>
+                    <button onclick="detectLocation()" class="btn btn-primary" id="detect-btn"
+                        style="padding: 8px 16px; font-size: 13px;">
+                        <i class="fas fa-location-crosshairs"></i> Detect
+                    </button>
                 </div>
             </div>
         </div>
@@ -498,6 +613,7 @@
     <script>
         let allFoodItems = [];
         let currentUser = null;
+        let userCoordinates = null;
 
         document.addEventListener('DOMContentLoaded', function () {
             // Check for currentUser from script.js
@@ -524,6 +640,333 @@
             }
         }
 
+        let map, marker;
+
+        function openMap() {
+            const modal = document.getElementById('map-modal');
+            modal.classList.add('show');
+
+            // Initialize map if not already done
+            if (!map) {
+                initMap();
+            } else {
+                // Resize trigger needed when map container goes from hidden to visible
+                setTimeout(() => map.invalidateSize(), 100);
+            }
+        }
+
+        function closeMap() {
+            document.getElementById('map-modal').classList.remove('show');
+        }
+
+        function initMap() {
+            // Default to Bangalore or user coords
+            const defaultLat = userCoordinates ? userCoordinates.lat : 12.9716;
+            const defaultLng = userCoordinates ? userCoordinates.lng : 77.5946;
+
+            map = L.map('map').setView([defaultLat, defaultLng], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            marker = L.marker([defaultLat, defaultLng], {
+                draggable: true
+            }).addTo(map);
+
+            // Update marker on click
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+            });
+        }
+
+        async function searchMapLocation() {
+            const query = document.getElementById('map-search-input').value;
+            if (!query) return;
+
+            const btn = document.querySelector('button[onclick="searchMapLocation()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    const result = data[0];
+                    const lat = parseFloat(result.lat);
+                    const lon = parseFloat(result.lon);
+
+                    map.setView([lat, lon], 13);
+                    marker.setLatLng([lat, lon]);
+                } else {
+                    alert('Location not found');
+                }
+            } catch (error) {
+                console.error('Search error:', error);
+                alert('Error searching location');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function confirmMapLocation() {
+            const latLng = marker.getLatLng();
+            closeMap();
+
+            const btn = document.getElementById('detect-btn');
+            const addressDisplay = document.getElementById('user-address');
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+            userCoordinates = {
+                lat: latLng.lat,
+                lng: latLng.lng
+            };
+
+            console.log('User manually pinned at:', userCoordinates);
+
+            // 1. Get readable address
+            try {
+                const address = await reverseGeocode(userCoordinates.lat, userCoordinates.lng);
+                userCoordinates.address = address;
+                addressDisplay.textContent = address;
+            } catch (err) {
+                console.error('Geocoding error:', err);
+                addressDisplay.textContent = `${userCoordinates.lat.toFixed(4)}, ${userCoordinates.lng.toFixed(4)}`;
+            }
+
+            // 2. Recalculate distances for all food items
+            recalculateDistances();
+
+            // 3. Refresh display
+            filterFood();
+
+            btn.innerHTML = '<i class="fas fa-check"></i> Updated';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> Detect';
+            }, 2000);
+        }
+
+        async function detectLocation() {
+            const btn = document.getElementById('detect-btn');
+            const addressDisplay = document.getElementById('user-address');
+
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Detecting...';
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    userCoordinates = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    console.log('User detected at:', userCoordinates);
+
+                    // 1. Get readable address
+                    try {
+                        const address = await reverseGeocode(userCoordinates.lat, userCoordinates.lng);
+                        userCoordinates.address = address; // Save address for text matching
+                        addressDisplay.textContent = address;
+                    } catch (err) {
+                        console.error('Geocoding error:', err);
+                        addressDisplay.textContent = `${userCoordinates.lat.toFixed(4)}, ${userCoordinates.lng.toFixed(4)}`;
+                    }
+
+                    // 2. Recalculate distances for all food items
+                    recalculateDistances();
+
+                    // 3. Refresh display
+                    filterFood();
+
+                    btn.innerHTML = '<i class="fas fa-check"></i> Updated';
+                    setTimeout(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> Detect Location';
+                    }, 2000);
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    let msg = 'Error detecting location.';
+                    if (error.code === 1) msg = 'Location permission denied.';
+                    else if (error.code === 2) msg = 'Location unavailable.';
+                    else if (error.code === 3) msg = 'Location request timed out.';
+
+                    alert(msg);
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-location-crosshairs"></i> Detect Location';
+                }
+            );
+        }
+
+        async function reverseGeocode(lat, lng) {
+            try {
+                // Using OpenStreetMap Nominatim API
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+                const data = await response.json();
+
+                if (data && data.display_name) {
+                    // Create a shorter address string
+                    const addr = data.address;
+                    const parts = [
+                        addr.road || addr.pedestrian,
+                        addr.suburb || addr.neighbourhood,
+                        addr.city || addr.town || addr.village
+                    ].filter(Boolean); // Remove nulls/undefined
+
+                    return parts.length > 0 ? parts.join(', ') : data.display_name.split(',').slice(0, 3).join(',');
+                }
+                return 'Address not found';
+            } catch (e) {
+                console.error('Reverse geocode failed', e);
+                return 'Unknown Location';
+            }
+        }
+
+        // Haversine formula for precise distance
+        function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function toRad(value) {
+            return value * Math.PI / 180;
+        }
+
+        // Geocoding Queue System
+        const geocodeQueue = [];
+        let isProcessingQueue = false;
+
+        function recalculateDistances() {
+            if (!userCoordinates || !allFoodItems.length) return;
+
+            console.group('Distance Calculation');
+
+            allFoodItems.forEach(food => {
+                let dist = null;
+                let foodLat = null;
+                let foodLng = null;
+
+                // 1. Check if we already have coordinates (either temp from this session or cached)
+                if (food._lat && food._lng) {
+                    foodLat = food._lat;
+                    foodLng = food._lng;
+                } else if (food.address) {
+                    // Check LocalStorage Cache
+                    const cached = localStorage.getItem(`geo_cache_${food.address.trim().toLowerCase()}`);
+                    if (cached) {
+                        try {
+                            const parsed = JSON.parse(cached);
+                            foodLat = parsed.lat;
+                            foodLng = parsed.lng;
+                            // Attach to object for faster access next loop
+                            food._lat = foodLat;
+                            food._lng = foodLng;
+                        } catch (e) {
+                            console.error('Cache parse error', e);
+                        }
+                    }
+                }
+
+                // 2. If we have coordinates, calculate distance
+                if (foodLat && foodLng) {
+                    dist = calculateHaversineDistance(
+                        parseFloat(userCoordinates.lat),
+                        parseFloat(userCoordinates.lng),
+                        parseFloat(foodLat),
+                        parseFloat(foodLng)
+                    );
+                    // console.log(`Distance for ${food.address}: ${dist.toFixed(2)}km`);
+                } else if (food.address && !geocodeQueue.includes(food)) {
+                    // 3. If no coords, add to queue
+                    geocodeQueue.push(food);
+                }
+
+                // 4. Update food item properties
+                if (dist !== null) {
+                    food.distance = dist.toFixed(1);
+                    food.rawDistance = dist;
+                }
+            });
+            console.groupEnd();
+
+            // Start queue processor if needed
+            if (geocodeQueue.length > 0 && !isProcessingQueue) {
+                console.log(`Starting geocode queue for ${geocodeQueue.length} items...`);
+                processGeocodeQueue();
+            }
+        }
+
+        async function processGeocodeQueue() {
+            isProcessingQueue = true;
+            const statusDiv = document.createElement('div');
+            statusDiv.id = 'geo-status';
+            statusDiv.style.cssText = 'position:fixed; bottom:20px; right:20px; background:#333; color:white; padding:10px 20px; border-radius:30px; z-index:9999; font-size:12px;';
+            document.body.appendChild(statusDiv);
+
+            while (geocodeQueue.length > 0) {
+                const food = geocodeQueue.shift();
+
+                // Double check if processed in meantime
+                if (food._lat) continue;
+
+                statusDiv.innerText = `Update: Finding location for "${food.address.substring(0, 20)}..."`;
+
+                try {
+                    const query = encodeURIComponent(food.address);
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`);
+                    const data = await res.json();
+
+                    if (data && data.length > 0) {
+                        const lat = data[0].lat;
+                        const lon = data[0].lon;
+
+                        // Save to object
+                        food._lat = lat;
+                        food._lng = lon;
+
+                        // Save to cache
+                        localStorage.setItem(`geo_cache_${food.address.trim().toLowerCase()}`, JSON.stringify({ lat, lng: lon }));
+
+                        // Recalculate just this one (or valid ones)
+                        // Trigger simple update without full loop to avoid infinite recursion issues if logic flawed
+                        // But safest is to just run filterFood() which calls recalculateDistances which is fast now
+                        recalculateDistances();
+                        filterFood();
+                    } else {
+                        console.warn(`Could not geocode: ${food.address}`);
+                        // Mark as failed so we don't retry immediately
+                        food._lat = 0;
+                        food._lng = 0;
+                    }
+                } catch (err) {
+                    console.error('Geocode API error:', err);
+                }
+
+                // Rate limit: 1 request per 1.2 seconds to be safe
+                await new Promise(r => setTimeout(r, 1200));
+            }
+
+            statusDiv.remove();
+            isProcessingQueue = false;
+            console.log('Geocoding queue finished.');
+        }
+
         async function loadAvailableFood() {
             const container = document.getElementById('food-container');
 
@@ -542,7 +985,7 @@
                 return;
             }
 
-            let availableFood = []; // Initialize availableFood here
+            let availableFood = [];
 
             try {
                 // Fetch food from Supabase food_table  ONLY
@@ -567,14 +1010,19 @@
                 console.log('✅ Loaded food from Supabase:', data);
                 allFoodItems = data || [];
 
-                // Debug logging
-                console.log(`Total food items: ${allFoodItems.length}`);
+                // Normalize data structure for distance calculation later
+                allFoodItems = allFoodItems.map(item => {
+                    // If DB has distance as a string "X km", try to parse it for initial fallback
+                    if (!item.rawDistance && item.distance) {
+                        const parsed = parseFloat(item.distance);
+                        if (!isNaN(parsed)) item.rawDistance = parsed;
+                    }
+                    return item;
+                });
 
                 // Show ALL food from Supabase - don't filter by status
                 // (Food in database should already be available)
                 availableFood = allFoodItems;
-
-                console.log(`Food to display: ${availableFood.length}`);
 
             } catch (err) {
                 console.error('Food loading error:', err);
@@ -593,7 +1041,7 @@
           <div class="empty-state">
             <i class="fas fa-utensils"></i>
             <h3>No Food Available</h3>
-            <p>There is currently no surplus food available within 20km radius.</p>
+            <p>There is currently no surplus food available.</p>
             <button onclick="loadAvailableFood()" class="btn btn-primary">
               <i class="fas fa-sync-alt"></i> Refresh
             </button>
@@ -602,14 +1050,8 @@
                 return;
             }
 
-            // Sort by distance if available (closest first)
-            availableFood.sort((a, b) => {
-                const distA = parseFloat(a.distance) || 999;
-                const distB = parseFloat(b.distance) || 999;
-                return distA - distB;
-            });
-
-            displayFoodItems(availableFood);
+            // Initial sort (default)
+            filterFood();
         }
 
         function displayFoodItems(foodItems) {
@@ -625,7 +1067,7 @@
               <div style="font-size: 13px; color: var(--text-muted); font-weight: 500;">${food.donor_phone || 'Phone not available'}</div>
             </div>
             <span class="distance-badge">
-              <i class="fas fa-location-dot"></i> ${food.distance || 'Nearby'}
+              <i class="fas fa-location-dot"></i> ${formatDistance(food.distance)}
             </span>
           </div>
           
@@ -684,48 +1126,68 @@
       `).join('');
         }
 
+        function formatDistance(dist) {
+            if (!dist) return 'Unknown dist';
+            const num = parseFloat(dist);
+            if (isNaN(num)) return dist; // Return as is if already string like "5 km"
+            return num + ' km';
+        }
+
         function filterFood() {
             const maxDistance = document.getElementById('distance-filter').value;
             const foodType = document.getElementById('type-filter').value;
             const sortBy = document.getElementById('sort-filter').value;
 
-            let filteredFood = allFoodItems.filter(food => food.status === 'available');
+            // Filter by status (accept both 'available' and 'Posted')
+            let filteredFood = allFoodItems.filter(food =>
+                (food.status === 'available' || food.status === 'Posted')
+            );
 
             // Filter by distance
             if (maxDistance !== 'all') {
                 filteredFood = filteredFood.filter(food => {
-                    const distance = parseFloat(food.distance);
-                    return !isNaN(distance) && distance <= parseInt(maxDistance);
+                    // Use rawDistance if available (number), else parse distance string
+                    const dist = food.rawDistance !== undefined ? food.rawDistance : parseFloat(food.distance);
+                    return !isNaN(dist) && dist <= parseInt(maxDistance);
                 });
             }
 
             // Filter by type
             if (foodType !== 'all') {
-                filteredFood = filteredFood.filter(food =>
-                    food.category === foodType || food.foodType.toLowerCase().includes(foodType)
-                );
+                filteredFood = filteredFood.filter(food => {
+                    // DB uses 'Veg'/'Non-Veg', filter uses 'vegetarian'/'non-vegetarian'
+                    const dbType = (food.food_type || food.foodType || '').toLowerCase();
+                    const filterValue = foodType.toLowerCase();
+
+                    // Normalizing for comparison
+                    if (filterValue === 'vegetarian' && dbType === 'veg') return true;
+                    if (filterValue === 'non-vegetarian' && dbType === 'non-veg') return true;
+
+                    // Direct match fallback
+                    return dbType.includes(filterValue) || (food.category && food.category.toLowerCase() === filterValue);
+                });
             }
 
             // Sort
-            switch (sortBy) {
-                case 'distance':
-                    filteredFood.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
-                    break;
-                case 'time':
-                    filteredFood.sort((a, b) => {
-                        const timeA = a.availableUntil.includes('Today') ? 0 : 1;
-                        const timeB = b.availableUntil.includes('Today') ? 0 : 1;
-                        return timeA - timeB;
-                    });
-                    break;
-                case 'quantity':
-                    filteredFood.sort((a, b) => {
-                        const qtyA = parseInt(a.quantity) || 0;
-                        const qtyB = parseInt(b.quantity) || 0;
-                        return qtyB - qtyA;
-                    });
-                    break;
-            }
+            filteredFood.sort((a, b) => {
+                if (sortBy === 'distance') {
+                    const distA = a.rawDistance !== undefined ? a.rawDistance : (parseFloat(a.distance) || 999);
+                    const distB = b.rawDistance !== undefined ? b.rawDistance : (parseFloat(b.distance) || 999);
+                    return distA - distB;
+                } else if (sortBy === 'time') {
+                    // Sort by valid_hours (Ascending: Less hours = Expiring sooner)
+                    // Treat null/undefined as having lots of time (push to bottom)
+                    const timeA = a.valid_hours !== null && a.valid_hours !== undefined ? parseFloat(a.valid_hours) : 9999;
+                    const timeB = b.valid_hours !== null && b.valid_hours !== undefined ? parseFloat(b.valid_hours) : 9999;
+                    return timeA - timeB;
+                } else if (sortBy === 'quantity') {
+                    // Sort by serves (Descending: More people = High quantity)
+                    const qtyA = parseInt(a.serves) || parseInt(a.quantity) || 0;
+                    const qtyB = parseInt(b.serves) || parseInt(b.quantity) || 0;
+                    return qtyB - qtyA;
+                }
+                return 0;
+            });
 
             if (filteredFood.length === 0) {
                 document.getElementById('food-container').innerHTML = `
@@ -744,7 +1206,8 @@
         function viewLocation(foodId) {
             const food = allFoodItems.find(f => f.id === foodId);
             if (food) {
-                alert(`📍 ${food.restaurant}\n\nLocation: ${food.location}\nDistance: ${food.distance} from you`);
+                // If we have coordinates, openness in maps would be cool, but alert is fine for now as per previous code
+                alert(`📍 ${food.restaurant || food.donor_type || 'Food Source'}\n\nLocation: ${food.location || food.address}\nDistance: ${food.distance || 'Unknown'} from you`);
             }
         }
 
@@ -756,7 +1219,7 @@
             const food = allFoodItems.find(f => f.id === foodId);
             if (!food) return;
 
-            const availability = prompt(`Volunteering to help with distribution from ${food.restaurant}\n\nPlease specify your availability:\n(e.g., Today evening, Tomorrow morning, This week)`);
+            const availability = prompt(`Volunteering to help with distribution from ${food.restaurant || 'this donor'}\n\nPlease specify your availability:\n(e.g., Today evening, Tomorrow morning, This week)`);
 
             if (!availability || availability.trim() === '') {
                 alert('Volunteering cancelled');
