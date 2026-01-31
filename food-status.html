@@ -218,16 +218,16 @@
           </div>
         </div>
 
-        ${food.volunteer_phone ? `
+        ${food.ngo_phone ? `
             <div class="volunteer-card animate-fade-in">
                 <div class="volunteer-icon">
-                    <i class="fas fa-user-check"></i>
+                    <i class="fas fa-hands-helping"></i>
                 </div>
                 <div>
-                    <h4 style="font-size: 14px; text-transform: uppercase; color: var(--primary-dark); letter-spacing: 0.05em; font-weight: 700;">Volunteer Assigned</h4>
-                    <p style="font-weight: 600; margin-top: 2px;">Contact: ${food.volunteer_phone}</p>
-                    <a href="tel:${food.volunteer_phone}" style="display: inline-block; margin-top: 8px; color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px;">
-                        <i class="fas fa-phone-alt"></i> Call Volunteer
+                    <h4 style="font-size: 14px; text-transform: uppercase; color: var(--primary-dark); letter-spacing: 0.05em; font-weight: 700;">NGO Contact</h4>
+                    <p style="font-weight: 600; margin-top: 2px;">Phone: ${food.ngo_phone}</p>
+                    <a href="tel:${food.ngo_phone}" style="display: inline-block; margin-top: 8px; color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px;">
+                        <i class="fas fa-phone-alt"></i> Call NGO
                     </a>
                 </div>
             </div>
@@ -241,6 +241,9 @@
         if (user.type === 'ngo') {
           backLink.href = 'my-requests.html';
           backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to My Requests';
+        } else if (user.type === 'donor') {
+          backLink.href = 'donor-home.html';
+          backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Dashboard';
         } else if (user.type === 'volunteer') {
           backLink.href = 'my-volunteering.html';
           backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Volunteering';
@@ -251,7 +254,7 @@
       const stages = [
         { name: 'Posted', label: 'Donation shared with the community', keys: ['Posted'] },
         { name: 'NGO Requested', label: 'An NGO has requested this food', keys: ['NGO Requested'] },
-        { name: 'Volunteer Assigned', label: 'A volunteer is on the way', keys: ['Volunteer Assigned', 'Accepted'] },
+        { name: 'Accepted', label: 'Donor accepted the request', keys: ['Accepted'] },
         { name: 'Picked Up', label: 'Food is in transit', keys: ['Picked Up'] },
         { name: 'Delivered', label: 'Food has been delivered', keys: ['Delivered'] }
       ];
@@ -271,7 +274,7 @@
       if (currentIdx === -1) {
         if (currentStatus === 'Delivered') currentIdx = 4;
         else if (currentStatus === 'Picked Up') currentIdx = 3;
-        else if (currentStatus === 'Accepted' || currentStatus === 'Volunteer Assigned') currentIdx = 2;
+        else if (currentStatus === 'Accepted') currentIdx = 2;
         else if (currentStatus === 'NGO Requested') currentIdx = 1;
         else currentIdx = 0;
       }
@@ -299,9 +302,10 @@
     }
 
     function getStatusClass(status) {
-      if (status === 'Volunteer Assigned') return 'accepted';
+      if (status === 'Accepted') return 'accepted';
       if (status === 'Picked Up') return 'picked';
       if (status === 'Delivered') return 'completed';
+      if (status === 'NGO Requested') return 'pending';
       return 'pending';
     }
 
@@ -335,42 +339,37 @@
       if (!user) return;
 
       if (user.type === 'donor') {
-        if (status === "Volunteer Assigned" || status === "Accepted" || status === "NGO Requested") {
+        if (status === "Accepted" || status === "NGO Requested") {
           actions.innerHTML = `
               <button class="btn btn-primary" onclick="updateStatus('Picked Up')" style="width: 100%;">
                   <i class="fas fa-truck-pickup"></i> Confirm Food Picked Up
               </button>
               <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
-                  Click this once the ${status === 'NGO Requested' ? 'NGO' : 'Volunteer'} arrives and picks up the food.
+                  Click this once the NGO arrives and picks up the food.
               </p>
-          `;
-        }
-      } else if (user.type === 'volunteer') {
-        if (status === 'Accepted' || status === 'Volunteer Assigned') {
-          actions.innerHTML = `
-              <div class="card" style="padding: 16px; background: #F8FAFC; border: none; text-align: center; font-size: 13px; color: var(--gray); width: 100%;">
-                  <i class="fas fa-clock"></i> Waiting for Donor to confirm Pickup
-              </div>
-          `;
-        } else if (status === 'Picked Up') {
-          actions.innerHTML = `
-              <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
-                  <i class="fas fa-check-circle"></i> Mark as Delivered
-              </button>
           `;
         }
       } else if (user.type === 'ngo') {
         if (status === 'NGO Requested') {
           actions.innerHTML = `
-              <div class="card" style="padding: 16px; background: #F8FAFC; border: none; text-align: center; font-size: 13px; color: var(--gray); width: 100%;">
-                  <i class="fas fa-clock"></i> Waiting for Donor to confirm Pickup
+              <div class="card" style="padding: 16px; background: #FEF3C7; border: 1px solid #FCD34D; text-align: center; font-size: 13px; color: #92400E; width: 100%;">
+                  <i class="fas fa-clock"></i> Waiting for donor to accept your request...
+              </div>
+          `;
+        } else if (status === 'Accepted') {
+          actions.innerHTML = `
+              <div class="card" style="padding: 16px; background: #DBEAFE; border: 1px solid #93C5FD; text-align: center; font-size: 13px; color: #1E40AF; width: 100%;">
+                  <i class="fas fa-check-circle"></i> Donor accepted! Waiting for pickup confirmation...
               </div>
           `;
         } else if (status === 'Picked Up') {
           actions.innerHTML = `
               <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
-                  <i class="fas fa-check-circle"></i> Confirm Delivery Received
+                  <i class="fas fa-check-circle"></i> Confirm Delivery to Needy
               </button>
+              <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
+                  Click this once you've delivered the food to people in need.
+              </p>
           `;
         }
       }

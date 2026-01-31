@@ -1215,68 +1215,46 @@
             }
         }
 
-        // Unified Claim Logic - "Pakka Logic" for both NGOs and Volunteers
-        async function handleClaim(foodId, type) {
+        // Unified Claim Logic - NGO Requests Only
+        async function handleClaim(foodId) {
             const food = allFoodItems.find(f => f.id === foodId);
             if (!food) return;
 
-            const isNGO = type === 'ngo';
-            const actionVerb = isNGO ? 'request' : 'volunteer for';
-            const statusTarget = isNGO ? 'NGO Requested' : 'Volunteer Assigned';
-
-            const confirmMsg = `Do you want to ${actionVerb} this food for distribution?\n\nSource: ${food.donor_type || 'Donor'}\nLocation: ${food.address}\nServes: ${food.serves} people`;
+            const confirmMsg = `Do you want to request this food for distribution?\n\nSource: ${food.donor_type || 'Donor'}\nLocation: ${food.address}\nServes: ${food.serves} people`;
 
             if (!confirm(confirmMsg)) return;
 
             try {
-                // Update status in Supabase - Unifying the logic completely
+                // Update status in Supabase
                 const updateData = {
-                    status: statusTarget,
-                    accepted_at: new Date().toISOString()
+                    status: 'NGO Requested',
+                    accepted_at: new Date().toISOString(),
+                    ngo_phone: currentUser.phone
                 };
-
-                // Add the appropriate contact column
-                if (isNGO) {
-                    updateData.ngo_phone = currentUser.phone;
-                } else {
-                    updateData.volunteer_phone = currentUser.phone;
-                }
 
                 const { error } = await window.sb.from('food_table')
                     .update(updateData)
                     .eq('id', foodId);
 
                 if (error) {
-                    console.error(`Error during ${type} claim:`, error);
+                    console.error('Error during request:', error);
 
-                    // Fallback: If ngo_phone is missing, try using volunteer_phone even for NGOs
-                    if (isNGO && error.message.includes('ngo_phone')) {
-                        const { error: error3 } = await window.sb.from('food_table')
-                            .update({
-                                status: statusTarget,
-                                accepted_at: new Date().toISOString(),
-                                volunteer_phone: currentUser.phone
-                            })
+                    // Fallback: Just update status if phone update fails
+                    if (error.message.includes('ngo_phone')) {
+                        const { error: error2 } = await window.sb.from('food_table')
+                            .update({ status: 'NGO Requested' })
                             .eq('id', foodId);
-
-                        if (!error3) {
-                            alert(`✅ Success! You have successfully requested this food.`);
-                            window.location.href = 'my-requests.html';
-                            return;
-                        }
+                        if (error2) throw error2;
+                    } else {
+                        throw error;
                     }
-
-                    const { error: error2 } = await window.sb.from('food_table').update({ status: statusTarget }).eq('id', foodId);
-                    if (error2) throw error2;
                 }
 
-                alert(`✅ Success! You have successfully ${isNGO ? 'requested' : 'volunteered for'} this food.`);
-
-                // Redirect to respective tracking page
-                window.location.href = isNGO ? 'my-requests.html' : 'my-volunteering.html';
+                alert('✅ Request sent to donor! You will be notified once the donor accepts your request.');
+                window.location.href = 'my-requests.html';
 
             } catch (err) {
-                console.error('Unified claim error:', err);
+                console.error('Request error:', err);
                 alert('An error occurred: ' + err.message);
             }
         }
@@ -1286,15 +1264,7 @@
                 alert('Only NGOs can request food.');
                 return;
             }
-            await handleClaim(foodId, 'ngo');
-        }
-
-        async function volunteerHelp(foodId) {
-            if (currentUser.type !== 'volunteer') {
-                alert('Only volunteers can accept food for delivery.');
-                return;
-            }
-            await handleClaim(foodId, 'volunteer');
+            await handleClaim(foodId);
         }
 
         // Fallback for checkAuth if script.js is not loaded

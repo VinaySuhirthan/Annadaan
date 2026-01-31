@@ -547,26 +547,23 @@
 
             try {
                 // Fetch from Supabase
-                // Try fetching with ngo_phone, if it fails, the column likely doesn't exist
+                // Try to fetch specific requests for this NGO using 'ngo_phone'
                 let { data, error } = await window.sb.from('food_table')
                     .select('*')
                     .eq('ngo_phone', currentUser.phone)
                     .order('created_at', { ascending: false });
 
-                if (error && error.message.includes('ngo_phone')) {
-                    console.warn('ngo_phone column missing, falling back to in-memory filter');
-                    // Fallback: Fetch all and filter in JS (less efficient but prevents crash)
+                // If error due to missing column, fallback to fetching ALL 'NGO Requested' items
+                if (error && (error.code === '42703' || error.message.includes('column') || error.message.includes('exist'))) {
+                    console.warn('ngo_phone column missing. Loading all active requests.');
+
                     const { data: allData, error: allErr } = await window.sb.from('food_table')
                         .select('*')
+                        .or(`status.eq.NGO Requested,status.eq.Accepted,status.eq.Picked Up,status.eq.Delivered`)
                         .order('created_at', { ascending: false });
 
                     if (allErr) throw allErr;
-
-                    // Try to finding it in volunteer_phone as fallback if status is NGO Requested
-                    data = allData.filter(item =>
-                        item.ngo_phone === currentUser.phone ||
-                        (item.status === 'NGO Requested' && item.volunteer_phone === currentUser.phone)
-                    );
+                    data = allData;
                 } else if (error) {
                     throw error;
                 }
@@ -656,8 +653,15 @@
               </div>
             ` : ''}
             
+            
             <div class="request-actions">
-              <a href="food-status.html?id=${request.id}" class="btn btn-primary" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
+              ${request.status === 'Picked Up' ? `
+                <button onclick="confirmDelivery('${request.id}')" class="btn btn-primary" style="width: 100%;">
+                  <i class="fas fa-check-circle"></i> Confirm Delivery to Needy
+                </button>
+              ` : ''}
+              
+              <a href="food-status.html?id=${request.id}" class="btn ${request.status === 'Picked Up' ? 'btn-secondary' : 'btn-primary'}" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
                 <i class="fas fa-chart-line"></i> Track Status
               </a>
               
@@ -772,6 +776,24 @@
             }
         }
 
+        async function confirmDelivery(requestId) {
+            if (!confirm('Confirm that you have delivered this food to people in need?')) return;
+
+            try {
+                const { error } = await window.sb.from('food_table')
+                    .update({ status: 'Delivered' })
+                    .eq('id', requestId);
+
+                if (error) throw error;
+
+                alert('✅ Delivery confirmed! Thank you for helping those in need.');
+                loadMyRequests();
+            } catch (err) {
+                console.error('Error confirming delivery:', err);
+                alert('Error: ' + err.message);
+            }
+        }
+
         function giveFeedback(requestId) {
             const request = allRequests.find(req => req.id === requestId);
             if (request) {
@@ -811,6 +833,11 @@ ${request.status === 'Emergency' ? '🚨 EMERGENCY REQUEST' : ''}
 
             alert(details);
         }
+
+        // Live Auto-Refresh
+        setInterval(() => {
+            loadMyRequests();
+        }, 5000);
 
     </script>
 
