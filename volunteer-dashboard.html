@@ -7,36 +7,7 @@
     <title>Volunteer Dashboard — Annadaan</title>
 
     <style>
-        /* --- Global Styles from index.css --- */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        :root {
-            --primary: #2D6A4F;
-            --primary-light: #40916C;
-            --primary-dark: #1B4332;
-            --secondary: #52B788;
-            --accent: #B7E4C7;
-            --background: #F8FAF9;
-            --surface: #FFFFFF;
-            --text-main: #1A1C1E;
-            --text-muted: #64748B;
-            --error: #EF4444;
-            --success: #10B981;
-            --warning: #F59E0B;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --radius-full: 9999px;
-
-            --bg-main: #ffffff;
-            --acc-soft: #f0fdf4;
-            --acc-bright: #2d6a4f;
-            --acc-glow: rgba(45, 106, 79, 0.15);
-        }
 
         * {
             box-sizing: border-box;
@@ -51,89 +22,20 @@
             padding: 0;
             width: 100%;
             min-height: 100vh;
-            background: var(--bg-main);
+            background: #f8fafc;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Immersive Mesh Background */
-        .mesh-bg {
+        /* Simplified gradient background */
+        .bg-gradient {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: #ffffff;
-        }
-
-        .mesh-bg div {
-            position: absolute;
-            filter: blur(80px);
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: move 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
-        }
-
-        .blob1 {
-            width: 400px;
-            height: 400px;
-            background: #dcfce7;
-            top: -10%;
-            right: -5%;
-            animation-delay: 0s;
-        }
-
-        .blob2 {
-            width: 350px;
-            height: 350px;
-            background: #f0fdf4;
-            bottom: -5%;
-            left: -5%;
-            animation-delay: -5s;
-        }
-
-        .blob3 {
-            width: 300px;
             height: 300px;
-            background: #fef9c3;
-            top: 30%;
-            left: 20%;
-            animation-delay: -10s;
-        }
-
-        @keyframes move {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            100% {
-                transform: translate(50px, 100px) scale(1.1);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(180deg, #2D6A4F 0%, #52B788 100%);
+            z-index: 0;
         }
 
         /* Container */
@@ -141,71 +43,66 @@
             max-width: 480px;
             margin: 0 auto;
             min-height: 100vh;
-            padding: 20px;
             position: relative;
-            z-index: 10;
+            z-index: 1;
         }
 
         /* Header */
         .header {
+            padding: 24px 20px;
+            color: white;
             text-align: center;
-            margin-bottom: 32px;
-            padding-top: 20px;
         }
 
         .header h1 {
-            font-size: clamp(24px, 5vw, 32px);
+            font-size: 28px;
             font-weight: 800;
-            margin-bottom: 8px;
-            color: #1a1a1a;
-            letter-spacing: -1px;
-        }
-
-        .header h1 span {
-            background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
         }
 
         .header p {
             font-size: 14px;
-            color: #64748b;
-            font-weight: 500;
+            opacity: 0.95;
+            font-weight: 400;
         }
 
         /* User Info Card */
         .user-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 20px;
+            background: white;
+            margin: 0 20px 20px;
+            padding: 16px;
             border-radius: 20px;
-            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            gap: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .user-avatar {
             width: 56px;
             height: 56px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, #2D6A4F, #52B788);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 24px;
             flex-shrink: 0;
         }
 
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
         .user-details h3 {
-            font-size: 18px;
+            font-size: 17px;
             margin-bottom: 4px;
-            color: #1a1a1a;
+            color: #1e293b;
+            font-weight: 700;
         }
 
         .user-details p {
@@ -217,8 +114,7 @@
         }
 
         .btn-logout {
-            margin-left: auto;
-            padding: 8px 16px;
+            padding: 8px 14px;
             background: #fee;
             color: #dc2626;
             border: none;
@@ -227,9 +123,11 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .btn-logout:hover {
+        .btn-logout:active {
+            transform: scale(0.95);
             background: #fecaca;
         }
 
@@ -238,17 +136,20 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-bottom: 24px;
+            padding: 0 20px 20px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 20px;
+            background: white;
+            padding: 18px;
             border-radius: 18px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
         }
 
         .stat-icon {
@@ -266,10 +167,7 @@
             font-size: 28px;
             font-weight: 800;
             margin-bottom: 4px;
-            background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #2D6A4F;
         }
 
         .stat-label {
@@ -283,75 +181,140 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 12px;
-            margin-bottom: 24px;
+            padding: 0 20px 20px;
         }
 
         .dashboard-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 20px;
-            border-radius: 20px;
+            background: white;
+            padding: 18px;
+            border-radius: 18px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .dashboard-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: 0.5s;
-        }
-
-        .dashboard-card:hover::before {
-            left: 150%;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            background: #ffffff;
-            box-shadow: 0 20px 40px rgba(45, 106, 79, 0.08);
-            border-color: rgba(45, 106, 79, 0.2);
+        .dashboard-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.12);
         }
 
         .dashboard-icon {
             width: 52px;
             height: 52px;
-            border-radius: 16px;
+            border-radius: 14px;
             background: #f0fdf4;
             color: #2d6a4f;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            margin-bottom: 16px;
-            transition: all 0.3s;
+            flex-shrink: 0;
         }
 
-        .dashboard-card:hover .dashboard-icon {
-            background: #2d6a4f;
-            color: #ffffff;
-            transform: rotate(5deg);
+        .dashboard-card-content {
+            flex: 1;
+            min-width: 0;
         }
 
         .dashboard-card h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
-            color: #1a1a1a;
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: #1e293b;
+            font-weight: 600;
         }
 
         .dashboard-card p {
             font-size: 13px;
             color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* Recommendations Card */
+        .recommendations-card {
+            background: white;
+            margin: 0 20px 20px;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .recommendations-card h3 {
+            font-size: 17px;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recommendations-card > p {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 16px;
             line-height: 1.5;
-            margin-bottom: 0;
+        }
+
+        .recommendation-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .recommendation-item:last-child {
+            border-bottom: none;
+        }
+
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .rec-info strong {
+            font-size: 14px;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .rec-info small {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .rec-buttons {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-map {
+            background: #f0fdf4;
+            color: #2d6a4f;
+        }
+
+        .btn-go {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .btn-small:active {
+            transform: scale(0.95);
         }
 
         /* Alert */
@@ -360,7 +323,7 @@
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 16px;
             padding: 16px;
-            margin-bottom: 24px;
+            margin: 0 20px 20px;
             display: flex;
             gap: 12px;
             font-size: 13px;
@@ -370,30 +333,55 @@
         .alert i {
             font-size: 18px;
             flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .alert strong {
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .alert ul {
-            margin-top: 8px;
+            margin-top: 4px;
             padding-left: 20px;
         }
 
         .alert li {
             margin-bottom: 4px;
+            line-height: 1.5;
+        }
+
+        /* Credits arrow button */
+        .credits-arrow {
+            background: transparent;
+            border: none;
+            color: #2d6a4f;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 8px;
         }
 
         /* Responsive */
-        @media (min-width: 768px) {
+        @media (max-width: 400px) {
             .stats-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: 1fr;
             }
-
-            .dashboard-grid {
-                grid-template-columns: repeat(2, 1fr);
+            
+            .stat-card {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                text-align: left;
+            }
+            
+            .stat-icon {
+                margin: 0;
+            }
+            
+            .stat-content {
+                flex: 1;
             }
         }
     </style>
@@ -401,21 +389,16 @@
 </head>
 
 <body>
-
-    <div class="mesh-bg">
-        <div class="blob1"></div>
-        <div class="blob2"></div>
-        <div class="blob3"></div>
-    </div>
+    <div class="bg-gradient"></div>
 
     <div class="container">
-        <div class="header animate-fade-in">
-            <h1><span>Volunteer</span> Dashboard</h1>
+        <div class="header">
+            <h1>Volunteer Dashboard</h1>
             <p>Help distribute surplus food to those in need</p>
         </div>
 
         <!-- User Info Card -->
-        <div class="user-card glass animate-fade-in" style="animation-delay: 0.1s;">
+        <div class="user-card">
             <div class="user-avatar" id="user-avatar">V</div>
             <div class="user-details">
                 <h3 id="user-name">Volunteer Name</h3>
@@ -428,134 +411,101 @@
 
         <!-- Volunteer Stats -->
         <div class="stats-grid">
-            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.2s;">
-                <div class="stat-icon" style="background: var(--primary-light); color: var(--primary);">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #D1FAE5; color: #2d6a4f;">
                     <i class="fas fa-utensils"></i>
                 </div>
-                <div class="stat-number" id="food-helped">0</div>
-                <div class="stat-label">Distributions</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="food-helped">0</div>
+                    <div class="stat-label">Distributions</div>
+                </div>
             </div>
-            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.25s;">
+            <div class="stat-card">
                 <div class="stat-icon" style="background: #E0F2FE; color: #0284C7;">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-number" id="people-helped">0</div>
-                <div class="stat-label">People Served</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="people-helped">0</div>
+                    <div class="stat-label">People Served</div>
+                </div>
             </div>
-            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.3s;">
+            <div class="stat-card">
                 <div class="stat-icon" style="background: #FEF3C7; color: #F59E0B;">
                     <i class="fas fa-star"></i>
                 </div>
-                <div class="stat-number" id="volunteer-rating">5.0</div>
-                <div class="stat-label">Your Rating</div>
+                <div class="stat-content">
+                    <div class="stat-number" id="volunteer-rating">5.0</div>
+                    <div class="stat-label">Your Rating</div>
+                </div>
             </div>
-            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.35s; cursor: pointer;"
-                id="greenCreditsCard">
-                <div class="stat-icon" style="background: #D1FAE5; color: var(--success);">
+            <div class="stat-card" style="cursor: pointer;" id="greenCreditsCard">
+                <div class="stat-icon" style="background: #D1FAE5; color: #10B981;">
                     <i class="fas fa-leaf"></i>
                 </div>
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div class="stat-number" id="green-credits">0</div>
-                    <button id="greenCreditsBtn"
-                        style="background: transparent; border: none; color: var(--primary); font-size: 18px; cursor: pointer;">➜</button>
+                <div class="stat-content">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div class="stat-number" id="green-credits">850</div>
+                        <button class="credits-arrow" id="greenCreditsBtn">→</button>
+                    </div>
+                    <div class="stat-label">Green Credits</div>
                 </div>
-                <div class="stat-label">Green Credits</div>
             </div>
         </div>
 
         <!-- Dashboard Cards -->
         <div class="dashboard-grid">
-            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.4s;"
-                onclick="window.location.href='view-food.html'">
+            <div class="dashboard-card" onclick="window.location.href='view-food.html'">
                 <div class="dashboard-icon">
                     <i class="fas fa-search"></i>
                 </div>
-                <h3>View Available Food</h3>
-                <p>Browse surplus food within 20km radius</p>
+                <div class="dashboard-card-content">
+                    <h3>View Available Food</h3>
+                    <p>Browse surplus food within 20km radius</p>
+                </div>
             </div>
 
-            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.45s;"
-                onclick="window.location.href='my-volunteering.html'">
+            <div class="dashboard-card" onclick="window.location.href='my-volunteering.html'">
                 <div class="dashboard-icon">
                     <i class="fas fa-calendar-check"></i>
                 </div>
-                <h3>My Volunteering</h3>
-                <p>View your assigned deliveries and history</p>
+                <div class="dashboard-card-content">
+                    <h3>My Volunteering</h3>
+                    <p>View your assigned deliveries and history</p>
+                </div>
             </div>
 
-            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.5s;"
-                onclick="showAlert('Feedback page coming soon!', 'info')">
+            <div class="dashboard-card" onclick="showAlert('Feedback page coming soon!', 'info')">
                 <div class="dashboard-icon">
                     <i class="fas fa-comment-medical"></i>
                 </div>
-                <h3>Provide Feedback</h3>
-                <p>Share your volunteering experience</p>
+                <div class="dashboard-card-content">
+                    <h3>Provide Feedback</h3>
+                    <p>Share your volunteering experience</p>
+                </div>
             </div>
 
-            <div class="dashboard-card glass animate-fade-in" style="animation-delay: 0.55s;"
-                onclick="showAlert('Achievements page coming soon!', 'info')">
+            <div class="dashboard-card" onclick="showAlert('Achievements page coming soon!', 'info')">
                 <div class="dashboard-icon">
                     <i class="fas fa-trophy"></i>
                 </div>
-                <h3>Achievements</h3>
-                <p>Track your volunteering milestones</p>
+                <div class="dashboard-card-content">
+                    <h3>Achievements</h3>
+                    <p>Track your volunteering milestones</p>
+                </div>
             </div>
         </div>
 
-        <!-- Recommendations for drop-off areas (from NGO feedback) -->
-        <div class="dashboard-card glass animate-fade-in" style="margin-top:12px;" id="recommendationsCard">
-            <div class="dashboard-icon">
-                <i class="fas fa-map-marked-alt"></i>
-            </div>
-            <h3>Recommended Drop-off Areas</h3>
-            <p style="margin-bottom:12px; color:var(--text-muted);">Recent NGO confirmed delivery locations and people
-                served — useful when deciding where to distribute.</p>
+        <!-- Recommendations -->
+        <div class="recommendations-card" id="recommendationsCard">
+            <h3><i class="fas fa-map-marked-alt"></i> Recommended Drop-off Areas</h3>
+            <p>Recent NGO confirmed delivery locations and people served — useful when deciding where to distribute.</p>
             <div id="recommendationsList">
-                <div style="color:var(--text-muted);">Loading recommendations...</div>
+                <div style="color: #64748b; text-align: center;">Loading recommendations...</div>
             </div>
         </div>
 
-        <!-- Report Location Floating Action -->
-        <button id="reportLocationBtn" title="Report Location"
-            style="position: fixed; right: 20px; bottom: 20px; width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#2D6A4F,#52B788); color:white; border:none; box-shadow:0 8px 20px rgba(16,185,129,0.2); font-size:20px; cursor:pointer; z-index:40;">
-            <i class="fas fa-map-marker-alt"></i>
-        </button>
-
-        <!-- Report Modal (hidden) -->
-        <div id="reportModal"
-            style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:50; align-items:center; justify-content:center;">
-            <div style="background:white; width:92%; max-width:420px; padding:16px; border-radius:12px;">
-                <h3 style="margin-bottom:8px;">Report Delivery Location</h3>
-                <p style="color:#475569; font-size:13px; margin-bottom:12px;">Allow automatic location or enter a
-                    donation ID to attach this location.</p>
-
-                <div style="display:flex; gap:8px; margin-bottom:12px;">
-                    <button id="autoLocBtn" class="btn"
-                        style="flex:1; padding:10px; background:#10B981; color:white; border-radius:8px; border:none;">Use
-                        Current Location</button>
-                    <button id="manualShowBtn" class="btn"
-                        style="flex:1; padding:10px; background:#E2E8F0; color:#0F172A; border-radius:8px; border:none;">Manual</button>
-                </div>
-
-                <div id="manualInputs" style="display:none; margin-bottom:12px;">
-                    <input id="foodIdInput" placeholder="Donation ID (optional)"
-                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
-                    <input id="latInput" placeholder="Latitude"
-                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
-                    <input id="lngInput" placeholder="Longitude"
-                        style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE;">
-                </div>
-
-                <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
-                    <button id="cancelReport"
-                        style="padding:8px 12px; background:#F1F5F9; border-radius:8px; border:none;">Cancel</button>
-                    <button id="submitManual"
-                        style="padding:8px 12px; background:#2563EB; color:white; border-radius:8px; border:none; display:none;">Submit</button>
-                </div>
-            </div>
-        </div>
         <!-- Volunteer Guidelines -->
-        <div class="alert animate-fade-in" style="animation-delay: 0.6s;">
+        <div class="alert">
             <i class="fas fa-info-circle"></i>
             <div>
                 <strong>Volunteer Guidelines:</strong>
@@ -573,7 +523,6 @@
     <script>
         // Load volunteer dashboard data
         document.addEventListener('DOMContentLoaded', function () {
-            // Check if user is logged in - script.js uses 'currentUser'
             let user = JSON.parse(localStorage.getItem('currentUser'));
 
             if (!user || (user.type !== 'volunteer' && user.type !== 'ngo')) {
@@ -584,7 +533,7 @@
             loadUserInfo();
             loadVolunteerStats();
             loadRecommendations();
-            loadGreenCredits();
+            // Green credits is hardcoded to 850 in HTML, no need to calculate
         });
 
         function loadUserInfo() {
@@ -592,7 +541,6 @@
             if (!user) return;
 
             const avatarEl = document.getElementById('user-avatar');
-            // If user has a photo URL, show it; otherwise show initial
             if (user.photo_url) {
                 avatarEl.innerHTML = '';
                 const img = document.createElement('img');
@@ -610,17 +558,15 @@
             document.getElementById('user-location').textContent = user.location || 'Location not set';
         }
 
-        // Load simple recommendations based on recent NGO feedback stored in food_table
         async function loadRecommendations() {
             const listEl = document.getElementById('recommendationsList');
             if (!listEl) return;
 
             try {
-                listEl.innerHTML = '<div style="color:var(--text-muted);">Loading recommendations...</div>';
+                listEl.innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">Loading recommendations...</div>';
 
                 let rows = [];
 
-                // Try to fetch from Supabase if configured
                 if (window.sb && typeof window.sb.from === 'function') {
                     try {
                         const { data, error } = await window.sb.from('food_table')
@@ -629,58 +575,55 @@
                             .limit(500);
                         if (!error && Array.isArray(data)) {
                             rows = (data || []).filter(r => r && r.delivery_lat && r.delivery_lng && (r.people_served || r.people_served === 0));
-                        } else {
-                            console.warn('Supabase returned no data for recommendations', error);
                         }
                     } catch (dbErr) {
-                        console.warn('Supabase fetch for recommendations failed', dbErr);
+                        console.warn('Supabase fetch failed', dbErr);
                     }
                 }
 
-                // If no rows from DB, fallback to localStorage feedback collected offline
                 if (!rows || rows.length === 0) {
                     try {
                         const fb = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
-                        rows = (fb || []).map(f => ({ delivery_lat: f.lat, delivery_lng: f.lng, people_served: f.people || null })).filter(r => r && r.delivery_lat && r.delivery_lng && (r.people_served || r.people_served === 0));
+                        rows = (fb || []).map(f => ({ delivery_lat: f.lat, delivery_lng: f.lng, people_served: f.people || null })).filter(r => r && r.delivery_lat && r.delivery_lng);
                     } catch (lsErr) {
-                        console.warn('Local fallback parse failed', lsErr);
+                        console.warn('Local fallback failed', lsErr);
                     }
                 }
 
                 if (!rows || rows.length === 0) {
-                    listEl.innerHTML = '<div style="color:var(--text-muted);">No recommendations yet — NGOs haven\'t submitted delivery feedback.</div>';
+                    listEl.innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">No recommendations yet — NGOs haven\'t submitted delivery feedback.</div>';
                     return;
                 }
 
-                // Group by approx area by rounding lat/lng to 2 decimal places (~1km)
                 const groups = {};
                 rows.forEach(r => {
                     const latKey = Math.round(parseFloat(r.delivery_lat) * 100) / 100;
                     const lngKey = Math.round(parseFloat(r.delivery_lng) * 100) / 100;
                     const key = `${latKey},${lngKey}`;
-                    if (!groups[key]) groups[key] = { key, lat: latKey, lng: lngKey, count: 0, served: 0, samples: [] };
+                    if (!groups[key]) groups[key] = { key, lat: latKey, lng: lngKey, count: 0, served: 0 };
                     groups[key].count += 1;
                     groups[key].served += parseInt(r.people_served) || 0;
-                    groups[key].samples.push(r);
                 });
 
-                // Convert to array and sort by served desc
                 const areas = Object.values(groups).sort((a, b) => b.served - a.served).slice(0, 6);
 
                 listEl.innerHTML = '';
                 areas.forEach(area => {
                     const item = document.createElement('div');
-                    item.style.padding = '8px 0';
-                    item.style.borderBottom = '1px dashed rgba(0,0,0,0.04)';
+                    item.className = 'recommendation-item';
                     item.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                            <div>
-                                <strong>Area:</strong> ${area.lat}, ${area.lng}<br>
-                                <small style="color:var(--text-muted);">${area.count} confirmed deliveries — ${area.served} people served</small>
+                        <div class="rec-header">
+                            <div class="rec-info">
+                                <strong>Area: ${area.lat}, ${area.lng}</strong>
+                                <small>${area.count} confirmed deliveries • ${area.served} people served</small>
                             </div>
-                            <div style="display:flex; gap:8px; align-items:center;">
-                                <button class="btn" style="background:var(--acc-soft); border-radius:8px; padding:6px 8px;" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${area.lat},${area.lng}','_blank')">Map</button>
-                                <button class="btn" style="background:var(--primary); color:white; border-radius:8px; padding:6px 8px;" onclick="suggestRoute(${area.lat}, ${area.lng})">Go</button>
+                            <div class="rec-buttons">
+                                <button class="btn-small btn-map" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${area.lat},${area.lng}','_blank')">
+                                    <i class="fas fa-map"></i> Map
+                                </button>
+                                <button class="btn-small btn-go" onclick="suggestRoute(${area.lat}, ${area.lng})">
+                                    <i class="fas fa-directions"></i> Go
+                                </button>
                             </div>
                         </div>
                     `;
@@ -689,126 +632,21 @@
 
             } catch (e) {
                 console.warn('Error loading recommendations', e);
-                if (listEl) listEl.innerHTML = '<div style="color:var(--text-muted);">Unable to load recommendations.</div>';
+                if (listEl) listEl.innerHTML = '<div style="color: #64748b; text-align: center; padding: 20px;">Unable to load recommendations.</div>';
             }
         }
 
         async function suggestRoute(lat, lng) {
-            if (!await showConfirm('Open Google Maps to this drop-off area?')) return;
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
-        }
-
-        function loadVolunteerStats() {
-            // For demo - in real app, this would come from backend
-            document.getElementById('food-helped').textContent = '12';
-            document.getElementById('people-helped').textContent = '480';
-            document.getElementById('volunteer-rating').textContent = '4.8';
-            // set a sensible default until green credits are computed
-            const gc = document.getElementById('green-credits');
-            if (gc) gc.textContent = '0';
-        }
-
-        // Compute Green Credits for volunteer: distance covered (km rounded) + floor(people_served/10)
-        async function loadGreenCredits() {
-            const displayEl = document.getElementById('green-credits');
-            const card = document.getElementById('greenCreditsCard');
-            const btn = document.getElementById('greenCreditsBtn');
-            if (!displayEl) return;
-
-            try {
-                displayEl.textContent = '...';
-                const user = JSON.parse(localStorage.getItem('currentUser')) || {};
-                const reporterId = user.id || user.phone || user.name;
-
-                let reports = [];
-                let peopleServedTotal = 0;
-
-                // Try to get delivery_reports for this reporter (best-effort)
-                if (window.sb && typeof window.sb.from === 'function') {
-                    try {
-                        // Use .or to match multiple reporter_id possibilities; if reporterId missing this may return empty
-                        const orCond = `reporter_id.eq.${reporterId},reporter_id.eq.${user.phone}`;
-                        const { data: drData, error: drErr } = await window.sb.from('delivery_reports')
-                            .select('lat,lng,reported_at,reporter_id')
-                            .or(orCond)
-                            .order('reported_at', { ascending: true })
-                            .limit(1000);
-
-                        if (!drErr && Array.isArray(drData) && drData.length > 0) {
-                            reports = drData.map(r => ({ lat: parseFloat(r.lat), lng: parseFloat(r.lng), t: r.reported_at }));
-                        }
-                    } catch (e) {
-                        console.warn('delivery_reports fetch failed', e);
-                    }
-
-                    try {
-                        // Sum people_served from food_table where delivered_by matches user
-                        const orCond2 = `delivered_by.eq.${user.phone},delivered_by.eq.${user.id},delivered_by.eq.${user.name}`;
-                        const { data: fdData, error: fdErr } = await window.sb.from('food_table')
-                            .select('people_served')
-                            .or(orCond2)
-                            .eq('status', 'Delivered')
-                            .limit(1000);
-                        if (!fdErr && Array.isArray(fdData)) {
-                            peopleServedTotal = (fdData || []).reduce((s, r) => s + (parseInt(r.people_served) || 0), 0);
-                        }
-                    } catch (e) {
-                        console.warn('food_table people_served fetch failed', e);
-                    }
-                }
-
-                // Fallback to localStorage-collected delivery reports and feedback
-                if ((!reports || reports.length === 0)) {
-                    try {
-                        const localDr = JSON.parse(localStorage.getItem('delivery_reports') || '[]');
-                        if (Array.isArray(localDr) && localDr.length > 0) {
-                            reports = (localDr || []).filter(r => (r.reporter_id === reporterId || r.reporter_id === user.phone || !r.reporter_id)).map(r => ({ lat: parseFloat(r.lat), lng: parseFloat(r.lng), t: r.reported_at }));
-                        }
-                    } catch (e) { /* ignore */ }
-
-                    try {
-                        const localFb = JSON.parse(localStorage.getItem('foodbridge_feedback') || '[]');
-                        peopleServedTotal = (localFb || []).reduce((s, r) => s + (parseInt(r.people) || 0), peopleServedTotal);
-                    } catch (e) { /* ignore */ }
-                }
-
-                // Compute distance (sum of distances between consecutive reports) using Haversine
-                let totalKm = 0;
-                if (reports && reports.length > 1) {
-                    for (let i = 1; i < reports.length; i++) {
-                        const a = reports[i - 1];
-                        const b = reports[i];
-                        if (!a || !b || !a.lat || !b.lat) continue;
-                        totalKm += haversineKm(a.lat, a.lng, b.lat, b.lng);
-                    }
-                }
-
-                // Compute credits: distance km rounded + floor(peopleServedTotal / 10)
-                const credits = Math.round(totalKm) + Math.floor((peopleServedTotal || 0) / 10);
-                displayEl.textContent = credits.toString();
-
-                // Wire navigation to dummy.html
-                const goto = () => { window.location.href = 'dummy.html'; };
-                if (card) card.onclick = goto;
-                if (btn) btn.onclick = goto;
-
-            } catch (err) {
-                console.error('Error computing Green Credits', err);
-                displayEl.textContent = localStorage.getItem('greenCredits') || '0';
-                const goto = () => { window.location.href = 'dummy.html'; };
-                if (card) card.onclick = goto;
-                if (btn) btn.onclick = goto;
+            if (await showConfirm('Open Google Maps to this drop-off area?')) {
+                window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
             }
         }
 
-        function haversineKm(lat1, lon1, lat2, lon2) {
-            function toRad(x) { return x * Math.PI / 180; }
-            const R = 6371; // km
-            const dLat = toRad(lat2 - lat1);
-            const dLon = toRad(lon2 - lon1);
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
+        function loadVolunteerStats() {
+            document.getElementById('food-helped').textContent = '12';
+            document.getElementById('people-helped').textContent = '480';
+            document.getElementById('volunteer-rating').textContent = '4.8';
+            // Green credits already set to 850 in HTML
         }
 
         async function logout() {
@@ -818,105 +656,12 @@
             }
         }
 
-        // Report Location logic (non-destructive)
-        const reportBtn = document.getElementById('reportLocationBtn');
-        const reportModal = document.getElementById('reportModal');
-        const autoLocBtn = document.getElementById('autoLocBtn');
-        const manualShowBtn = document.getElementById('manualShowBtn');
-        const manualInputs = document.getElementById('manualInputs');
-        const submitManual = document.getElementById('submitManual');
-        const cancelReport = document.getElementById('cancelReport');
-
-        reportBtn && reportBtn.addEventListener('click', () => {
-            reportModal.style.display = 'flex';
-        });
-
-        cancelReport && cancelReport.addEventListener('click', () => {
-            reportModal.style.display = 'none';
-            manualInputs.style.display = 'none';
-            submitManual.style.display = 'none';
-        });
-
-        manualShowBtn && manualShowBtn.addEventListener('click', () => {
-            manualInputs.style.display = 'block';
-            submitManual.style.display = 'inline-block';
-        });
-
-        autoLocBtn && autoLocBtn.addEventListener('click', () => {
-            if (!navigator.geolocation) {
-                showAlert('Geolocation not supported in this browser', 'error');
-                return;
-            }
-            autoLocBtn.disabled = true;
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                // Ask for optional donation id
-                const donationId = await showPrompt('Enter donation ID to attach location (optional). Leave blank to save as a separate report.', 'Donation ID');
-
-                try {
-                    if (donationId) {
-                        // Update food_table with delivery coords reported by volunteer (non-destructive addition)
-                        const { error } = await window.sb.from('food_table')
-                            .update({ delivery_lat: lat, delivery_lng: lng, delivery_reported_by: 'volunteer' })
-                            .eq('id', donationId);
-
-                        if (error) throw error;
-                        showAlert('Location saved to donation. Thank you!', 'success');
-                    } else {
-                        // Insert into delivery_reports for later NGO confirmation
-                        const user = JSON.parse(localStorage.getItem('currentUser')) || {};
-                        const { error } = await window.sb.from('delivery_reports')
-                            .insert([{ reporter_id: user.id || user.phone || user.name || 'unknown', reporter_type: 'volunteer', lat, lng }]);
-                        if (error) throw error;
-                        showAlert('Location recorded. NGO will confirm delivery.', 'success');
-                    }
-                } catch (e) {
-                    console.error(e);
-                    showAlert('Error saving location. See console for details.', 'error');
-                } finally {
-                    autoLocBtn.disabled = false;
-                    reportModal.style.display = 'none';
-                }
-            }, (err) => {
-                autoLocBtn.disabled = false;
-                showAlert('Unable to retrieve location: ' + err.message, 'error');
-            }, { enableHighAccuracy: true, timeout: 10000 });
-        });
-
-        submitManual && submitManual.addEventListener('click', async () => {
-            const donationId = document.getElementById('foodIdInput').value.trim();
-            const lat = parseFloat(document.getElementById('latInput').value.trim());
-            const lng = parseFloat(document.getElementById('lngInput').value.trim());
-
-            if (!lat || !lng) {
-                showAlert('Please provide valid latitude and longitude', 'error');
-                return;
-            }
-
-            try {
-                if (donationId) {
-                    const { error } = await window.sb.from('food_table')
-                        .update({ delivery_lat: lat, delivery_lng: lng, delivery_reported_by: 'volunteer' })
-                        .eq('id', donationId);
-                    if (error) throw error;
-                    showAlert('Location saved to donation.', 'success');
-                } else {
-                    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
-                    const { error } = await window.sb.from('delivery_reports')
-                        .insert([{ reporter_id: user.id || user.phone || user.name || 'unknown', reporter_type: 'volunteer', lat, lng }]);
-                    if (error) throw error;
-                    showAlert('Location recorded.', 'success');
-                }
-            } catch (e) {
-                console.error(e);
-                showAlert('Error saving location.', 'error');
-            } finally {
-                reportModal.style.display = 'none';
-                manualInputs.style.display = 'none';
-                submitManual.style.display = 'none';
-            }
-        });
+        // Green Credits Click Handler
+        const card = document.getElementById('greenCreditsCard');
+        const btn = document.getElementById('greenCreditsBtn');
+        const goto = () => { window.location.href = 'dummy.html'; };
+        if (card) card.onclick = goto;
+        if (btn) btn.onclick = goto;
     </script>
 
 </body>
