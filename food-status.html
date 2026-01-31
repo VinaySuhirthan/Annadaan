@@ -252,11 +252,11 @@
 
       // Timeline Logic
       const stages = [
-        { name: 'Posted', label: 'Donation shared with the community', keys: ['Posted'] },
-        { name: 'NGO Requested', label: 'An NGO has requested this food', keys: ['NGO Requested'] },
-        { name: 'Accepted', label: 'Donor accepted the request', keys: ['Accepted'] },
-        { name: 'Picked Up', label: 'Food is in transit', keys: ['Picked Up'] },
-        { name: 'Delivered', label: 'Food has been delivered', keys: ['Delivered'] }
+        { name: 'Posted', label: 'Food details posted by donor', keys: ['Posted'] },
+        { name: 'NGO/Volunteer Assigned', label: 'NGO/Volunteer matched to the order', keys: ['NGO Requested'] },
+        { name: 'Order Accepted', label: 'Order accepted by NGO/Volunteer', keys: ['Accepted'] },
+        { name: 'Picked Up', label: 'Food handed over to NGO/Volunteer', keys: ['Picked Up'] },
+        { name: 'Delivered', label: 'Food delivery completed', keys: ['Delivered'] }
       ];
 
       // Map current status to stage index
@@ -282,7 +282,21 @@
       const timelineContent = document.getElementById("timelineContent");
       timelineContent.innerHTML = "";
 
+      const currentUserForTimeline = JSON.parse(localStorage.getItem('currentUser') || localStorage.getItem('donor'));
+
       stages.forEach((stage, idx) => {
+        // HIDE 'Posted' ONLY for NGOs.
+        const isNGO = currentUserForTimeline && currentUserForTimeline.type === 'ngo';
+        if (stage.name === 'Posted' && isNGO) return;
+
+        // HIDE 'Posted' AND 'NGO/Volunteer Assigned' for Volunteers
+        const isVolunteer = currentUserForTimeline && currentUserForTimeline.type === 'volunteer';
+        if ((stage.name === 'Posted' || stage.name === 'NGO/Volunteer Assigned') && isVolunteer) return;
+
+        // HIDE 'Order Accepted' ONLY for Donors (Show for NGO)
+        const isDonor = currentUserForTimeline && currentUserForTimeline.type === 'donor';
+        if (stage.name === 'Order Accepted' && isDonor) return;
+
         const isPast = idx < currentIdx;
         const isCurrent = idx === currentIdx;
         const isActiveOrPast = idx <= currentIdx;
@@ -339,44 +353,17 @@
       if (!user) return;
 
       if (user.type === 'donor') {
-        if (status === "Accepted" || status === "NGO Requested") {
-          actions.innerHTML = `
-              <button class="btn btn-primary" onclick="updateStatus('Picked Up')" style="width: 100%;">
-                  <i class="fas fa-truck-pickup"></i> Confirm Food Picked Up
-              </button>
-              <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
-                  Click this once the NGO arrives and picks up the food.
-              </p>
-          `;
-        }
+        renderDonorActions(actions, status);
       } else if (user.type === 'ngo') {
-        if (status === 'NGO Requested') {
-          actions.innerHTML = `
-              <div class="card" style="padding: 16px; background: #FEF3C7; border: 1px solid #FCD34D; text-align: center; font-size: 13px; color: #92400E; width: 100%;">
-                  <i class="fas fa-clock"></i> Waiting for donor to accept your request...
-              </div>
-          `;
-        } else if (status === 'Accepted') {
-          actions.innerHTML = `
-              <div class="card" style="padding: 16px; background: #DBEAFE; border: 1px solid #93C5FD; text-align: center; font-size: 13px; color: #1E40AF; width: 100%;">
-                  <i class="fas fa-check-circle"></i> Donor accepted! Waiting for pickup confirmation...
-              </div>
-          `;
-        } else if (status === 'Picked Up') {
-          actions.innerHTML = `
-              <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
-                  <i class="fas fa-check-circle"></i> Confirm Delivery to Needy
-              </button>
-              <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
-                  Click this once you've delivered the food to people in need.
-              </p>
-          `;
-        }
+        renderNGOActions(actions, status);
+      } else if (user.type === 'volunteer') {
+        renderVolunteerActions(actions, status);
       }
 
+      // Shared Success Message
       if (status === "Delivered") {
-        actions.innerHTML = `
-            <div class="card" style="background: var(--grad-primary); color: white; border: none; text-align: center;">
+        actions.innerHTML += `
+            <div class="card animate-fade-in" style="background: var(--grad-primary); color: white; border: none; text-align: center;">
                 <i class="fas fa-heart" style="font-size: 2rem; margin-bottom: 12px;"></i>
                 <h3 style="margin-bottom: 4px;">Mission Accomplished!</h3>
                 <p style="opacity: 0.9;">The food has reached those in need. ${user.type === 'donor' ? 'Thank you for your donation!' : ''}</p>
@@ -384,11 +371,105 @@
           `;
       }
 
+      // Shared Dashboard Link
       const backHome = user.type === 'ngo' ? 'ngo-dashboard.html' : (user.type === 'volunteer' ? 'volunteer-dashboard.html' : 'donor-home.html');
       actions.innerHTML += `<a href="${backHome}" class="btn btn-secondary" style="width: 100%; margin-top: 16px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
         <i class="fas fa-home"></i> Back to Dashboard
       </a>`;
     }
+
+    // --- Role-Specific Action Renderers ---
+
+    function renderDonorActions(container, status) {
+      if (status === "Accepted" || status === "NGO Requested") {
+        container.innerHTML = `
+            <button class="btn btn-primary" onclick="updateStatus('Picked Up')" style="width: 100%;">
+                <i class="fas fa-truck-pickup"></i> Confirm Food Picked Up
+            </button>
+            <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
+                Click this once the NGO arrives and picks up the food.
+            </p>
+        `;
+      }
+    }
+
+    function renderNGOActions(container, status) {
+      if (status === 'NGO Requested') {
+        container.innerHTML = `
+            <div class="card" style="padding: 16px; background: #FEF3C7; border: 1px solid #FCD34D; text-align: center; font-size: 13px; color: #92400E; width: 100%;">
+                <i class="fas fa-clock"></i> Waiting for donor to accept your request...
+            </div>
+        `;
+      } else if (status === 'Accepted') {
+        container.innerHTML = `
+            <div class="card" style="padding: 16px; background: #DBEAFE; border: 1px solid #93C5FD; text-align: center; font-size: 13px; color: #1E40AF; width: 100%;">
+                <i class="fas fa-check-circle"></i> Donor accepted! Waiting for pickup confirmation...
+            </div>
+        `;
+      } else if (status === 'Picked Up') {
+        container.innerHTML = `
+            <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
+                <i class="fas fa-check-circle"></i> Confirm Delivery to Needy
+            </button>
+            <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
+                Click this once you've delivered the food to people in need.
+            </p>
+        `;
+      }
+    }
+
+    function renderVolunteerActions(container, status) {
+      // Placeholder for volunteer actions if needed in future
+      if (status === 'Accepted' || status === 'NGO Requested') {
+        container.innerHTML = `
+              <div class="card" style="padding: 16px; background: #F8FAFC; border: none; text-align: center; font-size: 13px; color: var(--gray); width: 100%;">
+                  <i class="fas fa-clock"></i> Waiting for pickup...
+              </div>
+          `;
+      } else if (status === 'Picked Up') {
+        container.innerHTML = `
+            <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
+                <i class="fas fa-check-circle"></i> Confirm Delivery to Needy
+            </button>
+            <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
+                Click this once you've delivered the food.
+            </p>
+        `;
+      }
+    }
+
+    async function updateStatus(newStatus) {
+      if (!confirm(`Are you sure you want to update status to "${newStatus}"?`)) return;
+
+      try {
+        // Precise update using ONLY 'status' column as requested
+        const { error } = await window.sb.from('food_table')
+          .update({
+            status: newStatus
+          })
+          .eq('id', foodId);
+
+        if (error) throw error;
+
+        // Optimistic update
+        renderActions(newStatus);
+
+        // Reload full data to be safe
+        loadStatus();
+
+      } catch (err) {
+        console.error(err);
+        alert("Error updating status: " + err.message);
+      }
+    }
+
+    // Realtime Subscription
+    window.sb.channel('public:food_table')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'food_table', filter: `id=eq.${foodId}` }, (payload) => {
+        console.log('Update received!', payload);
+        loadStatus();
+      })
+      .subscribe();
 
     loadStatus();
   </script>

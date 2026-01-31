@@ -1142,9 +1142,9 @@
             const foodType = document.getElementById('type-filter').value;
             const sortBy = document.getElementById('sort-filter').value;
 
-            // Filter by status (accept both 'available' and 'Posted')
+            // Filter by status (available)
             let filteredFood = allFoodItems.filter(food =>
-                (food.status === 'available' || food.status === 'Posted')
+                food.status === 'available'
             );
 
             // Filter by distance
@@ -1265,6 +1265,43 @@
                 return;
             }
             await handleClaim(foodId);
+        }
+
+        async function volunteerHelp(foodId) {
+            const food = allFoodItems.find(f => f.id === foodId);
+            if (!food) return;
+
+            const confirmMsg = `Do you want to volunteer to deliver this food?\n\nSource: ${food.donor_type || 'Donor'}\nLocation: ${food.address}`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                // Update status in Supabase
+                // Status is 'NGO Requested' (which means 'Assigned' in UI)
+                // For volunteer, we SAVE to volunteer_phone
+                const updateData = {
+                    status: 'NGO Requested',
+                    accepted_at: new Date().toISOString(),
+                    volunteer_phone: currentUser.phone
+                };
+
+                const { error } = await window.sb.from('food_table')
+                    .update(updateData)
+                    .eq('id', foodId);
+
+                if (error) {
+                    console.error('Error during volunteer request:', error);
+                    alert('Error: ' + error.message);
+                    return;
+                }
+
+                alert('✅ You have volunteered! The donor will be notified.');
+                window.location.href = 'my-volunteering.html';
+
+            } catch (err) {
+                console.error('Volunteer error:', err);
+                alert('An error occurred: ' + err.message);
+            }
         }
 
         // Fallback for checkAuth if script.js is not loaded

@@ -282,7 +282,7 @@
     }
 
     function renderCard(f) {
-      const statusClass = f.status === 'Posted' ? 'pending' : f.status === 'Picked Up' ? 'picked' : f.status === 'Delivered' ? 'completed' : 'accepted';
+      const statusClass = f.status === 'Picked Up' ? 'picked' : f.status === 'Delivered' ? 'completed' : 'accepted';
 
       const isAccepted = f.status === 'Accepted';
 
@@ -411,7 +411,7 @@
 
       const { error } = await window.sb.from('food_table')
         .update({
-          status: 'Posted',
+          status: 'available',
           ngo_phone: null
         })
         .eq('id', foodId);

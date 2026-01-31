@@ -741,10 +741,10 @@
             if (!confirm('Are you sure you want to cancel this request?')) return;
 
             try {
-                // Update Supabase status back to Posted (available)
+                // Update Supabase status back to available
                 const { error } = await window.sb.from('food_table')
                     .update({
-                        status: 'Posted',
+                        status: 'available',
                         ngo_phone: null,
                         requested_at: null
                     })
