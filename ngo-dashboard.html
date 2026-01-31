@@ -210,6 +210,20 @@
         <p>Manage your organization's food requests and impact</p>
     </header>
 
+    <!-- PROMPT: Pending Delivered Feedback -->
+    <div id="feedbackPrompt" style="display:none; max-width:1200px; margin: 16px auto; padding: 0 24px;">
+        <div class="card" style="background: #FEF3C7; border: 1px solid #FCD34D; display:flex; align-items:center; gap:12px;">
+            <div style="flex:1;">
+                <strong style="color:#92400E;">You have <span id="pendingCount">0</span> delivered donation(s) missing feedback.</strong>
+                <div style="color:#92400E; font-size:13px; margin-top:6px;">Please confirm delivery details to improve recommendations and reporting.</div>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button id="reviewPendingBtn" class="btn btn-primary">Review Now</button>
+                <button id="dismissPromptBtn" class="btn btn-secondary">Remind me later</button>
+            </div>
+        </div>
+    </div>
+
     <div class="dashboard-grid">
         <div class="dashboard-card" onclick="window.location.href='view-food.html'">
             <div class="dashboard-icon">
@@ -239,8 +253,8 @@
             <div class="dashboard-icon">
                 <i class="fas fa-comment-dots"></i>
             </div>
-            <h3>Deliveries & Feedback</h3>
-            <p>Rate donors and provide feedback on your recent distributions.</p>
+            <h3>Deliveries & Feedback <span id="pendingBadge" style="display:none; background:#FEF3C7; color:#92400E; padding:4px 8px; border-radius:8px; margin-left:8px; font-size:12px; font-weight:700;">Pending</span></h3>
+            <p>Rate donors and provide feedback on your recent distributions. (Feedback helps recommendations)</p>
         </div>
     </div>
 
@@ -295,6 +309,8 @@
 
             loadUserInfo();
             loadDashboardStats();
+            // Also check and prompt for any delivered donations missing feedback
+            checkPendingFeedback();
         });
 
         function loadUserInfo() {
@@ -305,27 +321,98 @@
             document.getElementById('user-location').textContent = user.location || 'Location not set';
         }
 
+        // Check for Delivered donations missing feedback and prompt NGO
+        async function checkPendingFeedback() {
+            try {
+                const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+                if (!user || !user.phone) return;
+
+                // Try the normal filtered query first. If the `ngo_phone` column doesn't exist
+                // the REST call will fail (400). In that case, fallback to fetching delivered
+                // items and filtering client-side to avoid noisy errors.
+                // Safer: fetch delivered rows and filter client-side for missing feedback
+                let pending = [];
+                try {
+                    const { data: deliveredRows, error: deliveredErr } = await window.sb.from('food_table')
+                        .select('*')
+                        .eq('status', 'Delivered')
+                        .order('delivered_at', { ascending: false })
+                        .limit(500);
+
+                    if (deliveredErr) {
+                        console.error('Error fetching delivered rows for pending feedback:', deliveredErr);
+                    } else if (Array.isArray(deliveredRows)) {
+                        pending = (deliveredRows || []).filter(item => (item.people_served === null || item.people_served === undefined) && item.ngo_phone === user.phone);
+                    }
+                } catch (fetchErr) {
+                    console.error('Exception fetching delivered rows:', fetchErr);
+                }
+
+                if (!pending || pending.length === 0) {
+                    // Fallback: fetch all delivered items missing people_served and filter client-side by ngo_phone
+                    try {
+                        const { data: allDelivered, error: allErr } = await window.sb.from('food_table')
+                            .select('*')
+                            .eq('status', 'Delivered');
+
+                        if (allErr) {
+                            console.error('Fallback fetch for pending feedback failed:', allErr);
+                        } else if (Array.isArray(allDelivered)) {
+                            pending = allDelivered.filter(item => {
+                                // Keep items that are missing people_served and match the NGO if possible
+                                const missingPeople = (item.people_served === null || item.people_served === undefined);
+                                if (!missingPeople) return false;
+                                if (item.ngo_phone) return item.ngo_phone === user.phone;
+                                return false;
+                            });
+                        }
+                    } catch (fbErr) {
+                        console.error('Fallback pending-feedback exception:', fbErr);
+                    }
+                }
+
+                const count = (pending && pending.length) || 0;
+                if (count > 0) {
+                    document.getElementById('feedbackPrompt').style.display = 'block';
+                    document.getElementById('pendingCount').textContent = count;
+                    document.getElementById('pendingBadge').style.display = 'inline-block';
+
+                    const reviewBtn = document.getElementById('reviewPendingBtn');
+                    const dismissBtn = document.getElementById('dismissPromptBtn');
+                    if (reviewBtn) {
+                        reviewBtn.addEventListener('click', () => {
+                            const first = pending[0];
+                            if (first && first.id) window.location.href = `food-status.html?id=${first.id}`;
+                        });
+                    }
+                    if (dismissBtn) {
+                        dismissBtn.addEventListener('click', () => {
+                            document.getElementById('feedbackPrompt').style.display = 'none';
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('checkPendingFeedback error:', e);
+            }
+        }
+
         async function loadDashboardStats() {
             try {
                 const user = JSON.parse(localStorage.getItem('currentUser'));
                 if (!user) return;
 
-                let { data: stats, error } = await window.sb.from('food_table')
-                    .select('status, serves, ngo_phone, volunteer_phone')
-                    .eq('ngo_phone', user.phone);
+                // Safer approach: fetch recent rows without referencing possibly-missing columns
+                const { data: allData, error: allErr } = await window.sb.from('food_table')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(500);
 
-                if (error && error.message.includes('ngo_phone')) {
-                    // Fallback for missing column
-                    const { data: allData, error: allErr } = await window.sb.from('food_table')
-                        .select('status, serves, ngo_phone, volunteer_phone');
-                    if (allErr) throw allErr;
-                    stats = allData.filter(item =>
-                        item.ngo_phone === user.phone ||
-                        (item.status === 'NGO Requested' && item.volunteer_phone === user.phone)
-                    );
-                } else if (error) {
-                    throw error;
-                }
+                if (allErr) throw allErr;
+
+                const stats = (allData || []).filter(item =>
+                    item.ngo_phone === user.phone ||
+                    (item.status === 'NGO Requested' && item.volunteer_phone === user.phone)
+                );
 
                 if (stats.length === 0) {
                     // Update UI with zeros

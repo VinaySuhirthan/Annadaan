@@ -219,15 +219,27 @@
     function switchTab(tab) {
       currentTab = tab;
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      if (tab === 'active') document.getElementById('tabActive').classList.add('active');
-      if (tab === 'history') document.getElementById('tabHistory').classList.add('active');
-      if (tab === 'requests') document.getElementById('tabRequests').classList.add('active');
+      const tabActiveEl = document.getElementById('tabActive');
+      const tabHistoryEl = document.getElementById('tabHistory');
+      const tabRequestsEl = document.getElementById('tabRequests');
 
-      activeView.style.display = tab === 'active' ? 'block' : 'none';
-      historyView.style.display = tab === 'history' ? 'block' : 'none';
-      requestsView.style.display = tab === 'requests' ? 'block' : 'none';
+      if (tabActiveEl) tabActiveEl.classList.remove('active');
+      if (tabHistoryEl) tabHistoryEl.classList.remove('active');
+      if (tabRequestsEl) tabRequestsEl.classList.remove('active');
 
-      if (tab === 'requests') {
+      if (tab === 'active' && tabActiveEl) tabActiveEl.classList.add('active');
+      if (tab === 'history' && tabHistoryEl) tabHistoryEl.classList.add('active');
+      if (tab === 'requests' && tabRequestsEl) tabRequestsEl.classList.add('active');
+
+      const activeViewEl = document.getElementById('activeView');
+      const historyViewEl = document.getElementById('historyView');
+      const requestsViewEl = document.getElementById('requestsView');
+
+      if (activeViewEl) activeViewEl.style.display = tab === 'active' ? 'block' : 'none';
+      if (historyViewEl) historyViewEl.style.display = tab === 'history' ? 'block' : 'none';
+      if (requestsViewEl) requestsViewEl.style.display = tab === 'requests' ? 'block' : 'none';
+
+      if (tab === 'requests' && typeof loadRequests === 'function') {
         loadRequests();
       } else {
         renderDonations();

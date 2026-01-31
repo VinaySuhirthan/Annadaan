@@ -546,29 +546,15 @@
             container.innerHTML = '<div class="spinner"></div>';
 
             try {
-                // Fetch from Supabase
-                // Try to fetch specific requests for this NGO using 'ngo_phone'
-                let { data, error } = await window.sb.from('food_table')
+                // Safer: fetch recent rows and filter client-side to avoid failing when a column is missing
+                const { data, error } = await window.sb.from('food_table')
                     .select('*')
-                    .eq('ngo_phone', currentUser.phone)
-                    .order('created_at', { ascending: false });
+                    .order('created_at', { ascending: false })
+                    .limit(500);
 
-                // If error due to missing column, fallback to fetching ALL 'NGO Requested' items
-                if (error && (error.code === '42703' || error.message.includes('column') || error.message.includes('exist'))) {
-                    console.warn('ngo_phone column missing. Loading all active requests.');
+                if (error) throw error;
 
-                    const { data: allData, error: allErr } = await window.sb.from('food_table')
-                        .select('*')
-                        .or(`status.eq.NGO Requested,status.eq.Accepted,status.eq.Picked Up,status.eq.Delivered`)
-                        .order('created_at', { ascending: false });
-
-                    if (allErr) throw allErr;
-                    data = allData;
-                } else if (error) {
-                    throw error;
-                }
-
-                allRequests = data || [];
+                allRequests = (data || []).filter(item => item.ngo_phone === currentUser.phone || ['NGO Requested','Accepted','Picked Up','Delivered'].includes(item.status));
 
                 if (allRequests.length === 0) {
                     container.innerHTML = `

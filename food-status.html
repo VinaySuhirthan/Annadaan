@@ -369,6 +369,31 @@
                 <p style="opacity: 0.9;">The food has reached those in need. ${user.type === 'donor' ? 'Thank you for your donation!' : ''}</p>
             </div>
           `;
+
+        // If NGO viewing, show feedback form (only if not already provided)
+        if (user.type === 'ngo') {
+          const feedbackSectionId = `ngoFeedbackSection-${foodId}`;
+          const feedbackBtnId = `openFeedbackBtn-${foodId}`;
+          actions.innerHTML += `
+            <div id="${feedbackSectionId}" class="card" style="margin-top:12px; padding:14px;">
+              <h4 style="margin-bottom:8px;">Confirm Delivery & Provide Feedback</h4>
+              <div id="feedbackFormContainer">
+                <button id="${feedbackBtnId}" class="btn btn-primary" style="width:100%;">Provide Feedback</button>
+                <p style="color:var(--gray); margin-top:8px; font-size:13px;">Click to open the simple feedback page.</p>
+              </div>
+            </div>
+          `;
+
+          // Attach click handler safely
+          setTimeout(() => {
+            const openBtn = document.getElementById(feedbackBtnId);
+            if (openBtn) {
+              openBtn.addEventListener('click', () => {
+                window.location.href = `delivery-feedback.html?id=${foodId}`;
+              });
+            }
+          }, 50);
+        }
       }
 
       // Shared Dashboard Link
@@ -415,6 +440,125 @@
                 Click this once you've delivered the food to people in need.
             </p>
         `;
+      }
+    }
+
+    // Render NGO feedback form after Delivered status
+    async function renderNGOFeedbackForm() {
+      const container = document.getElementById('feedbackFormContainer');
+      if (!container) return;
+
+      try {
+        // Show a clear loading indicator (in case it takes a moment)
+        container.innerHTML = '<div style="color:var(--gray);">Loading feedback form...</div>';
+
+        if (!window.sb) {
+          throw new Error('Supabase client not available');
+        }
+
+        // Load current food data to prefill
+        const { data: food, error } = await window.sb.from('food_table').select('*').eq('id', foodId).single();
+        if (error || !food) {
+          console.error('Error loading food for feedback:', error);
+          container.innerHTML = '<p style="color:var(--danger);">Unable to load feedback form. Please try again later.</p>';
+          return;
+        }
+
+        // If feedback already exists, show summary
+        if (food.people_served || food.delivery_feedback) {
+          container.innerHTML = `
+            <div style="font-size:14px; color:var(--dark);">
+              <div><strong>People served:</strong> ${food.people_served || '—'}</div>
+              <div style="margin-top:6px;"><strong>Notes:</strong> ${food.delivery_feedback || '—'}</div>
+              <div style="margin-top:6px;"><strong>Delivered at:</strong> ${food.delivered_at ? new Date(food.delivered_at).toLocaleString() : '—'}</div>
+            </div>
+          `;
+          return;
+        }
+
+        // Show form
+        container.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <label style="font-size:13px; color:var(--gray);">People served</label>
+            <input id="peopleServedInput" type="number" min="0" placeholder="Number of people served" style="padding:8px; border-radius:8px; border:1px solid #E6E9EE;">
+
+            <label style="font-size:13px; color:var(--gray);">Delivery location (lat,lng) — optional</label>
+            <div style="display:flex; gap:8px;">
+              <input id="latConfirm" placeholder="Latitude" style="flex:1; padding:8px; border-radius:8px; border:1px solid #E6E9EE;" value="${food.delivery_lat || ''}">
+              <input id="lngConfirm" placeholder="Longitude" style="flex:1; padding:8px; border-radius:8px; border:1px solid #E6E9EE;" value="${food.delivery_lng || ''}">
+            </div>
+
+            <label style="font-size:13px; color:var(--gray);">Notes (optional)</label>
+            <textarea id="notesInput" rows="3" placeholder="Any notes about delivery or location" style="padding:8px; border-radius:8px; border:1px solid #E6E9EE;"></textarea>
+
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:6px;">
+              <button id="submitFeedbackBtn" class="btn btn-primary">Submit Feedback</button>
+            </div>
+          </div>
+        `;
+
+        // Attach handler safely (guard against missing DOM)
+        const submitBtn = container.querySelector('#submitFeedbackBtn');
+        if (!submitBtn) {
+          console.warn('submitFeedbackBtn not found in DOM');
+          container.innerHTML = '<p style="color:var(--danger);">Feedback form unavailable.</p>';
+          return;
+        }
+
+        submitBtn.addEventListener('click', async (ev) => {
+          try {
+            ev.preventDefault();
+            const peopleEl = container.querySelector('#peopleServedInput');
+            const latEl = container.querySelector('#latConfirm');
+            const lngEl = container.querySelector('#lngConfirm');
+            const notesEl = container.querySelector('#notesInput');
+
+            const people = peopleEl ? parseInt(peopleEl.value) || null : null;
+            const lat = latEl ? parseFloat(latEl.value) || null : null;
+            const lng = lngEl ? parseFloat(lngEl.value) || null : null;
+            const notes = notesEl ? notesEl.value.trim() || null : null;
+
+            if (!people || people <= 0) return alert('Please enter number of people served');
+
+            submitBtn.disabled = true;
+            const oldText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+
+            const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+            const updates = { people_served: people, delivery_feedback: notes, delivered_at: new Date().toISOString(), delivered_by: user.phone || user.id || user.name };
+            if (lat) updates.delivery_lat = lat;
+            if (lng) updates.delivery_lng = lng;
+
+            if (!window.sb) throw new Error('Supabase client not available');
+
+            const { error } = await window.sb.from('food_table').update(updates).eq('id', foodId);
+            if (error) throw error;
+
+            alert('Thank you — feedback saved.');
+            // Refresh UI
+            loadStatus();
+          } catch (e) {
+            console.error('Error saving feedback:', e);
+            alert('Error saving feedback. Changes may be saved locally.');
+            // Local fallback
+            try {
+              let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
+              allFeedback.push({ foodId, people: parseInt(container.querySelector('#peopleServedInput')?.value) || null, notes: container.querySelector('#notesInput')?.value || null, lat: parseFloat(container.querySelector('#latConfirm')?.value) || null, lng: parseFloat(container.querySelector('#lngConfirm')?.value) || null, submittedAt: new Date().toISOString() });
+              localStorage.setItem('foodbridge_feedback', JSON.stringify(allFeedback));
+              loadStatus();
+            } catch (localErr) {
+              console.error('Local save failed', localErr);
+            }
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Submit Feedback';
+            }
+          }
+        });
+      } catch (ex) {
+        console.error('renderNGOFeedbackForm exception:', ex);
+        container.innerHTML = '<p style="color:var(--danger);">Unable to load feedback. Please try again later.</p>';
       }
     }
 

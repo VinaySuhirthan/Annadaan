@@ -449,12 +449,15 @@
                 <div class="stat-number" id="volunteer-rating">5.0</div>
                 <div class="stat-label">Your Rating</div>
             </div>
-            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.35s;">
+            <div class="stat-card glass animate-fade-in" style="animation-delay: 0.35s; cursor: pointer;" id="greenCreditsCard">
                 <div class="stat-icon" style="background: #D1FAE5; color: var(--success);">
-                    <i class="fas fa-clock"></i>
+                    <i class="fas fa-leaf"></i>
                 </div>
-                <div class="stat-number" id="hours-volunteered">0</div>
-                <div class="stat-label">Hours</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="stat-number" id="green-credits">0</div>
+                  <button id="greenCreditsBtn" style="background: transparent; border: none; color: var(--primary); font-size: 18px; cursor: pointer;">➜</button>
+                </div>
+                <div class="stat-label">Green Credits</div>
             </div>
         </div>
 
@@ -497,6 +500,46 @@
             </div>
         </div>
 
+        <!-- Recommendations for drop-off areas (from NGO feedback) -->
+        <div class="dashboard-card glass animate-fade-in" style="margin-top:12px;" id="recommendationsCard">
+            <div class="dashboard-icon">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+            <h3>Recommended Drop-off Areas</h3>
+            <p style="margin-bottom:12px; color:var(--text-muted);">Recent NGO confirmed delivery locations and people served — useful when deciding where to distribute.</p>
+            <div id="recommendationsList">
+                <div style="color:var(--text-muted);">Loading recommendations...</div>
+            </div>
+        </div>
+
+        <!-- Report Location Floating Action -->
+        <button id="reportLocationBtn" title="Report Location" style="position: fixed; right: 20px; bottom: 20px; width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,#2D6A4F,#52B788); color:white; border:none; box-shadow:0 8px 20px rgba(16,185,129,0.2); font-size:20px; cursor:pointer; z-index:40;">
+            <i class="fas fa-map-marker-alt"></i>
+        </button>
+
+        <!-- Report Modal (hidden) -->
+        <div id="reportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:50; align-items:center; justify-content:center;">
+            <div style="background:white; width:92%; max-width:420px; padding:16px; border-radius:12px;">
+                <h3 style="margin-bottom:8px;">Report Delivery Location</h3>
+                <p style="color:#475569; font-size:13px; margin-bottom:12px;">Allow automatic location or enter a donation ID to attach this location.</p>
+
+                <div style="display:flex; gap:8px; margin-bottom:12px;">
+                    <button id="autoLocBtn" class="btn" style="flex:1; padding:10px; background:#10B981; color:white; border-radius:8px; border:none;">Use Current Location</button>
+                    <button id="manualShowBtn" class="btn" style="flex:1; padding:10px; background:#E2E8F0; color:#0F172A; border-radius:8px; border:none;">Manual</button>
+                </div>
+
+                <div id="manualInputs" style="display:none; margin-bottom:12px;">
+                    <input id="foodIdInput" placeholder="Donation ID (optional)" style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
+                    <input id="latInput" placeholder="Latitude" style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE; margin-bottom:8px;">
+                    <input id="lngInput" placeholder="Longitude" style="width:100%; padding:10px; border-radius:8px; border:1px solid #E6E9EE;">
+                </div>
+
+                <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                    <button id="cancelReport" style="padding:8px 12px; background:#F1F5F9; border-radius:8px; border:none;">Cancel</button>
+                    <button id="submitManual" style="padding:8px 12px; background:#2563EB; color:white; border-radius:8px; border:none; display:none;">Submit</button>
+                </div>
+            </div>
+        </div>
         <!-- Volunteer Guidelines -->
         <div class="alert animate-fade-in" style="animation-delay: 0.6s;">
             <i class="fas fa-info-circle"></i>
@@ -526,15 +569,119 @@
 
             loadUserInfo();
             loadVolunteerStats();
+            loadRecommendations();
+            loadGreenCredits();
         });
 
         function loadUserInfo() {
             const user = JSON.parse(localStorage.getItem('currentUser'));
             if (!user) return;
 
-            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
+            const avatarEl = document.getElementById('user-avatar');
+            // If user has a photo URL, show it; otherwise show initial
+            if (user.photo_url) {
+                avatarEl.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = user.photo_url;
+                img.alt = user.name || 'Volunteer';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '50%';
+                avatarEl.appendChild(img);
+            } else {
+                avatarEl.textContent = (user.name && user.name.charAt(0)) ? user.name.charAt(0).toUpperCase() : 'V';
+            }
             document.getElementById('user-name').textContent = user.name;
             document.getElementById('user-location').textContent = user.location || 'Location not set';
+        }
+
+        // Load simple recommendations based on recent NGO feedback stored in food_table
+        async function loadRecommendations() {
+            const listEl = document.getElementById('recommendationsList');
+            if (!listEl) return;
+
+            try {
+                listEl.innerHTML = '<div style="color:var(--text-muted);">Loading recommendations...</div>';
+
+                let rows = [];
+
+                // Try to fetch from Supabase if configured
+                if (window.sb && typeof window.sb.from === 'function') {
+                    try {
+                        const { data, error } = await window.sb.from('food_table')
+                            .select('*')
+                            .order('delivered_at', { ascending: false })
+                            .limit(500);
+                        if (!error && Array.isArray(data)) {
+                            rows = (data || []).filter(r => r && r.delivery_lat && r.delivery_lng && (r.people_served || r.people_served === 0));
+                        } else {
+                            console.warn('Supabase returned no data for recommendations', error);
+                        }
+                    } catch (dbErr) {
+                        console.warn('Supabase fetch for recommendations failed', dbErr);
+                    }
+                }
+
+                // If no rows from DB, fallback to localStorage feedback collected offline
+                if (!rows || rows.length === 0) {
+                    try {
+                        const fb = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
+                        rows = (fb || []).map(f => ({ delivery_lat: f.lat, delivery_lng: f.lng, people_served: f.people || null })).filter(r => r && r.delivery_lat && r.delivery_lng && (r.people_served || r.people_served === 0));
+                    } catch (lsErr) {
+                        console.warn('Local fallback parse failed', lsErr);
+                    }
+                }
+
+                if (!rows || rows.length === 0) {
+                    listEl.innerHTML = '<div style="color:var(--text-muted);">No recommendations yet — NGOs haven\'t submitted delivery feedback.</div>';
+                    return;
+                }
+
+                // Group by approx area by rounding lat/lng to 2 decimal places (~1km)
+                const groups = {};
+                rows.forEach(r => {
+                    const latKey = Math.round(parseFloat(r.delivery_lat) * 100) / 100;
+                    const lngKey = Math.round(parseFloat(r.delivery_lng) * 100) / 100;
+                    const key = `${latKey},${lngKey}`;
+                    if (!groups[key]) groups[key] = { key, lat: latKey, lng: lngKey, count: 0, served: 0, samples: [] };
+                    groups[key].count += 1;
+                    groups[key].served += parseInt(r.people_served) || 0;
+                    groups[key].samples.push(r);
+                });
+
+                // Convert to array and sort by served desc
+                const areas = Object.values(groups).sort((a, b) => b.served - a.served).slice(0, 6);
+
+                listEl.innerHTML = '';
+                areas.forEach(area => {
+                    const item = document.createElement('div');
+                    item.style.padding = '8px 0';
+                    item.style.borderBottom = '1px dashed rgba(0,0,0,0.04)';
+                    item.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                            <div>
+                                <strong>Area:</strong> ${area.lat}, ${area.lng}<br>
+                                <small style="color:var(--text-muted);">${area.count} confirmed deliveries — ${area.served} people served</small>
+                            </div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <button class="btn" style="background:var(--acc-soft); border-radius:8px; padding:6px 8px;" onclick="window.open('https://www.google.com/maps/search/?api=1&query=${area.lat},${area.lng}','_blank')">Map</button>
+                                <button class="btn" style="background:var(--primary); color:white; border-radius:8px; padding:6px 8px;" onclick="suggestRoute(${area.lat}, ${area.lng})">Go</button>
+                            </div>
+                        </div>
+                    `;
+                    listEl.appendChild(item);
+                });
+
+            } catch (e) {
+                console.warn('Error loading recommendations', e);
+                if (listEl) listEl.innerHTML = '<div style="color:var(--text-muted);">Unable to load recommendations.</div>';
+            }
+        }
+
+        function suggestRoute(lat, lng) {
+            if (!confirm('Open Google Maps to this drop-off area?')) return;
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,'_blank');
         }
 
         function loadVolunteerStats() {
@@ -542,7 +689,112 @@
             document.getElementById('food-helped').textContent = '12';
             document.getElementById('people-helped').textContent = '480';
             document.getElementById('volunteer-rating').textContent = '4.8';
-            document.getElementById('hours-volunteered').textContent = '36';
+            // set a sensible default until green credits are computed
+            const gc = document.getElementById('green-credits');
+            if (gc) gc.textContent = '0';
+        }
+
+        // Compute Green Credits for volunteer: distance covered (km rounded) + floor(people_served/10)
+        async function loadGreenCredits() {
+            const displayEl = document.getElementById('green-credits');
+            const card = document.getElementById('greenCreditsCard');
+            const btn = document.getElementById('greenCreditsBtn');
+            if (!displayEl) return;
+
+            try {
+                displayEl.textContent = '...';
+                const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+                const reporterId = user.id || user.phone || user.name;
+
+                let reports = [];
+                let peopleServedTotal = 0;
+
+                // Try to get delivery_reports for this reporter (best-effort)
+                if (window.sb && typeof window.sb.from === 'function') {
+                    try {
+                        // Use .or to match multiple reporter_id possibilities; if reporterId missing this may return empty
+                        const orCond = `reporter_id.eq.${reporterId},reporter_id.eq.${user.phone}`;
+                        const { data: drData, error: drErr } = await window.sb.from('delivery_reports')
+                            .select('lat,lng,reported_at,reporter_id')
+                            .or(orCond)
+                            .order('reported_at', { ascending: true })
+                            .limit(1000);
+
+                        if (!drErr && Array.isArray(drData) && drData.length > 0) {
+                            reports = drData.map(r => ({ lat: parseFloat(r.lat), lng: parseFloat(r.lng), t: r.reported_at }));
+                        }
+                    } catch (e) {
+                        console.warn('delivery_reports fetch failed', e);
+                    }
+
+                    try {
+                        // Sum people_served from food_table where delivered_by matches user
+                        const orCond2 = `delivered_by.eq.${user.phone},delivered_by.eq.${user.id},delivered_by.eq.${user.name}`;
+                        const { data: fdData, error: fdErr } = await window.sb.from('food_table')
+                            .select('people_served')
+                            .or(orCond2)
+                            .eq('status', 'Delivered')
+                            .limit(1000);
+                        if (!fdErr && Array.isArray(fdData)) {
+                            peopleServedTotal = (fdData || []).reduce((s, r) => s + (parseInt(r.people_served) || 0), 0);
+                        }
+                    } catch (e) {
+                        console.warn('food_table people_served fetch failed', e);
+                    }
+                }
+
+                // Fallback to localStorage-collected delivery reports and feedback
+                if ((!reports || reports.length === 0)) {
+                    try {
+                        const localDr = JSON.parse(localStorage.getItem('delivery_reports') || '[]');
+                        if (Array.isArray(localDr) && localDr.length > 0) {
+                            reports = (localDr || []).filter(r => (r.reporter_id === reporterId || r.reporter_id === user.phone || !r.reporter_id)).map(r => ({ lat: parseFloat(r.lat), lng: parseFloat(r.lng), t: r.reported_at }));
+                        }
+                    } catch (e) { /* ignore */ }
+
+                    try {
+                        const localFb = JSON.parse(localStorage.getItem('foodbridge_feedback') || '[]');
+                        peopleServedTotal = (localFb || []).reduce((s, r) => s + (parseInt(r.people) || 0), peopleServedTotal);
+                    } catch (e) { /* ignore */ }
+                }
+
+                // Compute distance (sum of distances between consecutive reports) using Haversine
+                let totalKm = 0;
+                if (reports && reports.length > 1) {
+                    for (let i = 1; i < reports.length; i++) {
+                        const a = reports[i - 1];
+                        const b = reports[i];
+                        if (!a || !b || !a.lat || !b.lat) continue;
+                        totalKm += haversineKm(a.lat, a.lng, b.lat, b.lng);
+                    }
+                }
+
+                // Compute credits: distance km rounded + floor(peopleServedTotal / 10)
+                const credits = Math.round(totalKm) + Math.floor((peopleServedTotal || 0) / 10);
+                displayEl.textContent = credits.toString();
+
+                // Wire navigation to dummy.html
+                const goto = () => { window.location.href = 'dummy.html'; };
+                if (card) card.onclick = goto;
+                if (btn) btn.onclick = goto;
+
+            } catch (err) {
+                console.error('Error computing Green Credits', err);
+                displayEl.textContent = localStorage.getItem('greenCredits') || '0';
+                const goto = () => { window.location.href = 'dummy.html'; };
+                if (card) card.onclick = goto;
+                if (btn) btn.onclick = goto;
+            }
+        }
+
+        function haversineKm(lat1, lon1, lat2, lon2) {
+            function toRad(x) { return x * Math.PI / 180; }
+            const R = 6371; // km
+            const dLat = toRad(lat2 - lat1);
+            const dLon = toRad(lon2 - lon1);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
         }
 
         function logout() {
@@ -551,6 +803,106 @@
                 window.location.href = 'index.html';
             }
         }
+
+        // Report Location logic (non-destructive)
+        const reportBtn = document.getElementById('reportLocationBtn');
+        const reportModal = document.getElementById('reportModal');
+        const autoLocBtn = document.getElementById('autoLocBtn');
+        const manualShowBtn = document.getElementById('manualShowBtn');
+        const manualInputs = document.getElementById('manualInputs');
+        const submitManual = document.getElementById('submitManual');
+        const cancelReport = document.getElementById('cancelReport');
+
+        reportBtn && reportBtn.addEventListener('click', () => {
+            reportModal.style.display = 'flex';
+        });
+
+        cancelReport && cancelReport.addEventListener('click', () => {
+            reportModal.style.display = 'none';
+            manualInputs.style.display = 'none';
+            submitManual.style.display = 'none';
+        });
+
+        manualShowBtn && manualShowBtn.addEventListener('click', () => {
+            manualInputs.style.display = 'block';
+            submitManual.style.display = 'inline-block';
+        });
+
+        autoLocBtn && autoLocBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert('Geolocation not supported in this browser');
+                return;
+            }
+            autoLocBtn.disabled = true;
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                // Ask for optional donation id
+                const donationId = prompt('Enter donation ID to attach location (optional). Leave blank to save as a separate report.');
+
+                try {
+                    if (donationId) {
+                        // Update food_table with delivery coords reported by volunteer (non-destructive addition)
+                        const { error } = await window.sb.from('food_table')
+                            .update({ delivery_lat: lat, delivery_lng: lng, delivery_reported_by: 'volunteer' })
+                            .eq('id', donationId);
+
+                        if (error) throw error;
+                        alert('Location saved to donation. Thank you!');
+                    } else {
+                        // Insert into delivery_reports for later NGO confirmation
+                        const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+                        const { error } = await window.sb.from('delivery_reports')
+                            .insert([{ reporter_id: user.id || user.phone || user.name || 'unknown', reporter_type: 'volunteer', lat, lng }]);
+                        if (error) throw error;
+                        alert('Location recorded. NGO will confirm delivery.');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('Error saving location. See console for details.');
+                } finally {
+                    autoLocBtn.disabled = false;
+                    reportModal.style.display = 'none';
+                }
+            }, (err) => {
+                autoLocBtn.disabled = false;
+                alert('Unable to retrieve location: ' + err.message);
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        });
+
+        submitManual && submitManual.addEventListener('click', async () => {
+            const donationId = document.getElementById('foodIdInput').value.trim();
+            const lat = parseFloat(document.getElementById('latInput').value.trim());
+            const lng = parseFloat(document.getElementById('lngInput').value.trim());
+
+            if (!lat || !lng) {
+                alert('Please provide valid latitude and longitude');
+                return;
+            }
+
+            try {
+                if (donationId) {
+                    const { error } = await window.sb.from('food_table')
+                        .update({ delivery_lat: lat, delivery_lng: lng, delivery_reported_by: 'volunteer' })
+                        .eq('id', donationId);
+                    if (error) throw error;
+                    alert('Location saved to donation.');
+                } else {
+                    const user = JSON.parse(localStorage.getItem('currentUser')) || {};
+                    const { error } = await window.sb.from('delivery_reports')
+                        .insert([{ reporter_id: user.id || user.phone || user.name || 'unknown', reporter_type: 'volunteer', lat, lng }]);
+                    if (error) throw error;
+                    alert('Location recorded.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error saving location.');
+            } finally {
+                reportModal.style.display = 'none';
+                manualInputs.style.display = 'none';
+                submitManual.style.display = 'none';
+            }
+        });
     </script>
 
 </body>

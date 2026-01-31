@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Rewards Store</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #00C853;
+            --primary-dark: #009624;
+            --accent: #B9F6CA;
+            --bg-dark: #0D1117;
+            --card-bg: rgba(22, 27, 34, 0.7);
+            --card-border: rgba(48, 54, 61, 0.8);
+            --text-main: #FFFFFF;
+            --text-muted: #8B949E;
+            --app-width: 480px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(0, 200, 83, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 150, 255, 0.1) 0%, transparent 40%);
+        }
+
+        /* Container imitating a mobile app */
+        .app-container {
+            width: 100%;
+            max-width: var(--app-width);
+            background: rgba(13, 17, 23, 0.6);
+            backdrop-filter: blur(20px);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 40px;
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #B9F6CA 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-pill {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Balance Card */
+        .balance-card {
+            margin: 0 20px 30px;
+            background: linear-gradient(135deg, rgba(0, 200, 83, 0.2) 0%, rgba(0, 100, 50, 0.2) 100%);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 10px 40px -10px rgba(0, 200, 83, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .balance-label {
+            font-size: 14px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .balance-amount {
+            font-size: 56px;
+            font-weight: 800;
+            margin: 10px 0;
+            color: #fff;
+            text-shadow: 0 4px 20px rgba(0, 200, 83, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .leaf-icon {
+            font-size: 0.6em;
+            color: var(--primary);
+            vertical-align: super;
+        }
+
+        /* Section Title */
+        .section-title {
+            margin: 0 24px 16px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Rewards Grid */
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            padding: 0 20px 40px;
+            overflow-y: auto;
+        }
+
+        .reward-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reward-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Hover Effect for Desktop (simulated on tap) */
+        .reward-card:hover {
+            border-color: rgba(0, 200, 83, 0.5);
+            background: rgba(22, 27, 34, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .reward-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--text-main);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .reward-card:hover .reward-icon {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .reward-details {
+            flex: 1;
+        }
+
+        .reward-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .reward-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .reward-cost {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            background: rgba(0, 200, 83, 0.1);
+            padding: 4px 10px;
+            border-radius: 10px;
+        }
+
+        /* Redeem Button (Hidden initially, appears on click logic) */
+        .redeem-btn {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        /* Pulse Animation for Success */
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(0, 200, 83, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 200, 83, 0);
+            }
+        }
+
+        .redeem-success {
+            animation: pulse-green 1s;
+            border-color: var(--primary);
+            background: rgba(0, 200, 83, 0.1);
+        }
+
+        /* Modal */
+        #successModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #161B22;
+            border: 1px solid var(--primary);
+            padding: 40px 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+            box-shadow: 0 0 50px rgba(0, 200, 83, 0.3);
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #successModal.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            color: black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 30px var(--primary);
+        }
+
+        .modal-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 14px 0;
+            width: 100%;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+
+        .modal-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <h1>Rewards</h1>
+            </div>
+            <div class="user-pill">
+                <i class="fas fa-user-astronaut"></i>
+                <span id="userName">Volunteer</span>
+            </div>
+        </header>
+
+        <!-- Balance Section -->
+        <div class="balance-card">
+            <div class="balance-label">Current Balance</div>
+            <div class="balance-amount">
+                <span id="currentBalance">850</span><span class="leaf-icon"><i class="fas fa-leaf"></i></span>
+            </div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7);">Keep volunteering to earn more!</div>
+        </div>
+
+        <!-- Redemption Section -->
+        <div class="section-title">
+            <i class="fas fa-ticket-alt" style="color: var(--primary);"></i> Travel Rewards
+        </div>
+
+        <div class="rewards-grid">
+            <!-- Metro Card -->
+            <div class="reward-card" onclick="redeemReward('Metro Pass', 200, this)">
+                <div class="reward-icon">
+                    <i class="fas fa-subway"></i>
+                </div>
+                <div class="reward-details">
+                    <div class="reward-name">Metro Day Pass</div>
+                    <div class="reward-desc">Unlimited travel for 24 hours on all lines.</div>
+                    <div class="reward-cost">
+                        200 <i class="fas fa-leaf" style="font-size: 10px;"></i>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+            </div>
+
+            <!-- MTC Bus Card -->
+            <div class="reward-card" onclick="redeemReward('Bus Ticket', 100, this)">
+                <div class="reward-icon">
+                    <i class="fas fa-bus"></i>
+                </div>
+                <div class="reward-details">
+                    <div class="reward-name">MTC Bus Ticket</div>
+                    <div class="reward-desc">Single trip ticket valid for any AC/Non-AC bus.</div>
+                    <div class="reward-cost">
+                        100 <i class="fas fa-leaf" style="font-size: 10px;"></i>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+            </div>
+
+            <!-- Coming Soon -->
+            <div class="reward-card" style="opacity: 0.5; cursor: not-allowed;">
+                <div class="reward-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="reward-details">
+                    <div class="reward-name">Movie Vouchers</div>
+                    <div class="reward-desc">Coming soon to the store.</div>
+                    <div class="reward-cost">
+                        500 <i class="fas fa-leaf" style="font-size: 10px;"></i>
+                    </div>
+                </div>
+                <i class="fas fa-lock" style="color: var(--text-muted);"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h2 style="margin-bottom: 10px;">Redeemed!</h2>
+            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+                You successfully redeemed <strong style="color: white;" id="redeemedItem">Item</strong>.<br>
+                The voucher code has been sent to your email.
+            </p>
+            <div
+                style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; font-family: monospace; letter-spacing: 2px; color: var(--primary);">
+                GRN-<span id="voucherCode">8X29</span>
+            </div>
+            <button class="modal-btn" onclick="closeModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <script>
+        // Mock State
+        let balance = 850;
+
+        // Elements
+        const balanceEl = document.getElementById('currentBalance');
+        const modal = document.getElementById('successModal');
+        const redeemedItemEl = document.getElementById('redeemedItem');
+        const voucherCodeCodeEl = document.getElementById('voucherCode');
+
+        function updateBalanceDisplay() {
+            // Animate number count
+            const start = parseInt(balanceEl.innerText);
+            const end = balance;
+            const duration = 500;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Ease out cubic
+                const ease = 1 - Math.pow(1 - progress, 3);
+
+                const current = Math.floor(start + (end - start) * ease);
+                balanceEl.innerText = current;
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        function redeemReward(itemName, cost, cardElement) {
+            if (balance < cost) {
+                alert("Not enough Green Credits! Keep volunteering! 🌱");
+                return;
+            }
+
+            // Deduct balance
+            balance -= cost;
+
+            // Visual feedback on card
+            cardElement.classList.add('redeem-success');
+            setTimeout(() => {
+                cardElement.classList.remove('redeem-success');
+            }, 1000);
+
+            // Update balance
+            updateBalanceDisplay();
+
+            // Prepare Modal
+            redeemedItemEl.innerText = itemName;
+            voucherCodeCodeEl.innerText = Math.random().toString(36).substring(2, 6).toUpperCase();
+
+            // Show Modal with delay for effect
+            setTimeout(() => {
+                modal.style.display = 'flex';
+                // Trigger reflow
+                void modal.offsetWidth;
+                modal.classList.add('show');
+            }, 600);
+        }
+
+        function closeModal() {
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+    </script>
+</body>
+
+</html>
