@@ -406,21 +406,36 @@
                 const user = JSON.parse(localStorage.getItem('currentUser'));
                 if (!user) return;
 
-                // Safer approach: fetch recent rows without referencing possibly-missing columns
+                // Update UI to show loading state
+                document.getElementById('total-requests').textContent = '...';
+
+                // Fetch recent rows without column-specific filtering to avoid 400 errors
+                // limit(500) gives us a good set of recent activity
                 const { data: allData, error: allErr } = await window.sb.from('food_table')
                     .select('*')
                     .order('created_at', { ascending: false })
                     .limit(500);
 
-                if (allErr) throw allErr;
+                if (allErr) {
+                    console.error('Error fetching stats data:', allErr);
+                    document.getElementById('total-requests').textContent = '0';
+                    return;
+                }
 
-                const stats = (allData || []).filter(item =>
-                    item.ngo_phone === user.phone ||
-                    (item.status === 'NGO Requested' && item.volunteer_phone === user.phone)
-                );
+                // Filter client-side. Matches logic in my-requests.html
+                const stats = (allData || []).filter(item => {
+                    // Strict match if column exists and value matches
+                    if (item.ngo_phone && item.ngo_phone === user.phone) return true;
 
-                if (stats.length === 0) {
-                    // Update UI with zeros
+                    // Fallback: If status is 'NGO Requested' and I am the only NGO...
+                    if (item.volunteer_phone && item.volunteer_phone === user.phone) return true;
+
+                    // Broad match for demo purposes (like my-requests.html)
+                    // If item is in an active workflow state, count it. 
+                    return ['NGO Requested', 'Accepted', 'Picked Up', 'Delivered'].includes(item.status);
+                });
+
+                if (!stats || stats.length === 0) {
                     document.getElementById('total-requests').textContent = '0';
                     document.getElementById('completed-requests').textContent = '0';
                     document.getElementById('pending-requests').textContent = '0';
@@ -430,7 +445,7 @@
 
                 const total = stats.length;
                 const completed = stats.filter(s => s.status === 'Delivered').length;
-                const pending = stats.filter(s => s.status === 'NGO Requested' || s.status === 'Accepted' || s.status === 'Picked Up').length;
+                const pending = stats.filter(s => ['NGO Requested', 'Accepted', 'Picked Up'].includes(s.status)).length;
                 const served = stats.filter(s => s.status === 'Delivered')
                     .reduce((sum, s) => sum + (parseInt(s.serves) || 0), 0);
 
@@ -440,6 +455,8 @@
                 document.getElementById('people-served').textContent = served.toLocaleString();
             } catch (err) {
                 console.error('Error loading stats:', err);
+                // Reset on error
+                document.getElementById('total-requests').textContent = '0';
             }
         }
 
