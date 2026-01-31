@@ -6,217 +6,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <title>Track Donation — Annadaan</title>
 
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
 
   <style>
-    /* --- Global Styles from index.css --- */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-    :root {
-      --primary: #2D6A4F;
-      --primary-light: #40916C;
-      --primary-dark: #1B4332;
-      --secondary: #52B788;
-      --accent: #B7E4C7;
-      --background: #F8FAF9;
-      --surface: #FFFFFF;
-      --text-main: #1A1C1E;
-      --text-muted: #64748B;
-      --error: #EF4444;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-      --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 20px;
-      --radius-full: 9999px;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--background);
-      color: var(--text-main);
-      line-height: 1.5;
+      background: #F8FAFC;
     }
 
     .container {
       max-width: 480px;
       margin: 0 auto;
+      background: white;
       min-height: 100vh;
-      position: relative;
-      background: var(--surface);
-      box-shadow: var(--shadow-premium);
-    }
-
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      margin-bottom: 16px;
-      transition: all 0.2s ease;
-    }
-
-    .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px 24px;
-      border-radius: var(--radius-md);
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-      width: 100%;
-      text-decoration: none;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid var(--primary);
-      color: var(--primary);
-    }
-
-    .animate-fade-in {
-      animation: fadeIn 0.4s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: var(--shadow-xl);
     }
 
     .status-header {
+      padding: 24px 20px;
       background: white;
-      color: var(--text-main);
-      padding: 16px 20px;
-      border-bottom: 1px solid #F1F5F9;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
+      border-bottom: 1px solid var(--border);
     }
 
-    .status-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--gray);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 12px;
+      transition: var(--transition);
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+      transform: translateX(-4px);
+    }
+
+    .status-badge-lg {
+      padding: 6px 16px;
       border-radius: 20px;
-      margin-top: 24px;
-      box-shadow: var(--shadow-md);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .timeline {
       position: relative;
-      padding-left: 32px;
-      margin-top: 24px;
+      padding-left: 40px;
+      margin: 32px 0;
     }
 
     .timeline::before {
       content: '';
       position: absolute;
-      left: 7px;
-      top: 5px;
-      bottom: 5px;
-      width: 2px;
+      left: 11px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
       background: #E2E8F0;
+      border-radius: 4px;
     }
 
     .timeline-item {
       position: relative;
-      margin-bottom: 32px;
+      margin-bottom: 40px;
     }
 
     .timeline-dot {
       position: absolute;
-      left: -32px;
-      width: 16px;
-      height: 16px;
+      left: -40px;
+      width: 25px;
+      height: 25px;
       border-radius: 50%;
       background: white;
       border: 3px solid #E2E8F0;
-      z-index: 2;
+      transition: var(--transition);
+      z-index: 10;
     }
 
     .timeline-item.active .timeline-dot {
       border-color: var(--primary);
       background: var(--primary);
-      box-shadow: 0 0 0 4px var(--accent);
+      box-shadow: 0 0 0 6px var(--primary-light);
+    }
+
+    .timeline-item.active::after {
+      content: '';
+      position: absolute;
+      left: -29px;
+      top: 0;
+      bottom: -40px;
+      width: 3px;
+      background: var(--primary);
+      z-index: 1;
+    }
+
+    .timeline-item:last-child.active::after {
+      display: none;
     }
 
     .timeline-content {
-      background: white;
-      padding: 12px 16px;
-      border-radius: 12px;
-      border: 1px solid #F1F5F9;
+      padding: 4px 0;
     }
 
     .timeline-content h4 {
-      font-size: 15px;
+      font-size: 16px;
+      font-weight: 600;
       margin-bottom: 4px;
+      color: #94A3B8;
+    }
+
+    .timeline-item.active h4 {
+      color: var(--dark);
     }
 
     .timeline-content p {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin: 0;
+      font-size: 14px;
+      color: var(--gray);
+    }
+
+    .volunteer-card {
+      background: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .volunteer-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      color: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
     }
   </style>
 </head>
 
 <body>
-  <div class="container" style="background: var(--background);">
+  <div class="container">
     <div class="status-header">
-      <button onclick="location.href='donor-home.html'"
-        style="background:none; border:none; color:var(--text-main); cursor:pointer; margin-bottom:12px; display:flex; align-items:center; gap:4px; font-weight:500;">
-        ← Back
-      </button>
-      <h3>Donation Tracking</h3>
-      <p style="opacity: 0.8; font-size: 14px;">Real-time update on your shared meal</p>
+      <a href="donor-home.html" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+      <h2 style="font-weight: 700; letter-spacing: -0.01em;">Donation Status</h2>
     </div>
 
-    <div style="padding: 0 20px;">
+    <div style="padding: 24px;">
       <div id="foodContent">
-        <div style="text-align: center; padding: 100px 0;">Loading...</div>
+        <div class="spinner"></div>
       </div>
 
       <div id="timelineContent" class="timeline"></div>
 
-      <!-- Popup removed per user request -->
-
-      <div id="actions" style="margin-top: 24px; padding-bottom: 40px;"></div>
+      <div id="actions" style="margin-top: 32px; padding-bottom: 48px;"></div>
     </div>
   </div>
 
@@ -235,92 +193,202 @@
       if (error || !food) {
         console.error(error);
         document.getElementById("foodContent").innerHTML = `
-          <div class="card" style="margin-top: 40px; text-align: center;">
+          <div class="card" style="text-align: center;">
+            <i class="fas fa-search-minus" style="font-size: 3rem; color: #E2E8F0; margin-bottom: 16px;"></i>
             <h3>Donation not found</h3>
-            <button class="btn btn-primary" style="margin-top: 16px;" onclick="location.href='donor-home.html'">Go Back</button>
+            <button class="btn btn-primary" style="margin-top: 24px; width: 100%;" onclick="location.href='donor-home.html'">Go Back</button>
           </div>`;
         return;
       }
 
       const foodContent = document.getElementById("foodContent");
       foodContent.innerHTML = `
-        <img src="${food.photo_url || 'https://via.placeholder.com/400/F1F5F9/2D6A4F?text=No+Photo'}" class="status-image">
-        <div class="card glass" style="margin-top: 20px;">
-          <div style="display: flex; justify-content: space-between; align-items: start;">
-            <div>
-              <h4 style="font-size: 18px; color: var(--primary-dark);">${food.food_type}</h4>
-              <p style="font-size: 14px; color: var(--text-muted);">Serves ${food.serves} people</p>
-            </div>
-            <span class="status-pill active" style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">${food.status}</span>
-          </div>
-          <hr style="opacity: 0.05; margin: 16px 0;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div>
-              <label style="margin-bottom: 2px;">Fresh for</label>
-              <div style="font-weight:600; font-size: 14px;">${food.valid_hours || 0} hours</div>
-            </div>
-            <div>
-              <label style="margin-bottom: 2px;">Posted</label>
-              <div style="font-weight:600; font-size: 14px;">${new Date(food.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-            </div>
+        <div style="position: relative;">
+          <img src="${food.photo_url || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1470&auto=format&fit=crop'}" style="width: 100%; height: 220px; object-fit: cover; border-radius: 20px; margin-bottom: 24px; box-shadow: var(--shadow-lg);">
+          <div style="position: absolute; top: 12px; right: 12px;">
+             <span class="status-badge status-${getStatusClass(food.status)}">${food.status}</span>
           </div>
         </div>
+
+        <div class="card" style="padding: 20px;">
+          <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">${food.food_type}</h3>
+          <div style="display: flex; gap: 20px; color: var(--gray); font-size: 14px; font-weight: 600;">
+             <span><i class="fas fa-users" style="color: var(--primary);"></i> Serves ${food.serves}</span>
+             <span><i class="fas fa-clock" style="color: var(--primary);"></i> Fresh: ${food.valid_hours || 0}h</span>
+          </div>
+        </div>
+
+        ${food.volunteer_phone ? `
+            <div class="volunteer-card animate-fade-in">
+                <div class="volunteer-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <h4 style="font-size: 14px; text-transform: uppercase; color: var(--primary-dark); letter-spacing: 0.05em; font-weight: 700;">Volunteer Assigned</h4>
+                    <p style="font-weight: 600; margin-top: 2px;">Contact: ${food.volunteer_phone}</p>
+                    <a href="tel:${food.volunteer_phone}" style="display: inline-block; margin-top: 8px; color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px;">
+                        <i class="fas fa-phone-alt"></i> Call Volunteer
+                    </a>
+                </div>
+            </div>
+        ` : ''}
       `;
 
+      // Update Back Link based on user type
+      const user = JSON.parse(localStorage.getItem('currentUser') || localStorage.getItem('donor'));
+      const backLink = document.querySelector('.back-link');
+      if (user) {
+        if (user.type === 'ngo') {
+          backLink.href = 'my-requests.html';
+          backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to My Requests';
+        } else if (user.type === 'volunteer') {
+          backLink.href = 'my-volunteering.html';
+          backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Volunteering';
+        }
+      }
+
       // Timeline Logic
-      const stages = ['Posted', 'Volunteer Assigned', 'Picked Up', 'Delivered'];
-      const currentIdx = stages.indexOf(food.status);
+      const stages = [
+        { name: 'Posted', label: 'Donation shared with the community', keys: ['Posted'] },
+        { name: 'NGO Requested', label: 'An NGO has requested this food', keys: ['NGO Requested'] },
+        { name: 'Volunteer Assigned', label: 'A volunteer is on the way', keys: ['Volunteer Assigned', 'Accepted'] },
+        { name: 'Picked Up', label: 'Food is in transit', keys: ['Picked Up'] },
+        { name: 'Delivered', label: 'Food has been delivered', keys: ['Delivered'] }
+      ];
+
+      // Map current status to stage index
+      let currentIdx = -1;
+      const currentStatus = food.status;
+
+      // Find the highest stage reached
+      stages.forEach((stage, idx) => {
+        if (stage.keys.includes(currentStatus)) {
+          currentIdx = idx;
+        }
+      });
+
+      // If status isn't explicitly in keys, try to find by string match or sequence
+      if (currentIdx === -1) {
+        if (currentStatus === 'Delivered') currentIdx = 4;
+        else if (currentStatus === 'Picked Up') currentIdx = 3;
+        else if (currentStatus === 'Accepted' || currentStatus === 'Volunteer Assigned') currentIdx = 2;
+        else if (currentStatus === 'NGO Requested') currentIdx = 1;
+        else currentIdx = 0;
+      }
+
       const timelineContent = document.getElementById("timelineContent");
       timelineContent.innerHTML = "";
 
       stages.forEach((stage, idx) => {
-        const isPast = idx <= currentIdx;
+        const isPast = idx < currentIdx;
+        const isCurrent = idx === currentIdx;
+        const isActiveOrPast = idx <= currentIdx;
+
         timelineContent.innerHTML += `
-          <div class="timeline-item ${isPast ? 'active' : ''}">
+          <div class="timeline-item ${isActiveOrPast ? 'active' : ''}">
             <div class="timeline-dot"></div>
             <div class="timeline-content">
-              <h4>${stage}</h4>
-              <p>${isPast ? 'Task completed successfully' : 'Awaiting completion'}</p>
+              <h4>${stage.name}</h4>
+              <p>${isCurrent ? 'Current' : (isPast ? 'Completed' : 'Awaiting')}: ${stage.label}</p>
             </div>
           </div>
         `;
       });
 
-      if (food.status === 'Delivered') {
-        // document.getElementById("successMsg").style.display = "block";
-        document.getElementById("actions").style.display = "none";
-      } else {
-        renderActions(food.status);
-      }
+      renderActions(food.status);
+    }
+
+    function getStatusClass(status) {
+      if (status === 'Volunteer Assigned') return 'accepted';
+      if (status === 'Picked Up') return 'picked';
+      if (status === 'Delivered') return 'completed';
+      return 'pending';
     }
 
     async function updateStatus(newStatus) {
-      const { error } = await window.sb.from('food_table')
-        .update({ status: newStatus })
-        .eq('id', foodId);
+      if (confirm(`Mark this donation as ${newStatus}?`)) {
+        const btn = event.target;
+        const oldText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
 
-      if (error) {
-        console.error(error);
-        return alert("Error updating status");
+        const { error } = await window.sb.from('food_table')
+          .update({ status: newStatus })
+          .eq('id', foodId);
+
+        if (error) {
+          console.error(error);
+          btn.disabled = false;
+          btn.innerHTML = oldText;
+          return alert("Error updating status");
+        }
+        loadStatus();
       }
-      location.reload();
     }
 
     function renderActions(status) {
       const actions = document.getElementById("actions");
       actions.innerHTML = "";
 
-      if (status === "Posted") {
-        actions.innerHTML = `<button class="btn btn-primary" onclick="updateStatus('Volunteer Assigned')">Simulate Volunteer Assignment</button>`;
-      }
-      else if (status === "Volunteer Assigned") {
-        actions.innerHTML = `<button class="btn btn-primary" onclick="updateStatus('Picked Up')">Simulate Pickup</button>`;
-      }
-      else if (status === "Picked Up") {
-        actions.innerHTML = `<button class="btn btn-primary" onclick="updateStatus('Delivered')">Simulate Delivery</button>`;
+      // Get user context
+      const user = JSON.parse(localStorage.getItem('currentUser') || localStorage.getItem('donor'));
+      if (!user) return;
+
+      if (user.type === 'donor') {
+        if (status === "Volunteer Assigned" || status === "Accepted" || status === "NGO Requested") {
+          actions.innerHTML = `
+              <button class="btn btn-primary" onclick="updateStatus('Picked Up')" style="width: 100%;">
+                  <i class="fas fa-truck-pickup"></i> Confirm Food Picked Up
+              </button>
+              <p style="text-align: center; font-size: 13px; color: var(--gray); margin-top: 12px; font-weight: 500;">
+                  Click this once the ${status === 'NGO Requested' ? 'NGO' : 'Volunteer'} arrives and picks up the food.
+              </p>
+          `;
+        }
+      } else if (user.type === 'volunteer') {
+        if (status === 'Accepted' || status === 'Volunteer Assigned') {
+          actions.innerHTML = `
+              <div class="card" style="padding: 16px; background: #F8FAFC; border: none; text-align: center; font-size: 13px; color: var(--gray); width: 100%;">
+                  <i class="fas fa-clock"></i> Waiting for Donor to confirm Pickup
+              </div>
+          `;
+        } else if (status === 'Picked Up') {
+          actions.innerHTML = `
+              <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
+                  <i class="fas fa-check-circle"></i> Mark as Delivered
+              </button>
+          `;
+        }
+      } else if (user.type === 'ngo') {
+        if (status === 'NGO Requested') {
+          actions.innerHTML = `
+              <div class="card" style="padding: 16px; background: #F8FAFC; border: none; text-align: center; font-size: 13px; color: var(--gray); width: 100%;">
+                  <i class="fas fa-clock"></i> Waiting for Donor to confirm Pickup
+              </div>
+          `;
+        } else if (status === 'Picked Up') {
+          actions.innerHTML = `
+              <button class="btn btn-primary" onclick="updateStatus('Delivered')" style="width: 100%;">
+                  <i class="fas fa-check-circle"></i> Confirm Delivery Received
+              </button>
+          `;
+        }
       }
 
-      actions.innerHTML += `<button class="btn btn-outline" style="margin-top: 12px;" onclick="location.href='donor-home.html'">Back to Dashboard</button>`;
+      if (status === "Delivered") {
+        actions.innerHTML = `
+            <div class="card" style="background: var(--grad-primary); color: white; border: none; text-align: center;">
+                <i class="fas fa-heart" style="font-size: 2rem; margin-bottom: 12px;"></i>
+                <h3 style="margin-bottom: 4px;">Mission Accomplished!</h3>
+                <p style="opacity: 0.9;">The food has reached those in need. ${user.type === 'donor' ? 'Thank you for your donation!' : ''}</p>
+            </div>
+          `;
+      }
+
+      const backHome = user.type === 'ngo' ? 'ngo-dashboard.html' : (user.type === 'volunteer' ? 'volunteer-dashboard.html' : 'donor-home.html');
+      actions.innerHTML += `<a href="${backHome}" class="btn btn-secondary" style="width: 100%; margin-top: 16px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-home"></i> Back to Dashboard
+      </a>`;
     }
 
     loadStatus();

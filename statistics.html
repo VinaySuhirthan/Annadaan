@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statistics & Reports - FoodBridge</title>
+    <title>Statistics & Reports - Annadaan</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <!-- Navigation Bar -->
@@ -24,8 +25,9 @@
         </div>
 
         <header class="header">
-            <h1><i class="fas fa-chart-line"></i> Impact Statistics & Reports</h1>
-            <p>Track your organization's impact and food distribution analytics</p>
+            <h1 style="font-weight: 700; letter-spacing: -0.01em;"><i class="fas fa-chart-line"></i> Impact Statistics
+            </h1>
+            <p style="font-weight: 400;">Track your organization's impact and food distribution analytics</p>
         </header>
 
         <!-- Summary Stats -->
@@ -66,7 +68,8 @@
                 <h3 style="color: var(--dark); margin-bottom: 20px;">
                     <i class="fas fa-chart-pie"></i> Distribution by Food Type
                 </h3>
-                <div id="food-type-chart" style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
+                <div id="food-type-chart"
+                    style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
                     <p>Chart will be displayed here</p>
                 </div>
             </div>
@@ -75,7 +78,8 @@
                 <h3 style="color: var(--dark); margin-bottom: 20px;">
                     <i class="fas fa-chart-bar"></i> Monthly Impact Trend
                 </h3>
-                <div id="monthly-trend-chart" style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
+                <div id="monthly-trend-chart"
+                    style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--gray);">
                     <p>Chart will be displayed here</p>
                 </div>
             </div>
@@ -86,16 +90,19 @@
             <h2 style="margin-bottom: 20px; color: var(--dark);">
                 <i class="fas fa-list-alt"></i> Detailed Statistics
             </h2>
-            
+
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                 <!-- Emergency Distribution -->
                 <div>
                     <h4 style="color: var(--dark); margin-bottom: 15px;">
-                        <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Emergency Distributions
+                        <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i> Emergency
+                        Distributions
                     </h4>
-                    <div style="background: #FEF3C7; padding: 15px; border-radius: 8px;">
-                        <div style="font-size: 2rem; font-weight: 700; color: #92400E; text-align: center;" id="emergency-count">0</div>
-                        <p style="text-align: center; color: #92400E; margin-top: 5px;">Emergency Requests</p>
+                    <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #92400E; text-align: center;"
+                            id="emergency-count">0</div>
+                        <p style="text-align: center; color: #92400E; margin-top: 5px; font-weight: 500;">Emergency
+                            Requests</p>
                     </div>
                 </div>
 
@@ -104,7 +111,8 @@
                     <h4 style="color: var(--dark); margin-bottom: 15px;">
                         <i class="fas fa-crown" style="color: var(--warning);"></i> Top Restaurants
                     </h4>
-                    <div id="top-restaurants" style="background: var(--light); padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                    <div id="top-restaurants"
+                        style="background: var(--light); padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
                         <p style="color: var(--gray); text-align: center;">Loading...</p>
                     </div>
                 </div>
@@ -114,7 +122,8 @@
                     <h4 style="color: var(--dark); margin-bottom: 15px;">
                         <i class="fas fa-map-marker-alt" style="color: var(--danger);"></i> Top Distribution Areas
                     </h4>
-                    <div id="top-areas" style="background: var(--light); padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
+                    <div id="top-areas"
+                        style="background: var(--light); padding: 15px; border-radius: 8px; max-height: 200px; overflow-y: auto;">
                         <p style="color: var(--gray); text-align: center;">Loading...</p>
                     </div>
                 </div>
@@ -157,13 +166,13 @@
 
     <script src="script.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const user = checkAuth();
             if (!user || user.type !== 'ngo') {
                 window.location.href = 'index.html';
                 return;
             }
-            
+
             loadStatistics();
         });
 
@@ -171,19 +180,19 @@
             const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
             const feedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
             const currentUser = getCurrentUser();
-            
+
             // Filter data for current NGO
             const ngoRequests = requests.filter(req => req.ngoId === currentUser.id);
             const ngoFeedback = feedback.filter(fb => fb.ngoId === currentUser.id);
-            
+
             // Calculate summary statistics
             const completedRequests = ngoRequests.filter(req => req.status === 'completed').length;
             const emergencyRequests = ngoRequests.filter(req => req.emergency).length;
-            
+
             let totalPeopleServed = 0;
             let totalRating = 0;
             let ratingCount = 0;
-            
+
             ngoFeedback.forEach(fb => {
                 totalPeopleServed += fb.peopleServed || 0;
                 if (fb.rating) {
@@ -191,23 +200,23 @@
                     ratingCount++;
                 }
             });
-            
+
             // Estimate food collected (simplified)
             const estimatedFood = completedRequests * 25; // Assume 25kg per distribution
-            
+
             // Update summary stats
             document.getElementById('total-distributions').textContent = completedRequests;
             document.getElementById('total-people-served').textContent = totalPeopleServed.toLocaleString();
             document.getElementById('total-food-collected').textContent = estimatedFood + ' kg';
             document.getElementById('avg-restaurant-rating').textContent = ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : '0.0';
             document.getElementById('emergency-count').textContent = emergencyRequests;
-            
+
             // Load top restaurants
             loadTopRestaurants(ngoRequests, ngoFeedback);
-            
+
             // Load distribution areas
             loadTopAreas(ngoFeedback);
-            
+
             // Load recent feedback
             loadRecentFeedback(ngoFeedback);
         }
@@ -216,11 +225,11 @@
             // Count distributions per restaurant
             const restaurantCounts = {};
             const restaurantRatings = {};
-            
+
             feedback.forEach(fb => {
                 if (fb.restaurant) {
                     restaurantCounts[fb.restaurant] = (restaurantCounts[fb.restaurant] || 0) + 1;
-                    
+
                     // Calculate average rating
                     if (!restaurantRatings[fb.restaurant]) {
                         restaurantRatings[fb.restaurant] = { total: 0, count: 0 };
@@ -229,24 +238,24 @@
                     restaurantRatings[fb.restaurant].count += fb.rating ? 1 : 0;
                 }
             });
-            
+
             // Sort restaurants by count
             const topRestaurants = Object.entries(restaurantCounts)
-                .sort(([,a], [,b]) => b - a)
+                .sort(([, a], [, b]) => b - a)
                 .slice(0, 5);
-            
+
             const container = document.getElementById('top-restaurants');
-            
+
             if (topRestaurants.length === 0) {
                 container.innerHTML = '<p style="color: var(--gray); text-align: center;">No restaurant data</p>';
                 return;
             }
-            
+
             container.innerHTML = topRestaurants.map(([restaurant, count], index) => {
-                const avgRating = restaurantRatings[restaurant] 
+                const avgRating = restaurantRatings[restaurant]
                     ? (restaurantRatings[restaurant].total / restaurantRatings[restaurant].count).toFixed(1)
                     : 'N/A';
-                
+
                 return `
                     <div style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                         <div>
@@ -266,25 +275,25 @@
         function loadTopAreas(feedback) {
             // Count distributions by area
             const areaCounts = {};
-            
+
             feedback.forEach(fb => {
                 if (fb.distributedArea) {
                     areaCounts[fb.distributedArea] = (areaCounts[fb.distributedArea] || 0) + 1;
                 }
             });
-            
+
             // Sort areas by count
             const topAreas = Object.entries(areaCounts)
-                .sort(([,a], [,b]) => b - a)
+                .sort(([, a], [, b]) => b - a)
                 .slice(0, 5);
-            
+
             const container = document.getElementById('top-areas');
-            
+
             if (topAreas.length === 0) {
                 container.innerHTML = '<p style="color: var(--gray); text-align: center;">No area data</p>';
                 return;
             }
-            
+
             container.innerHTML = topAreas.map(([area, count], index) => `
                 <div style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                     <div>
@@ -299,12 +308,12 @@
 
         function loadRecentFeedback(feedback) {
             const container = document.getElementById('recent-feedback');
-            
+
             // Sort feedback by date (newest first)
             const recentFeedback = [...feedback]
                 .sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt))
                 .slice(0, 3);
-            
+
             if (recentFeedback.length === 0) {
                 container.innerHTML = `
                     <p style="color: var(--gray); text-align: center; padding: 20px;">
@@ -313,7 +322,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = recentFeedback.map(fb => `
                 <div style="background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -353,14 +362,14 @@
             const currentUser = getCurrentUser();
             const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
             const feedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
-            
+
             const ngoRequests = requests.filter(req => req.ngoId === currentUser.id);
             const ngoFeedback = feedback.filter(fb => fb.ngoId === currentUser.id);
-            
+
             let timePeriod = '';
             let filteredData = ngoFeedback;
-            
-            switch(type) {
+
+            switch (type) {
                 case 'monthly':
                     timePeriod = 'Last 30 Days';
                     const monthAgo = new Date();
@@ -380,14 +389,14 @@
                     filteredData = ngoFeedback.filter(fb => new Date(fb.submittedAt) >= yearAgo);
                     break;
             }
-            
+
             // Calculate report data
             const totalDistributions = filteredData.length;
             const totalPeopleServed = filteredData.reduce((sum, fb) => sum + (fb.peopleServed || 0), 0);
-            const avgRating = filteredData.length > 0 
+            const avgRating = filteredData.length > 0
                 ? (filteredData.reduce((sum, fb) => sum + parseInt(fb.rating || 0), 0) / filteredData.length).toFixed(1)
                 : 0;
-            
+
             // Create report content
             const reportContent = `
                 FoodBridge Impact Report
@@ -423,24 +432,25 @@
                 Thank you for making a difference!
                 =================================
             `;
-            
+
             // Show report
             alert(reportContent);
             showAlert(`${type.charAt(0).toUpperCase() + type.slice(1)} report generated!`, 'success');
-            
+
             // In a real app, this would generate a PDF or CSV file
         }
 
         function calculateImpactScore(feedback) {
             if (feedback.length === 0) return 'N/A';
-            
+
             const totalPeople = feedback.reduce((sum, fb) => sum + (fb.peopleServed || 0), 0);
             const avgRating = feedback.reduce((sum, fb) => sum + parseInt(fb.rating || 0), 0) / feedback.length;
-            
+
             // Simple impact score calculation
             const score = Math.min(100, Math.round((totalPeople / 10) + (avgRating * 10)));
             return `${score}/100`;
         }
     </script>
 </body>
+
 </html>

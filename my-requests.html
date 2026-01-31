@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>My Requests — Annadaan</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
 
     <style>
         /* --- Global Styles from index.css --- */
@@ -153,11 +155,11 @@
         }
 
         .header h1 {
-            font-size: clamp(24px, 5vw, 32px);
-            font-weight: 800;
-            margin-bottom: 8px;
+            font-size: clamp(24px, 5vw, 30px);
+            font-weight: 700;
+            margin-bottom: 6px;
             color: #1a1a1a;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
         }
 
         .header h1 span {
@@ -170,7 +172,7 @@
         .header p {
             font-size: 14px;
             color: #64748b;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         /* Filter Section */
@@ -242,9 +244,10 @@
         }
 
         .request-header h3 {
-            font-size: 18px;
+            font-size: 17px;
+            font-weight: 600;
             color: #1a1a1a;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .request-meta {
@@ -311,7 +314,7 @@
 
         .detail-box p {
             color: #1a1a1a;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         .emergency-box {
@@ -355,7 +358,7 @@
             gap: 8px;
             padding: 12px 20px;
             border-radius: 12px;
-            font-weight: 600;
+            font-weight: 500;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
@@ -516,8 +519,21 @@
         let currentUser = null;
 
         document.addEventListener('DOMContentLoaded', function () {
-            currentUser = checkAuth ? checkAuth() : null;
-            if (!currentUser || currentUser.type !== 'ngo') {
+            // Robust auth check - matching dashboard pattern
+            const userStr = localStorage.getItem('currentUser');
+            if (!userStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(userStr);
+                if (currentUser.type !== 'ngo') {
+                    window.location.href = 'index.html';
+                    return;
+                }
+            } catch (e) {
+                console.error('Auth check failed:', e);
                 window.location.href = 'index.html';
                 return;
             }
@@ -525,38 +541,64 @@
             loadMyRequests();
         });
 
-        function loadMyRequests() {
+        async function loadMyRequests() {
             const container = document.getElementById('requests-container');
-            const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
+            container.innerHTML = '<div class="spinner"></div>';
 
-            // Filter requests for current NGO
-            allRequests = requests.filter(req => req.ngoId === currentUser.id);
+            try {
+                // Fetch from Supabase
+                // Try fetching with ngo_phone, if it fails, the column likely doesn't exist
+                let { data, error } = await window.sb.from('food_table')
+                    .select('*')
+                    .eq('ngo_phone', currentUser.phone)
+                    .order('created_at', { ascending: false });
 
-            if (allRequests.length === 0) {
-                container.innerHTML = `
-          <div class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <h3>No Requests Yet</h3>
-            <p>You haven't made any food requests yet.</p>
-            <a href="view-food.html" class="btn btn-primary">
-              <i class="fas fa-utensils"></i> Request Food Now
-            </a>
-          </div>
-        `;
-                return;
+                if (error && error.message.includes('ngo_phone')) {
+                    console.warn('ngo_phone column missing, falling back to in-memory filter');
+                    // Fallback: Fetch all and filter in JS (less efficient but prevents crash)
+                    const { data: allData, error: allErr } = await window.sb.from('food_table')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (allErr) throw allErr;
+
+                    // Try to finding it in volunteer_phone as fallback if status is NGO Requested
+                    data = allData.filter(item =>
+                        item.ngo_phone === currentUser.phone ||
+                        (item.status === 'NGO Requested' && item.volunteer_phone === currentUser.phone)
+                    );
+                } else if (error) {
+                    throw error;
+                }
+
+                allRequests = data || [];
+
+                if (allRequests.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No Requests Yet</h3>
+                            <p>You haven't made any food requests yet.</p>
+                            <a href="view-food.html" class="btn btn-primary">
+                                <i class="fas fa-utensils"></i> Request Food Now
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                displayRequests(allRequests);
+            } catch (err) {
+                console.error('Error loading requests:', err);
+                container.innerHTML = `<div class="empty-state"><h3>Error: ${err.message}</h3></div>`;
             }
-
-            // Sort by date (newest first)
-            allRequests.sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
-
-            displayRequests(allRequests);
         }
 
         function displayRequests(requests) {
             const container = document.getElementById('requests-container');
 
             container.innerHTML = requests.map(request => {
-                const requestDate = new Date(request.requestDate);
+                const requestDate = new Date(request.created_at || request.requestDate);
                 const formattedDate = requestDate.toLocaleDateString('en-US', {
                     weekday: 'short',
                     month: 'short',
@@ -569,34 +611,34 @@
           <div class="request-card glass">
             <div class="request-header">
               <div>
-                <h3>${request.restaurant}</h3>
+                <h3>${request.donor_type || 'Donor'}</h3>
                 <div class="request-meta">
                   <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
-                  <span><i class="fas fa-map-marker-alt"></i> ${request.distance || 'N/A'}</span>
+                  <span><i class="fas fa-map-marker-alt"></i> ${request.distance || 'Near you'}</span>
                 </div>
               </div>
-              <span class="status-badge status-${request.status}">
+              <span class="status-badge status-${request.status.toLowerCase().replace(' ', '-')}">
                 <i class="fas fa-${getRequestIcon(request.status)}"></i>
-                ${request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                ${request.status}
               </span>
             </div>
             
             <div class="request-details">
               <div class="detail-box">
                 <label>Food Type</label>
-                <p>${request.foodType}</p>
+                <p>${request.food_type}</p>
               </div>
               <div class="detail-box">
                 <label>Quantity</label>
-                <p>${request.quantity}</p>
+                <p>${request.serves} people</p>
               </div>
               <div class="detail-box">
                 <label>Emergency</label>
-                <p>${request.emergency ? 'Yes' : 'No'}</p>
+                <p>${request.status === 'Emergency' ? 'Yes' : 'No'}</p>
               </div>
               <div class="detail-box">
                 <label>Location</label>
-                <p>${request.location || 'N/A'}</p>
+                <p>${request.address || 'N/A'}</p>
               </div>
             </div>
             
@@ -615,32 +657,12 @@
             ` : ''}
             
             <div class="request-actions">
-              ${request.status === 'pending' ? `
-                <button onclick="cancelRequest('${request.id}')" class="btn btn-danger">
-                  <i class="fas fa-times"></i> Cancel
-                </button>
-              ` : ''}
-              
-              ${request.status === 'accepted' ? `
-                <button onclick="schedulePickup('${request.id}')" class="btn btn-primary">
-                  <i class="fas fa-calendar-alt"></i> Schedule Pickup
-                </button>
-              ` : ''}
-              
-              ${request.status === 'picked' ? `
-                <button onclick="completeDelivery('${request.id}')" class="btn btn-primary">
-                  <i class="fas fa-check-circle"></i> Mark Delivered
-                </button>
-              ` : ''}
-              
-              ${request.status === 'completed' ? `
-                <button onclick="giveFeedback('${request.id}')" class="btn btn-secondary">
-                  <i class="fas fa-star"></i> Give Feedback
-                </button>
-              ` : ''}
+              <a href="food-status.html?id=${request.id}" class="btn btn-primary" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
+                <i class="fas fa-chart-line"></i> Track Status
+              </a>
               
               <button onclick="viewRequestDetails('${request.id}')" class="btn btn-secondary">
-                <i class="fas fa-info-circle"></i> Details
+                <i class="fas fa-info-circle"></i> View Card Details
               </button>
             </div>
           </div>
@@ -649,14 +671,13 @@
         }
 
         function getRequestIcon(status) {
-            switch (status) {
-                case 'pending': return 'clock';
-                case 'accepted': return 'check-circle';
-                case 'picked': return 'truck-pickup';
-                case 'completed': return 'check-double';
-                case 'cancelled': return 'times-circle';
-                default: return 'info-circle';
-            }
+            const s = status ? status.toLowerCase() : '';
+            if (s.includes('requested')) return 'clock';
+            if (s.includes('accepted') || s.includes('scheduled')) return 'check-circle';
+            if (s.includes('picked')) return 'truck-pickup';
+            if (s.includes('delivered') || s.includes('completed')) return 'check-double';
+            if (s.includes('cancelled')) return 'times-circle';
+            return 'info-circle';
         }
 
         function filterRequests() {
@@ -666,16 +687,20 @@
 
             let filteredRequests = [...allRequests];
 
-            // Filter by status
+            // Filter by status (case insensitive matching)
             if (statusFilter !== 'all') {
-                filteredRequests = filteredRequests.filter(req => req.status === statusFilter);
+                filteredRequests = filteredRequests.filter(req => {
+                    const s = req.status.toLowerCase();
+                    if (statusFilter === 'pending') return s.includes('requested');
+                    return s.includes(statusFilter);
+                });
             }
 
             // Filter by time
             if (timeFilter !== 'all') {
                 const now = new Date();
                 filteredRequests = filteredRequests.filter(req => {
-                    const requestDate = new Date(req.requestDate);
+                    const requestDate = new Date(req.created_at);
 
                     switch (timeFilter) {
                         case 'week':
@@ -695,10 +720,10 @@
             // Sort
             switch (sortFilter) {
                 case 'newest':
-                    filteredRequests.sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
+                    filteredRequests.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
                     break;
                 case 'oldest':
-                    filteredRequests.sort((a, b) => new Date(a.requestDate) - new Date(b.requestDate));
+                    filteredRequests.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
                     break;
                 case 'status':
                     filteredRequests.sort((a, b) => a.status.localeCompare(b.status));
@@ -708,39 +733,59 @@
             displayRequests(filteredRequests);
         }
 
-        function cancelRequest(requestId) {
+        async function cancelRequest(requestId) {
             if (!confirm('Are you sure you want to cancel this request?')) return;
 
-            const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
-            const requestIndex = requests.findIndex(req => req.id === requestId);
+            try {
+                // Update Supabase status back to Posted (available)
+                const { error } = await window.sb.from('food_table')
+                    .update({
+                        status: 'Posted',
+                        ngo_phone: null,
+                        requested_at: null
+                    })
+                    .eq('id', requestId);
 
-            if (requestIndex !== -1) {
-                requests[requestIndex].status = 'cancelled';
-                localStorage.setItem('foodbridge_requests', JSON.stringify(requests));
-
-                // Update food status back to available
-                const foodItems = JSON.parse(localStorage.getItem('foodbridge_food')) || [];
-                const foodIndex = foodItems.findIndex(f => f.id === requests[requestIndex].foodId);
-                if (foodIndex !== -1) {
-                    foodItems[foodIndex].status = 'available';
-                    localStorage.setItem('foodbridge_food', JSON.stringify(foodItems));
-                }
+                if (error) throw error;
 
                 alert('Request cancelled successfully');
                 loadMyRequests();
+            } catch (err) {
+                console.error('Error cancelling request:', err);
+                alert('Error: ' + err.message);
             }
         }
 
-        function schedulePickup(requestId) {
-            alert('Schedule pickup feature - redirect to pickup-schedule.html');
-        }
+        async function updateRequestStatus(requestId, newStatus) {
+            try {
+                const { error } = await window.sb.from('food_table')
+                    .update({ status: newStatus })
+                    .eq('id', requestId);
 
-        function completeDelivery(requestId) {
-            alert('Complete delivery feature - redirect to delivery-feedback.html');
+                if (error) throw error;
+
+                alert(`Status successfully updated to: ${newStatus}`);
+                loadMyRequests();
+            } catch (err) {
+                console.error('Error updating status:', err);
+                alert('Error: ' + err.message);
+            }
         }
 
         function giveFeedback(requestId) {
-            alert('Give feedback feature - redirect to delivery-feedback.html');
+            const request = allRequests.find(req => req.id === requestId);
+            if (request) {
+                // Save current request for feedback page
+                localStorage.setItem('currentRequest', JSON.stringify({
+                    id: request.id,
+                    restaurant: request.donor_type || 'Donor',
+                    foodType: request.food_type,
+                    quantity: `${request.serves} people`,
+                    ngoId: currentUser.id,
+                    ngoName: currentUser.name
+                }));
+                window.location.href = 'delivery-feedback.html';
+            }
         }
 
         function viewRequestDetails(requestId) {
@@ -751,30 +796,22 @@
 📋 Request Details
 =================
 
-Restaurant: ${request.restaurant}
-Food Type: ${request.foodType}
-Quantity: ${request.quantity}
+Donor: ${request.donor_type || 'Unknown'}
+Food Type: ${request.food_type}
+Quantity: ${request.serves} people
 
-📍 Location: ${request.location}
-📏 Distance: ${request.distance}
+📍 Location: ${request.address || 'N/A'}
+📏 Distance: ${request.distance || 'Near you'}
 
-⏰ Requested: ${new Date(request.requestDate).toLocaleString()}
+⏰ Requested: ${new Date(request.created_at).toLocaleString()}
 📊 Status: ${request.status}
 
-${request.emergency ? '🚨 EMERGENCY REQUEST' : ''}
-${request.emergencyReason ? `Reason: ${request.emergencyReason}` : ''}
-
-${request.pickupTime ? `🚚 Pickup: ${request.pickupTime}` : ''}
-${request.pickupPerson ? `👤 Pickup Person: ${request.pickupPerson}` : ''}
+${request.status === 'Emergency' ? '🚨 EMERGENCY REQUEST' : ''}
       `;
 
             alert(details);
         }
 
-        // Fallback for checkAuth if script.js is not loaded
-        function checkAuth() {
-            return null;
-        }
     </script>
 
 </body>

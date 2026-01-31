@@ -429,6 +429,21 @@
     <footer>ANNADAAN PROTOTYPE</footer>
   </div>
 
+  <script>
+    // Intelligent Redirect for Logged-in Users
+    (function () {
+      try {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+          if (user.type === 'ngo') window.location.href = 'ngo-dashboard.html';
+          else if (user.type === 'volunteer') window.location.href = 'volunteer-dashboard.html';
+          else if (user.type === 'donor') window.location.href = 'donor-home.html';
+        }
+      } catch (e) {
+        console.error('Redirect failed:', e);
+      }
+    })();
+  </script>
 </body>
 
 </html>

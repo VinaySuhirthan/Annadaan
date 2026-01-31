@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Feedback - FoodBridge</title>
+    <title>Delivery Feedback - Annadaan</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <div class="container">
         <!-- Navigation Bar -->
@@ -24,8 +25,9 @@
         </div>
 
         <header class="header">
-            <h1><i class="fas fa-comment-medical"></i> Delivery Feedback & Impact Tracking</h1>
-            <p>Share your experience and track the impact of food distribution</p>
+            <h1 style="font-weight: 700; letter-spacing: -0.01em;"><i class="fas fa-comment-medical"></i> Delivery
+                Feedback</h1>
+            <p style="font-weight: 400;">Share your experience and track food distribution impact</p>
         </header>
 
         <!-- Delivery Summary -->
@@ -38,12 +40,13 @@
             <h2 style="margin-bottom: 20px; color: var(--dark);">
                 <i class="fas fa-chart-line"></i> Impact Tracking
             </h2>
-            
+
             <form id="feedback-form">
                 <!-- Restaurant Rating -->
                 <div class="form-group">
                     <label><i class="fas fa-star"></i> Restaurant Rating *</label>
-                    <p style="color: var(--gray); margin-bottom: 10px;">How would you rate your experience with the restaurant?</p>
+                    <p style="color: var(--gray); margin-bottom: 10px;">How would you rate your experience with the
+                        restaurant?</p>
                     <div class="rating-stars">
                         <input type="radio" id="star5" name="rating" value="5">
                         <label for="star5" title="Excellent">★</label>
@@ -61,12 +64,16 @@
                 <!-- Distribution Details -->
                 <div class="form-group">
                     <label for="distributed-area"><i class="fas fa-map"></i> Distributed Area *</label>
-                    <input type="text" id="distributed-area" placeholder="Where was the food distributed? (e.g., Homeless shelter, Community center)" required>
+                    <input type="text" id="distributed-area"
+                        placeholder="Where was the food distributed? (e.g., Homeless shelter, Community center)"
+                        required>
                 </div>
 
                 <div class="form-group">
-                    <label for="food-type-distributed"><i class="fas fa-utensils"></i> Type of Food Distributed *</label>
-                    <input type="text" id="food-type-distributed" placeholder="What type of food was distributed?" required>
+                    <label for="food-type-distributed"><i class="fas fa-utensils"></i> Type of Food Distributed
+                        *</label>
+                    <input type="text" id="food-type-distributed" placeholder="What type of food was distributed?"
+                        required>
                 </div>
 
                 <div class="form-group">
@@ -82,18 +89,22 @@
                 <!-- Demographics -->
                 <div class="form-group">
                     <label><i class="fas fa-user-friends"></i> Demographics Served</label>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px;">
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px;">
                         <div>
                             <input type="number" id="children-count" min="0" placeholder="Children">
-                            <label style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Children</label>
+                            <label
+                                style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Children</label>
                         </div>
                         <div>
                             <input type="number" id="adults-count" min="0" placeholder="Adults">
-                            <label style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Adults</label>
+                            <label
+                                style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Adults</label>
                         </div>
                         <div>
                             <input type="number" id="seniors-count" min="0" placeholder="Seniors">
-                            <label style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Seniors</label>
+                            <label
+                                style="display: block; text-align: center; font-size: 0.9rem; color: var(--gray);">Seniors</label>
                         </div>
                     </div>
                 </div>
@@ -122,24 +133,30 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="distribution-challenges"><i class="fas fa-exclamation-circle"></i> Challenges Faced</label>
-                    <textarea id="distribution-challenges" rows="3" placeholder="Any challenges faced during distribution?"></textarea>
+                    <label for="distribution-challenges"><i class="fas fa-exclamation-circle"></i> Challenges
+                        Faced</label>
+                    <textarea id="distribution-challenges" rows="3"
+                        placeholder="Any challenges faced during distribution?"></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="success-stories"><i class="fas fa-smile"></i> Success Stories</label>
-                    <textarea id="success-stories" rows="3" placeholder="Any positive stories or impact observed?"></textarea>
+                    <textarea id="success-stories" rows="3"
+                        placeholder="Any positive stories or impact observed?"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="improvement-suggestions"><i class="fas fa-lightbulb"></i> Suggestions for Improvement</label>
-                    <textarea id="improvement-suggestions" rows="3" placeholder="How can we improve the food donation process?"></textarea>
+                    <label for="improvement-suggestions"><i class="fas fa-lightbulb"></i> Suggestions for
+                        Improvement</label>
+                    <textarea id="improvement-suggestions" rows="3"
+                        placeholder="How can we improve the food donation process?"></textarea>
                 </div>
 
                 <!-- Photos (conceptual) -->
                 <div class="form-group">
                     <label><i class="fas fa-camera"></i> Distribution Photos (Optional)</label>
-                    <div style="border: 2px dashed var(--border); border-radius: 10px; padding: 30px; text-align: center; color: var(--gray);">
+                    <div
+                        style="border: 2px dashed var(--border); border-radius: 10px; padding: 30px; text-align: center; color: var(--gray);">
                         <i class="fas fa-cloud-upload-alt fa-3x" style="margin-bottom: 15px;"></i>
                         <p>Upload photos of the distribution (if available)</p>
                         <p style="font-size: 0.9rem;">Note: This is a demo feature</p>
@@ -170,13 +187,13 @@
     <script>
         let currentRequest = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const user = checkAuth();
             if (!user || user.type !== 'ngo') {
                 window.location.href = 'index.html';
                 return;
             }
-            
+
             loadDeliveryData();
             setupFeedbackForm();
         });
@@ -184,7 +201,7 @@
         function loadDeliveryData() {
             currentRequest = JSON.parse(localStorage.getItem('currentRequest'));
             const container = document.getElementById('delivery-summary');
-            
+
             if (!currentRequest) {
                 container.innerHTML = `
                     <div class="alert alert-warning">
@@ -194,7 +211,7 @@
                 `;
                 return;
             }
-            
+
             container.innerHTML = `
                 <h3 style="color: var(--dark); margin-bottom: 15px;">
                     <i class="fas fa-truck"></i> Delivery Summary
@@ -235,38 +252,38 @@
                     </p>
                 </div>
             `;
-            
+
             // Set default delivery time to now
             const now = new Date();
             const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
             document.getElementById('delivery-time').value = localDateTime;
-            
+
             // Auto-populate food type
             document.getElementById('food-type-distributed').value = currentRequest.foodType;
         }
 
         function setupFeedbackForm() {
             const form = document.getElementById('feedback-form');
-            
-            form.addEventListener('submit', function(e) {
+
+            form.addEventListener('submit', function (e) {
                 e.preventDefault();
-                
+
                 // Validate required fields
                 const rating = document.querySelector('input[name="rating"]:checked');
                 const distributedArea = document.getElementById('distributed-area').value.trim();
                 const deliveryTime = document.getElementById('delivery-time').value;
                 const peopleServed = document.getElementById('people-served').value;
-                
+
                 if (!rating) {
                     showAlert('Please rate the restaurant', 'error');
                     return;
                 }
-                
+
                 if (!distributedArea || !deliveryTime || !peopleServed) {
                     showAlert('Please fill all required fields', 'error');
                     return;
                 }
-                
+
                 // Collect feedback data
                 const feedback = {
                     requestId: currentRequest.id,
@@ -290,23 +307,23 @@
                     ngoId: currentRequest.ngoId,
                     ngoName: currentRequest.ngoName
                 };
-                
+
                 // Save feedback
                 let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
                 allFeedback.push(feedback);
                 localStorage.setItem('foodbridge_feedback', JSON.stringify(allFeedback));
-                
+
                 // Update request status to completed
                 const requests = JSON.parse(localStorage.getItem('foodbridge_requests')) || [];
                 const requestIndex = requests.findIndex(req => req.id === currentRequest.id);
-                
+
                 if (requestIndex !== -1) {
                     requests[requestIndex].status = 'completed';
                     requests[requestIndex].completedAt = new Date().toISOString();
                     requests[requestIndex].feedback = feedback;
                     localStorage.setItem('foodbridge_requests', JSON.stringify(requests));
                 }
-                
+
                 // Show success message
                 const successMessage = `
                     🎉 Thank You for Your Feedback!
@@ -324,9 +341,9 @@
                     
                     📈 Your contribution has been recorded!
                 `;
-                
+
                 showAlert('Feedback submitted successfully!', 'success');
-                
+
                 setTimeout(() => {
                     alert(successMessage);
                     window.location.href = 'my-requests.html';
@@ -335,4 +352,5 @@
         }
     </script>
 </body>
+
 </html>

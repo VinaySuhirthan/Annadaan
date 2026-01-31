@@ -136,7 +136,7 @@
             color: #1a1a1a;
             text-decoration: none;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 20px;
             transition: all 0.2s;
         }
@@ -153,11 +153,11 @@
         }
 
         .header h1 {
-            font-size: clamp(24px, 5vw, 32px);
-            font-weight: 800;
-            margin-bottom: 8px;
+            font-size: clamp(24px, 5vw, 30px);
+            font-weight: 700;
+            margin-bottom: 6px;
             color: #1a1a1a;
-            letter-spacing: -1px;
+            letter-spacing: -0.5px;
         }
 
         .header h1 span {
@@ -170,7 +170,7 @@
         .header p {
             font-size: 14px;
             color: #64748b;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         /* Filter Section */
@@ -193,7 +193,7 @@
         .form-group label {
             display: block;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 500;
             margin-bottom: 6px;
             color: #64748b;
         }
@@ -633,6 +633,10 @@
         });
 
         function goBack() {
+            if (!currentUser) {
+                window.location.href = 'index.html';
+                return;
+            }
             if (currentUser.type === 'ngo') {
                 window.location.href = 'ngo-dashboard.html';
             } else {
@@ -1211,22 +1215,86 @@
             }
         }
 
-        function requestFood(foodId) {
-            alert('Request food feature - NGO functionality');
-        }
-
-        function volunteerHelp(foodId) {
+        // Unified Claim Logic - "Pakka Logic" for both NGOs and Volunteers
+        async function handleClaim(foodId, type) {
             const food = allFoodItems.find(f => f.id === foodId);
             if (!food) return;
 
-            const availability = prompt(`Volunteering to help with distribution from ${food.restaurant || 'this donor'}\n\nPlease specify your availability:\n(e.g., Today evening, Tomorrow morning, This week)`);
+            const isNGO = type === 'ngo';
+            const actionVerb = isNGO ? 'request' : 'volunteer for';
+            const statusTarget = isNGO ? 'NGO Requested' : 'Volunteer Assigned';
 
-            if (!availability || availability.trim() === '') {
-                alert('Volunteering cancelled');
+            const confirmMsg = `Do you want to ${actionVerb} this food for distribution?\n\nSource: ${food.donor_type || 'Donor'}\nLocation: ${food.address}\nServes: ${food.serves} people`;
+
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                // Update status in Supabase - Unifying the logic completely
+                const updateData = {
+                    status: statusTarget,
+                    accepted_at: new Date().toISOString()
+                };
+
+                // Add the appropriate contact column
+                if (isNGO) {
+                    updateData.ngo_phone = currentUser.phone;
+                } else {
+                    updateData.volunteer_phone = currentUser.phone;
+                }
+
+                const { error } = await window.sb.from('food_table')
+                    .update(updateData)
+                    .eq('id', foodId);
+
+                if (error) {
+                    console.error(`Error during ${type} claim:`, error);
+
+                    // Fallback: If ngo_phone is missing, try using volunteer_phone even for NGOs
+                    if (isNGO && error.message.includes('ngo_phone')) {
+                        const { error: error3 } = await window.sb.from('food_table')
+                            .update({
+                                status: statusTarget,
+                                accepted_at: new Date().toISOString(),
+                                volunteer_phone: currentUser.phone
+                            })
+                            .eq('id', foodId);
+
+                        if (!error3) {
+                            alert(`✅ Success! You have successfully requested this food.`);
+                            window.location.href = 'my-requests.html';
+                            return;
+                        }
+                    }
+
+                    const { error: error2 } = await window.sb.from('food_table').update({ status: statusTarget }).eq('id', foodId);
+                    if (error2) throw error2;
+                }
+
+                alert(`✅ Success! You have successfully ${isNGO ? 'requested' : 'volunteered for'} this food.`);
+
+                // Redirect to respective tracking page
+                window.location.href = isNGO ? 'my-requests.html' : 'my-volunteering.html';
+
+            } catch (err) {
+                console.error('Unified claim error:', err);
+                alert('An error occurred: ' + err.message);
+            }
+        }
+
+        async function requestFood(foodId) {
+            if (currentUser.type !== 'ngo') {
+                alert('Only NGOs can request food.');
                 return;
             }
+            await handleClaim(foodId, 'ngo');
+        }
 
-            alert(`✅ Thank you for volunteering!\n\nYour availability: ${availability}\n\nThe NGO will contact you if help is needed.`);
+        async function volunteerHelp(foodId) {
+            if (currentUser.type !== 'volunteer') {
+                alert('Only volunteers can accept food for delivery.');
+                return;
+            }
+            await handleClaim(foodId, 'volunteer');
         }
 
         // Fallback for checkAuth if script.js is not loaded

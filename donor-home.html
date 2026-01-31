@@ -6,8 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dashboard — Annadaan</title>
 
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+
   <style>
     .app-header {
       position: sticky;
@@ -22,32 +25,13 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
 
-    .app-header .title {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--primary-dark);
-    }
-
-    .menu-toggle {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      background: #F1F5F9;
-      cursor: pointer;
-    }
-
-    /* Sidebar Upgrade */
     .sidebar {
       position: fixed;
       top: 0;
       left: -280px;
       width: 280px;
       height: 100%;
-      background: var(--surface);
+      background: white;
       box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
       transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 1000;
@@ -56,44 +40,6 @@
 
     .sidebar.open {
       transform: translateX(280px);
-    }
-
-    .sidebar-header {
-      margin-bottom: 32px;
-    }
-
-    .sidebar-header .user-name {
-      font-size: 20px;
-      font-weight: 700;
-      display: block;
-    }
-
-    .sidebar-header .user-phone {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--text-main);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .nav-item:hover {
-      background: #F1F5F9;
-      color: var(--primary);
-    }
-
-    .nav-item.logout {
-      margin-top: auto;
-      color: var(--error);
     }
 
     .tabs-container {
@@ -109,11 +55,11 @@
       padding: 10px;
       text-align: center;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13px;
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.2s;
-      color: var(--text-muted);
+      color: var(--gray);
     }
 
     .tab.active {
@@ -122,16 +68,16 @@
       box-shadow: var(--shadow-sm);
     }
 
-    /* Food Feed Styles */
     .food-card {
       display: flex;
       gap: 16px;
       align-items: center;
+      padding: 16px !important;
     }
 
     .food-img-wrapper {
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
       border-radius: 16px;
       background: #F1F5F9;
       overflow: hidden;
@@ -148,181 +94,31 @@
       flex: 1;
     }
 
-    .food-info b {
-      font-size: 16px;
-      display: block;
-      margin-bottom: 4px;
-    }
-
     .status-pill {
       display: inline-block;
-      padding: 2px 10px;
+      padding: 4px 10px;
       border-radius: 20px;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      background: #E2E8F0;
-      color: #475569;
+      margin-top: 4px;
     }
 
-    .view-btn {
-      margin-top: 10px;
-      font-size: 13px;
-      color: var(--primary);
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* --- Global Styles from index.css --- */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-    :root {
-      --primary: #2D6A4F;
-      --primary-light: #40916C;
-      --primary-dark: #1B4332;
-      --secondary: #52B788;
-      --accent: #B7E4C7;
-      --background: #F8FAF9;
-      --surface: #FFFFFF;
-      --text-main: #1A1C1E;
-      --text-muted: #64748B;
-      --error: #EF4444;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-      --shadow-premium: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 20px;
-      --radius-full: 9999px;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: var(--background);
-      color: var(--text-main);
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      position: relative;
-      background: var(--surface);
-      box-shadow: var(--shadow-premium);
-    }
-
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(0, 0, 0, 0.04);
-      margin-bottom: 16px;
-      transition: all 0.2s ease;
-    }
-
-    .btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px 24px;
-      border-radius: var(--radius-md);
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: none;
-      width: 100%;
-      text-decoration: none;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-muted);
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 16px;
-      border-radius: var(--radius-sm);
-      border: 1.5px solid #E2E8F0;
-      font-family: inherit;
-      font-size: 15px;
-      transition: all 0.2s ease;
-      background: #F8FAFC;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px var(--accent);
-      background: white;
-    }
-
-    .animate-fade-in {
-      animation: fadeIn 0.4s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* --- End Global Styles --- */
     .fab {
       position: fixed;
       right: 24px;
       bottom: 24px;
       width: 60px;
       height: 60px;
-      background: var(--primary);
+      background: var(--grad-primary);
       color: white;
       border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 12px 24px rgba(45, 106, 79, 0.4);
+      box-shadow: 0 12px 24px rgba(16, 185, 129, 0.3);
       cursor: pointer;
-      transition: transform 0.2s;
       z-index: 90;
-    }
-
-    .fab:active {
-      transform: scale(0.9);
     }
 
     .overlay {
@@ -341,165 +137,83 @@
 </head>
 
 <body>
-
   <script>
     let donor = JSON.parse(localStorage.getItem("donor"));
     if (!donor) location.href = "login.html";
   </script>
 
-  <div class="container">
+  <div class="container"
+    style="max-width: 480px; padding: 0; background: white; min-height: 100vh; box-shadow: var(--shadow-xl);">
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+      <div class="sidebar-header" style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
         <div
-          style="width: 48px; height: 48px; background: #E2E8F0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748B; flex-shrink: 0;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
+          style="width: 48px; height: 48px; background: #f0fdf4; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+          <i class="fas fa-user"></i>
         </div>
         <div>
-          <span class="user-name" id="sideName"></span>
-          <span class="user-phone" id="sidePhone"></span>
+          <span style="font-weight: 700; display: block;" id="sideName"></span>
+          <span style="font-size: 12px; color: var(--gray);" id="sidePhone"></span>
         </div>
       </div>
-      <hr style="border: 0; border-top: 1px solid #E2E8F0; margin: 0 0 16px 0;">
-
-      <div class="nav-item" onclick="showDashboard()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-          <polyline points="9 22 9 12 15 12 15 22"></polyline>
-        </svg>
-        Home
-      </div>
-      <div class="nav-item" onclick="showProfile()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-          <circle cx="12" cy="7" r="4"></circle>
-        </svg>
-        Profile
-      </div>
-      <div class="nav-item logout" onclick="logout()" style="margin-top: 40px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-        Logout
-      </div>
+      <div class="nav-item" onclick="showDashboard()"><i class="fas fa-home"></i> Home</div>
+      <div class="nav-item" onclick="showProfile()"><i class="fas fa-user-circle"></i> Profile</div>
+      <div class="nav-item logout" onclick="logout()" style="margin-top: 40px; color: var(--danger);"><i
+          class="fas fa-sign-out-alt"></i> Logout</div>
     </div>
 
     <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
     <!-- HEADER -->
     <div class="app-header">
-      <div class="menu-toggle" onclick="openMenu()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </div>
-      <div class="title" id="pageTitle">Annadaan</div>
-      <div style="width: 40px;"></div> <!-- Spacer -->
+      <div onclick="openMenu()" style="cursor: pointer; color: var(--dark);"><i class="fas fa-bars fa-lg"></i></div>
+      <div style="font-weight: 700; font-size: 18px; letter-spacing: -0.01em;" id="pageTitle">Annadaan</div>
+      <div style="width: 24px;"></div>
     </div>
 
     <!-- TABS -->
     <div class="tabs-container" id="homeTabs">
-      <div class="tab active" id="tabListings" onclick="showListings()">My Donations</div>
-      <div class="tab" id="tabRequests" onclick="showRequests()">Live Requests</div>
+      <div class="tab active" id="tabActive" onclick="switchTab('active')">Active</div>
+      <div class="tab" id="tabHistory" onclick="switchTab('history')">History</div>
+      <div class="tab" id="tabRequests" onclick="switchTab('requests')">Requests</div>
     </div>
 
-    <!-- DASHBOARD / LISTINGS -->
-    <div class="content animate-fade-in" id="dashboardView" style="padding: 0 20px;">
-      <div id="emptyListings" style="text-align: center; padding: 40px 20px; color: #94A3B8;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
-          style="margin-bottom: 12px; opacity: 0.5;">
-          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
-          <path d="M3 6h18"></path>
-          <path d="M16 10a4 4 0 0 1-8 0"></path>
-        </svg>
-        <p>No food posted yet</p>
-      </div>
-      <div id="listings"></div>
+    <!-- MAIN VIEWS -->
+    <div id="activeView" class="animate-fade-in" style="padding: 0 20px;">
+      <div id="listingsActive"></div>
     </div>
 
-    <!-- REQUESTS VIEW -->
-    <div class="content animate-fade-in" id="requestsView" style="display:none; padding: 20px;">
-      <div class="card glass" style="text-align: center; color: var(--text-muted);">
-        <p>No requests yet.<br>Volunteer / NGO requests will appear here when live.</p>
+    <div id="historyView" class="animate-fade-in" style="display:none; padding: 0 20px;">
+      <div id="listingsHistory"></div>
+    </div>
+
+    <div id="requestsView" class="animate-fade-in" style="display:none; padding: 20px;">
+      <div class="card" style="text-align: center; color: var(--gray); border: 2px dashed var(--border);">
+        <p>No live requests from NGOs or volunteers at the moment.</p>
       </div>
     </div>
 
-    <!-- PROFILE VIEW -->
-    <div class="content animate-fade-in" id="profileView" style="display:none; padding: 20px;">
-      <div id="profileDisplay">
-        <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
-            <h4 style="font-size: 20px;">Account Settings</h4>
-            <button class="btn btn-outline" style="width: auto; padding: 8px 16px; font-size: 14px;"
-              onclick="toggleEditProfile(true)">Edit</button>
-          </div>
-          <div class="form-group"><label>Full Name</label>
-            <div id="pName" style="font-weight: 700; font-size: 18px;"></div>
-          </div>
-          <div class="form-group"><label>Phone</label>
-            <div id="pPhone" style="font-weight: 600;"></div>
-          </div>
-          <div class="form-group"><label>Email</label>
-            <div id="pEmail"></div>
-          </div>
-          <div class="form-group"><label>Member Since</label>
-            <div id="pSince"></div>
-          </div>
-          <hr style="opacity: 0.1; margin: 20px 0;">
-          <div class="form-group"><label>Emergency Contact</label>
-            <div id="pEmergency"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- EDIT PROFILE FORM -->
-      <div id="profileEdit" style="display: none;">
-        <div class="card glass">
-          <h4 style="font-size: 20px; margin-bottom: 24px;">Edit Profile</h4>
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="editName">
-          </div>
-          <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="editEmail">
-          </div>
-          <div class="form-group">
-            <label>Emergency Contact</label>
-            <input type="text" id="editEmergency">
-          </div>
-
-          <div style="display: flex; gap: 12px; margin-top: 32px;">
-            <button class="btn btn-outline" style="flex: 1;" onclick="toggleEditProfile(false)">Cancel</button>
-            <button class="btn btn-primary" style="flex: 2;" onclick="saveProfile()">Save Changes</button>
-          </div>
-        </div>
+    <!-- PROFILE VIEW (HIDDEN) -->
+    <div id="profileView" class="animate-fade-in" style="display:none; padding: 20px;">
+      <div class="card">
+        <h4 style="margin-bottom: 20px; font-weight: 700;">Profile Settings</h4>
+        <!-- Profile content simplified to focus on workflow -->
+        <p><strong>Name:</strong> <span id="pName"></span></p>
+        <p><strong>Phone:</strong> <span id="pPhone"></span></p>
+        <button class="btn btn-secondary" style="margin-top: 20px; width: 100%;" onclick="showDashboard()">Back to
+          Dashboard</button>
       </div>
     </div>
 
     <div class="fab" id="fab" onclick="location.href='add-food.html'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
+      <i class="fas fa-plus fa-lg"></i>
     </div>
   </div>
 
   <script>
+    let currentTab = 'active';
+    let allDonations = [];
+
     sideName.textContent = donor.name;
     sidePhone.textContent = donor.phone;
 
@@ -507,131 +221,83 @@
     function closeMenu() { sidebar.classList.remove("open"); overlay.classList.remove("show") }
     function logout() { localStorage.removeItem("donor"); location.href = "index.html" }
 
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      if (tab === 'active') document.getElementById('tabActive').classList.add('active');
+      if (tab === 'history') document.getElementById('tabHistory').classList.add('active');
+      if (tab === 'requests') document.getElementById('tabRequests').classList.add('active');
+
+      activeView.style.display = tab === 'active' ? 'block' : 'none';
+      historyView.style.display = tab === 'history' ? 'block' : 'none';
+      requestsView.style.display = tab === 'requests' ? 'block' : 'none';
+
+      renderDonations();
+    }
+
     function showProfile() {
       closeMenu();
       pageTitle.textContent = "Your Profile";
       homeTabs.style.display = "none";
-      dashboardView.style.display = "none";
+      activeView.style.display = "none";
+      historyView.style.display = "none";
       requestsView.style.display = "none";
       profileView.style.display = "block";
       fab.style.display = "none";
-      updateProfileDisplay();
+      pName.textContent = donor.name;
+      pPhone.textContent = donor.phone;
     }
+
     function showDashboard() {
       closeMenu();
       pageTitle.textContent = "Annadaan";
       homeTabs.style.display = "flex";
       profileView.style.display = "none";
-      requestsView.style.display = "none";
-      dashboardView.style.display = "block";
+      switchTab(currentTab);
       fab.style.display = "flex";
     }
 
-    function showListings() {
-      tabListings.classList.add("active");
-      tabRequests.classList.remove("active");
-      dashboardView.style.display = "block";
-      requestsView.style.display = "none";
-    }
-    function showRequests() {
-      tabRequests.classList.add("active");
-      tabListings.classList.remove("active");
-      dashboardView.style.display = "none";
-      requestsView.style.display = "block";
-    }
-
-    function updateProfileDisplay() {
-      pName.textContent = donor.name || "Not added";
-      pPhone.textContent = donor.phone || "Not added";
-      pEmail.textContent = donor.email || "Not added";
-      pEmergency.textContent = donor.emergency || "Not added";
-
-      if (!donor.createdAt) {
-        donor.createdAt = Date.now();
-        localStorage.setItem("donor", JSON.stringify(donor));
-      }
-      pSince.textContent =
-        new Date(donor.createdAt).toLocaleDateString(undefined, { month: "long", year: "numeric" });
-    }
-
-    function toggleEditProfile(editing) {
-      if (editing) {
-        document.getElementById("profileDisplay").style.display = "none";
-        document.getElementById("profileEdit").style.display = "block";
-        document.getElementById("editName").value = donor.name || "";
-        document.getElementById("editEmail").value = donor.email || "";
-        document.getElementById("editEmergency").value = donor.emergency || "";
-      } else {
-        document.getElementById("profileDisplay").style.display = "block";
-        document.getElementById("profileEdit").style.display = "none";
-      }
-    }
-
-    async function saveProfile() {
-      donor.name = document.getElementById("editName").value.trim();
-      donor.email = document.getElementById("editEmail").value.trim();
-      donor.emergency = document.getElementById("editEmergency").value.trim();
-
-      const { error } = await window.sb.from('donor_table')
-        .update({
-          name: donor.name,
-          email: donor.email,
-          emergency_contact: donor.emergency
-        })
-        .eq('phone', donor.phone);
-
-      if (error) {
-        console.error(error);
-        return alert("Error updating profile in database");
-      }
-
-      localStorage.setItem("donor", JSON.stringify(donor));
-      sideName.textContent = donor.name;
-      updateProfileDisplay();
-      toggleEditProfile(false);
-      alert("Profile updated successfully!");
-    }
-
-    async function loadFoodListings() {
+    async function loadDonations() {
       const { data, error } = await window.sb.from('food_table')
         .select('*')
         .eq('donor_phone', donor.phone)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error(error);
-        return;
-      }
-
-      listings.innerHTML = "";
-      if (data.length) {
-        emptyListings.style.display = "none";
-        data.forEach(f => {
-          const statusColor = f.status === 'Posted' ? 'var(--warning)' :
-            f.status === 'Picked Up' ? 'var(--success)' : 'var(--primary)';
-
-          listings.innerHTML += `
-        <div class="card food-card animate-fade-in">
-          <div class="food-img-wrapper">
-            <img src="${f.photo_url || 'https://via.placeholder.com/150/F1F5F9/2D6A4F?text=Food'}">
-          </div>
-          <div class="food-info">
-            <b>${f.food_type} • Serves ${f.serves}</b>
-            <span class="status-pill" style="color: white; background: ${statusColor}">${f.status}</span>
-            <div class="view-btn" onclick="location.href='food-status.html?id=${f.id}'">
-              Track Status
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </div>
-          </div>
-        </div>`;
-        });
-      } else {
-        emptyListings.style.display = "block";
-      }
+      if (error) return console.error(error);
+      allDonations = data || [];
+      renderDonations();
     }
 
-    updateProfileDisplay();
-    loadFoodListings();
-  </script>
+    function renderDonations() {
+      const activeContainer = document.getElementById("listingsActive");
+      const historyContainer = document.getElementById("listingsHistory");
 
+      const activeItems = allDonations.filter(d => d.status !== 'Delivered');
+      const historyItems = allDonations.filter(d => d.status === 'Delivered');
+
+      activeContainer.innerHTML = activeItems.length ? activeItems.map(d => renderCard(d)).join('') : '<div style="text-align: center; color: #94A3B8; padding: 40px;"><p>No active donations</p></div>';
+      historyContainer.innerHTML = historyItems.length ? historyItems.map(d => renderCard(d)).join('') : '<div style="text-align: center; color: #94A3B8; padding: 40px;"><p>No donation history</p></div>';
+    }
+
+    function renderCard(f) {
+      const statusClass = f.status === 'Posted' ? 'pending' : f.status === 'Picked Up' ? 'picked' : f.status === 'Delivered' ? 'completed' : 'accepted';
+
+      return `
+        <div class="card food-card animate-fade-in" onclick="location.href='food-status.html?id=${f.id}'">
+          <div class="food-img-wrapper">
+            <img src="${f.photo_url || 'https://images.unsplash.com/photo-1488459711612-97435f0f0980?auto=format&fit=crop&q=80&w=200'}">
+          </div>
+          <div class="food-info">
+            <div style="font-weight: 600; font-size: 15px;">${f.food_type}</div>
+            <div style="font-size: 12px; color: var(--gray); font-weight: 600;">Serves ${f.serves} • ${new Date(f.created_at).toLocaleDateString()}</div>
+            <div class="status-pill status-${statusClass}">${f.status}</div>
+          </div>
+          <i class="fas fa-chevron-right" style="color: #E2E8F0;"></i>
+        </div>`;
+    }
+
+    loadDonations();
+  </script>
 </body>
+
+</html>
