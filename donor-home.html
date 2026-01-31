@@ -175,7 +175,6 @@
     <div class="tabs-container" id="homeTabs">
       <div class="tab active" id="tabActive" onclick="switchTab('active')">Active</div>
       <div class="tab" id="tabHistory" onclick="switchTab('history')">History</div>
-      <div class="tab" id="tabRequests" onclick="switchTab('requests')">Requests</div>
     </div>
 
     <!-- MAIN VIEWS -->
@@ -187,9 +186,7 @@
       <div id="listingsHistory"></div>
     </div>
 
-    <div id="requestsView" class="animate-fade-in" style="display:none; padding: 20px;">
-      <div id="requestsList"></div>
-    </div>
+    <!-- Requests view removed; accept/reject moved into Active donation cards -->
 
     <!-- PROFILE VIEW (HIDDEN) -->
     <div id="profileView" class="animate-fade-in" style="display:none; padding: 20px;">
@@ -243,7 +240,6 @@
       homeTabs.style.display = "none";
       activeView.style.display = "none";
       historyView.style.display = "none";
-      requestsView.style.display = "none";
       profileView.style.display = "block";
       fab.style.display = "none";
       pName.textContent = donor.name;
@@ -285,6 +281,7 @@
       const statusClass = f.status === 'Picked Up' ? 'picked' : f.status === 'Delivered' ? 'completed' : 'accepted';
 
       const isAccepted = f.status === 'Accepted';
+      const isRequested = f.status === 'NGO Requested';
 
       return `
         <div class="card food-card animate-fade-in" onclick="location.href='food-status.html?id=${f.id}'">
@@ -296,13 +293,26 @@
             <div style="font-size: 12px; color: var(--gray); font-weight: 600;">Serves ${f.serves} • ${new Date(f.created_at).toLocaleDateString()}</div>
             <div class="status-pill status-${statusClass}">${f.status}</div>
             
-            ${isAccepted ? `
+            ${isRequested ? `
+              <div style="background: #F0FDF4; padding: 12px; border-radius: 12px; margin-top: 8px;">
+                <div style="font-size: 12px; font-weight: 600; color: var(--primary-dark); margin-bottom: 4px;"><i class="fas fa-hands-helping"></i> NGO Contact</div>
+                <div style="font-size: 14px; font-weight: 600; color: var(--dark);">${f.ngo_phone || 'NGO'}</div>
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                <button class="btn btn-primary" onclick="event.stopPropagation(); acceptRequest('${f.id}')" style="width: 100%;">
+                  <i class="fas fa-check"></i> Accept
+                </button>
+                <button class="btn btn-secondary" onclick="event.stopPropagation(); rejectRequest('${f.id}')" style="width: 100%; background: white; color: var(--danger); border-color: var(--danger);">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+              </div>
+            ` : isAccepted ? `
               <button class="btn btn-primary" onclick="event.stopPropagation(); confirmPickup('${f.id}')" style="margin-top: 12px; width: 100%; padding: 8px; font-size: 13px;">
                 <i class="fas fa-truck-pickup"></i> Confirm Pickup
               </button>
             ` : ''}
           </div>
-          ${!isAccepted ? '<i class="fas fa-chevron-right" style="color: #E2E8F0;"></i>' : ''}
+          ${!isAccepted && !isRequested ? '<i class="fas fa-chevron-right" style="color: #E2E8F0;"></i>' : ''}
         </div>`;
     }
 
@@ -325,68 +335,10 @@
 
     // Live Auto-Refresh
     setInterval(() => {
-      if (document.getElementById('requestsView').style.display !== 'none') {
-        loadRequests();
-      } else {
-        loadDonations();
-      }
+      loadDonations();
     }, 5000); // Check for updates every 5 seconds
 
-    async function loadRequests() {
-      const requestsContainer = document.getElementById('requestsList');
-
-      // Load donations with status "NGO Requested" for this donor
-      const { data, error } = await window.sb.from('food_table')
-        .select('*')
-        .eq('donor_phone', donor.phone)
-        .eq('status', 'NGO Requested')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error(error);
-        requestsContainer.innerHTML = '<div class="card" style="text-align: center; color: var(--gray);"><p>Error loading requests</p></div>';
-        return;
-      }
-
-      if (!data || data.length === 0) {
-        requestsContainer.innerHTML = '<div class="card" style="text-align: center; color: var(--gray); border: 2px dashed var(--border);"><p>No pending requests from NGOs</p></div>';
-        return;
-      }
-
-      requestsContainer.innerHTML = data.map(req => `
-        <div class="card animate-fade-in" style="margin-bottom: 16px; padding: 20px;">
-          <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-            <div class="food-img-wrapper" style="width: 80px; height: 80px; flex-shrink: 0;">
-              <img src="${req.photo_url || 'https://images.unsplash.com/photo-1488459711612-97435f0f0980?auto=format&fit=crop&q=80&w=200'}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
-            </div>
-            <div style="flex: 1;">
-              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">${req.food_type}</h3>
-              <p style="font-size: 13px; color: var(--gray); margin-bottom: 8px;">Serves ${req.serves} people</p>
-              <div class="status-pill status-pending" style="display: inline-block;">NGO Requested</div>
-            </div>
-          </div>
-          
-          <div style="background: #F0FDF4; padding: 12px; border-radius: 12px; margin-bottom: 16px;">
-            <div style="font-size: 12px; font-weight: 600; color: var(--primary-dark); margin-bottom: 4px;">
-              <i class="fas fa-hands-helping"></i> NGO Contact
-            </div>
-            <div style="font-size: 14px; font-weight: 600; color: var(--dark);">${req.ngo_phone || 'NGO'}</div>
-            <div style="font-size: 12px; color: var(--gray); margin-top: 4px;">
-              <i class="fas fa-clock"></i> Requested ${new Date(req.created_at).toLocaleString()}
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <button class="btn btn-primary" onclick="event.stopPropagation(); acceptRequest('${req.id}')" style="width: 100%;">
-              <i class="fas fa-check"></i> Accept Request
-            </button>
-            <button class="btn btn-secondary" onclick="event.stopPropagation(); rejectRequest('${req.id}')" style="width: 100%; background: white; color: var(--danger); border-color: var(--danger);">
-              <i class="fas fa-times"></i> Reject
-            </button>
-          </div>
-        </div>
-      `).join('');
-    }
+    
 
     async function acceptRequest(foodId) {
       if (!confirm('Accept this NGO request? The NGO will be notified to pick up the food.')) return;
@@ -402,7 +354,6 @@
       }
 
       alert('✅ Request accepted! NGO has been notified.');
-      loadRequests();
       loadDonations();
     }
 
@@ -423,7 +374,6 @@
       }
 
       alert('Request rejected. Food is now available for other NGOs.');
-      loadRequests();
       loadDonations();
     }
 
@@ -432,17 +382,11 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       if (tab === 'active') document.getElementById('tabActive').classList.add('active');
       if (tab === 'history') document.getElementById('tabHistory').classList.add('active');
-      if (tab === 'requests') document.getElementById('tabRequests').classList.add('active');
 
       activeView.style.display = tab === 'active' ? 'block' : 'none';
       historyView.style.display = tab === 'history' ? 'block' : 'none';
-      requestsView.style.display = tab === 'requests' ? 'block' : 'none';
 
-      if (tab === 'requests') {
-        loadRequests();
-      } else {
-        renderDonations();
-      }
+      renderDonations();
     }
 
     loadDonations();
