@@ -7,6 +7,68 @@
     <title>Delivery Feedback - Annadaan</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #E6E9EE;
+            width: 100%;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .location-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        @media (min-width: 480px) {
+            .location-controls {
+                flex-direction: row;
+            }
+        }
+
+        #locationStatus {
+            padding: 12px;
+            border: 1px solid #E6E9EE;
+            border-radius: 8px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--gray);
+            background: #f8fafc;
+        }
+
+        .button-container {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (min-width: 480px) {
+            .button-container {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -42,16 +104,15 @@
             </h2>
 
             <form id="feedback-form">
-                <p style="color:var(--gray); margin-bottom:8px;">Please provide the three required details below.</p>
+                <p style="color:var(--gray); margin-bottom:20px;">Please provide the three required details below.</p>
 
                 <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Delivery Location (current)</label>
-                    <div style="display:flex; gap:8px; margin-top:8px;">
-                        <button type="button" id="captureLocationBtn" class="btn btn-primary">Use Current
-                            Location</button>
-                        <div id="locationStatus"
-                            style="padding:8px 10px; border:1px solid #E6E9EE; border-radius:8px; min-width:140px; display:flex; align-items:center;">
-                            Not captured</div>
+                    <label><i class="fas fa-map-marker-alt"></i> Delivery Location *</label>
+                    <div class="location-controls">
+                        <button type="button" id="captureLocationBtn" class="btn btn-primary">
+                            <i class="fas fa-crosshairs"></i> Use Current Location
+                        </button>
+                        <div id="locationStatus">Not captured</div>
                     </div>
                     <input type="hidden" id="feedback-lat">
                     <input type="hidden" id="feedback-lng">
@@ -59,20 +120,19 @@
 
                 <div class="form-group">
                     <label for="people-served"><i class="fas fa-users"></i> Number of people served *</label>
-                    <input type="number" id="people-served" min="1" required
-                        style="padding:8px; border-radius:8px; border:1px solid #E6E9EE; width:100%;">
+                    <input type="number" id="people-served" min="1" required placeholder="e.g., 50">
                 </div>
 
                 <div class="form-group">
                     <label for="notes"><i class="fas fa-sticky-note"></i> Notes (optional)</label>
-                    <textarea id="notes" rows="3" placeholder="Any brief notes about delivery"
-                        style="padding:8px; border-radius:8px; border:1px solid #E6E9EE; width:100%;"></textarea>
+                    <textarea id="notes" rows="4" placeholder="Any brief notes about the delivery experience..."></textarea>
                 </div>
 
-                <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end;">
+                <div class="button-container">
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-paper-plane"></i> Submit Feedback
+                    </button>
                     <button type="button" id="cancelFeedback" class="btn btn-secondary">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-paper-plane"></i> Submit
-                        Feedback</button>
                 </div>
             </form>
         </div>
