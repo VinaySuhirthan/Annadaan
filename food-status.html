@@ -183,6 +183,66 @@
     const foodId = params.get("id");
     let currentFood = null;
 
+    async function getAssigneeContact(food) {
+      if (!food) return null;
+
+      if (food.volunteer_phone) {
+        const fallback = {
+          roleLabel: 'Volunteer Contact',
+          typeLabel: 'Volunteer',
+          phone: food.volunteer_phone,
+          name: 'Volunteer'
+        };
+
+        try {
+          const { data, error } = await window.sb.from('volunteer_table')
+            .select('name, phone')
+            .eq('phone', food.volunteer_phone)
+            .single();
+
+          if (error || !data) return fallback;
+          return {
+            roleLabel: 'Volunteer Contact',
+            typeLabel: 'Volunteer',
+            phone: data.phone || food.volunteer_phone,
+            name: data.name || 'Volunteer'
+          };
+        } catch (err) {
+          console.error('Error loading volunteer contact:', err);
+          return fallback;
+        }
+      }
+
+      if (food.ngo_phone) {
+        const fallback = {
+          roleLabel: 'NGO Contact',
+          typeLabel: 'NGO',
+          phone: food.ngo_phone,
+          name: 'NGO'
+        };
+
+        try {
+          const { data, error } = await window.sb.from('ngo_table')
+            .select('name, phone')
+            .eq('phone', food.ngo_phone)
+            .single();
+
+          if (error || !data) return fallback;
+          return {
+            roleLabel: 'NGO Contact',
+            typeLabel: 'NGO',
+            phone: data.phone || food.ngo_phone,
+            name: data.name || 'NGO'
+          };
+        } catch (err) {
+          console.error('Error loading NGO contact:', err);
+          return fallback;
+        }
+      }
+
+      return null;
+    }
+
     async function loadStatus() {
       if (!foodId) return showAlert("No donation ID provided", "error");
 
@@ -204,6 +264,8 @@
 
       currentFood = food;
 
+      const assigneeContact = await getAssigneeContact(food);
+
       const foodContent = document.getElementById("foodContent");
       foodContent.innerHTML = `
         <div style="position: relative;">
@@ -221,16 +283,17 @@
           </div>
         </div>
 
-        ${food.ngo_phone ? `
+        ${assigneeContact ? `
             <div class="volunteer-card animate-fade-in">
                 <div class="volunteer-icon">
                     <i class="fas fa-hands-helping"></i>
                 </div>
                 <div>
-                    <h4 style="font-size: 14px; text-transform: uppercase; color: var(--primary-dark); letter-spacing: 0.05em; font-weight: 700;">NGO Contact</h4>
-                    <p style="font-weight: 600; margin-top: 2px;">Phone: ${food.ngo_phone}</p>
-                    <a href="tel:${food.ngo_phone}" style="display: inline-block; margin-top: 8px; color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px;">
-                        <i class="fas fa-phone-alt"></i> Call NGO
+                    <h4 style="font-size: 14px; text-transform: uppercase; color: var(--primary-dark); letter-spacing: 0.05em; font-weight: 700;">${assigneeContact.roleLabel}</h4>
+                    <p style="font-weight: 700; margin-top: 2px;">${assigneeContact.name}</p>
+                    <p style="font-weight: 600; margin-top: 4px;">Phone: ${assigneeContact.phone}</p>
+                    <a href="tel:${assigneeContact.phone}" style="display: inline-block; margin-top: 8px; color: var(--primary); font-weight: 700; text-decoration: none; font-size: 13px;">
+                        <i class="fas fa-phone-alt"></i> Call ${assigneeContact.typeLabel}
                     </a>
                 </div>
             </div>

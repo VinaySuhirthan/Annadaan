@@ -499,11 +499,16 @@
           {
             event: '*',
             schema: 'public',
-            table: 'food_table',
-            filter: `donor_phone=eq.${donor.phone}`
+            table: 'food_table'
           },
-          () => {
-            loadDonations();
+          (payload) => {
+            const newRow = payload.new || {};
+            const oldRow = payload.old || {};
+            const belongsToDonor = newRow.donor_phone === donor.phone || oldRow.donor_phone === donor.phone;
+
+            if (belongsToDonor) {
+              loadDonations();
+            }
           }
         )
         .subscribe();

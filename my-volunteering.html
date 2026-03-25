@@ -335,11 +335,16 @@
                     {
                         event: '*',
                         schema: 'public',
-                        table: 'food_table',
-                        filter: `volunteer_phone=eq.${currentUser.phone}`
+                        table: 'food_table'
                     },
-                    () => {
-                        loadDeliveries();
+                    (payload) => {
+                        const newRow = payload.new || {};
+                        const oldRow = payload.old || {};
+                        const belongsToVolunteer = newRow.volunteer_phone === currentUser.phone || oldRow.volunteer_phone === currentUser.phone;
+
+                        if (belongsToVolunteer) {
+                            loadDeliveries();
+                        }
                     }
                 )
                 .subscribe();
