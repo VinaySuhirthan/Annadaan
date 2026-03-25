@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Feedback - Annadaan</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .form-group {
@@ -138,14 +138,14 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
     <script>
         let currentRequest = null;
 
         document.addEventListener('DOMContentLoaded', function () {
             const user = checkAuth();
             if (!user || user.type !== 'ngo') {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
                 return;
             }
 

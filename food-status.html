@@ -161,7 +161,7 @@
 <body>
   <div class="container">
     <div class="status-header">
-      <a href="donor-home.html" class="back-link">
+      <a href="donor/donor-home.html" class="back-link">
         <i class="fas fa-arrow-left"></i> Back to Dashboard
       </a>
       <h2 style="font-weight: 700; letter-spacing: -0.01em;">Donation Status</h2>
@@ -257,7 +257,7 @@
           <div class="card" style="text-align: center;">
             <i class="fas fa-search-minus" style="font-size: 3rem; color: #E2E8F0; margin-bottom: 16px;"></i>
             <h3>Donation not found</h3>
-            <button class="btn btn-primary" style="margin-top: 24px; width: 100%;" onclick="location.href='donor-home.html'">Go Back</button>
+            <button class="btn btn-primary" style="margin-top: 24px; width: 100%;" onclick="location.href='donor/donor-home.html'">Go Back</button>
           </div>`;
         return;
       }
@@ -305,13 +305,13 @@
       const backLink = document.querySelector('.back-link');
       if (user) {
         if (user.type === 'ngo') {
-          backLink.href = 'my-requests.html';
+          backLink.href = 'volunteer/my-requests.html';
           backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to My Requests';
         } else if (user.type === 'donor') {
-          backLink.href = 'donor-home.html';
+          backLink.href = 'donor/donor-home.html';
           backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Dashboard';
         } else if (user.type === 'volunteer') {
-          backLink.href = 'my-volunteering.html';
+          backLink.href = 'volunteer/my-volunteering.html';
           backLink.innerHTML = '<i class="fas fa-arrow-left"></i> Back to Volunteering';
         }
       }
@@ -380,6 +380,7 @@
 
       renderActions(food.status);
     }
+
 
     function getStatusClass(status) {
       if (status === 'Accepted') return 'accepted';
@@ -455,7 +456,7 @@
             const openBtn = document.getElementById(feedbackBtnId);
             if (openBtn) {
               openBtn.addEventListener('click', () => {
-                window.location.href = `delivery-feedback.html?id=${foodId}`;
+                window.location.href = `volunteer/delivery-feedback.html?id=${foodId}`;
               });
             }
           }, 50);
@@ -463,7 +464,7 @@
       }
 
       // Shared Dashboard Link
-      const backHome = user.type === 'ngo' ? 'ngo-dashboard.html' : (user.type === 'volunteer' ? 'volunteer-dashboard.html' : 'donor-home.html');
+      const backHome = user.type === 'ngo' ? 'volunteer/ngo-dashboard.html' : (user.type === 'volunteer' ? 'volunteer/volunteer-dashboard.html' : 'donor/donor-home.html');
       actions.innerHTML += `<a href="${backHome}" class="btn btn-secondary" style="width: 100%; margin-top: 16px; text-decoration: none; display: flex; align-items: center; justify-content: center;">
         <i class="fas fa-home"></i> Back to Dashboard
       </a>`;

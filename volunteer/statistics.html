@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
     <title>Statistics & Reports - Annadaan</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -329,7 +329,7 @@
         <div class="card">
             <h3><i class="fas fa-map-marker-alt"></i> Impact by District</h3>
             <div class="chart-container">
-                <img src="pie.png" alt="Impact by District Pie Chart" class="chart-img">
+                <img src="../pie.png" alt="Impact by District Pie Chart" class="chart-img">
             </div>
             <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 12px;">
                 Distribution spread across 6 districts
@@ -339,7 +339,7 @@
         <div class="card">
             <h3><i class="fas fa-chart-bar"></i> People Fed Overview</h3>
             <div class="chart-container">
-                <img src="bar.png" alt="People Fed Bar Chart" class="chart-img">
+                <img src="../bar.png" alt="People Fed Bar Chart" class="chart-img">
             </div>
             <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 12px;">
                 Daily distribution trends over the last 30 days
@@ -349,7 +349,7 @@
         <div class="card">
             <h3><i class="fas fa-fire"></i> Correlation Heatmap</h3>
             <div class="chart-container">
-                <img src="heatmap.png" alt="Correlation Heatmap" class="chart-img">
+                <img src="../heatmap.png" alt="Correlation Heatmap" class="chart-img">
             </div>
             <p style="font-size: 12px; color: #64748b; text-align: center; margin-top: 12px;">
                 Hunger Index factors correlation analysis
@@ -424,12 +424,12 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const user = checkAuth();
             if (!user || user.type !== 'ngo') {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
                 return;
             }
 

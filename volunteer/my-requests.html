@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>My Requests — Annadaan</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-client.js"></script>
+    <script src="../supabase-client.js"></script>
 
     <style>
         /* --- Global Styles from index.css --- */
@@ -513,7 +513,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
     <script>
         let allRequests = [];
         let currentUser = null;
@@ -522,19 +522,19 @@
             // Robust auth check - matching dashboard pattern
             const userStr = localStorage.getItem('currentUser');
             if (!userStr) {
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
                 return;
             }
 
             try {
                 currentUser = JSON.parse(userStr);
                 if (currentUser.type !== 'ngo') {
-                    window.location.href = 'index.html';
+                    window.location.href = '../index.html';
                     return;
                 }
             } catch (e) {
                 console.error('Auth check failed:', e);
-                window.location.href = 'index.html';
+                window.location.href = '../index.html';
                 return;
             }
 
@@ -647,7 +647,7 @@
                 </button>
               ` : ''}
               
-              <a href="food-status.html?id=${request.id}" class="btn ${request.status === 'Picked Up' ? 'btn-secondary' : 'btn-primary'}" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
+              <a href="../food-status.html?id=${request.id}" class="btn ${request.status === 'Picked Up' ? 'btn-secondary' : 'btn-primary'}" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%;">
                 <i class="fas fa-chart-line"></i> Track Status
               </a>
               

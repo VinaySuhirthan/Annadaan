@@ -272,7 +272,9 @@ function setupForms() {
                 // Set current user and redirect
                 setCurrentUser(data);
 
-                const dashboard = userType === 'ngo' ? 'ngo-dashboard.html' : 'volunteer-dashboard.html';
+                const dashboard = userType === 'ngo'
+                    ? appPath('volunteer/ngo-dashboard.html')
+                    : appPath('volunteer/volunteer-dashboard.html');
 
                 showAlert('Login successful!', 'success');
 
@@ -400,7 +402,7 @@ async function registerVolunteer() {
         showAlert('Volunteer registration successful!', 'success');
 
         setTimeout(() => {
-            window.location.href = 'volunteer-dashboard.html';
+            window.location.href = appPath('volunteer/volunteer-dashboard.html');
         }, 1500);
 
     } catch (err) {
@@ -503,7 +505,7 @@ async function registerNGO() {
         showAlert('NGO registration successful!', 'success');
 
         setTimeout(() => {
-            window.location.href = 'ngo-dashboard.html';
+            window.location.href = appPath('volunteer/ngo-dashboard.html');
         }, 1500);
 
     } catch (err) {
@@ -526,17 +528,23 @@ function getCurrentUser() {
     return JSON.parse(localStorage.getItem('currentUser'));
 }
 
+function appPath(path) {
+    const currentPath = window.location.pathname.replace(/\\/g, '/');
+    const isInsideRoleFolder = /\/(donor|volunteer)\//.test(currentPath);
+    return isInsideRoleFolder ? `../${path}` : path;
+}
+
 async function logout() {
     if (typeof showConfirm !== 'undefined') {
         if (await showConfirm('Are you sure you want to logout?')) {
             localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
+            window.location.href = appPath('index.html');
         }
     } else {
         // Fallback if showConfirm missing
         if (confirm('Are you sure you want to logout?')) {
             localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
+            window.location.href = appPath('index.html');
         }
     }
 }
@@ -862,7 +870,7 @@ function formatDate(dateString) {
 function checkAuth() {
     const user = getCurrentUser();
     if (!user) {
-        window.location.href = 'index.html';
+        window.location.href = appPath('index.html');
         return null;
     }
     return user;
