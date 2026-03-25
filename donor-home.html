@@ -352,6 +352,7 @@
   <script>
     let currentTab = 'active';
     let allDonations = [];
+    let donorFoodChannel = null;
 
     sideName.textContent = donor.name;
     sidePhone.textContent = donor.phone;
@@ -485,10 +486,28 @@
       loadDonations();
     }
 
-    // Live Auto-Refresh
-    setInterval(() => {
-      loadDonations();
-    }, 5000); // Check for updates every 5 seconds
+    function subscribeToDonationUpdates() {
+      if (!window.sb || !donor || !donor.phone) return;
+
+      if (donorFoodChannel) {
+        window.sb.removeChannel(donorFoodChannel);
+      }
+
+      donorFoodChannel = window.sb.channel(`donor-food-${donor.phone}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'food_table',
+            filter: `donor_phone=eq.${donor.phone}`
+          },
+          () => {
+            loadDonations();
+          }
+        )
+        .subscribe();
+    }
 
     async function acceptRequest(foodId) {
       if (!confirm('Accept this NGO request? The NGO will be notified to pick up the food.')) return;
@@ -528,6 +547,7 @@
     }
 
     loadDonations();
+    subscribeToDonationUpdates();
   </script>
   <script src="script.js"></script>
 </body>

@@ -181,6 +181,7 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const foodId = params.get("id");
+    let currentFood = null;
 
     async function loadStatus() {
       if (!foodId) return showAlert("No donation ID provided", "error");
@@ -200,6 +201,8 @@
           </div>`;
         return;
       }
+
+      currentFood = food;
 
       const foodContent = document.getElementById("foodContent");
       foodContent.innerHTML = `
@@ -406,7 +409,24 @@
     // --- Role-Specific Action Renderers ---
 
     function renderDonorActions(container, status) {
-      if (status === "Accepted" || status === "NGO Requested") {
+      if (status === "NGO Requested") {
+        container.innerHTML = `
+            <div class="card" style="padding: 18px;">
+                <h4 style="margin-bottom: 8px;">Volunteer requested this donation</h4>
+                <p style="font-size: 13px; color: var(--gray); margin-bottom: 16px;">
+                    Review the request here. Once you accept it, this page will move to pickup confirmation.
+                </p>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-primary" onclick="acceptRequest()" style="flex: 1;">
+                        <i class="fas fa-check"></i> Accept
+                    </button>
+                    <button class="btn btn-secondary" onclick="rejectRequest()" style="flex: 1; color: #ef4444; border-color: #ef4444;">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                </div>
+            </div>
+        `;
+      } else if (status === "Accepted") {
         container.innerHTML = `
             <button class="btn btn-primary" onclick="updateStatus('Picked Up')" style="width: 100%;">
                 <i class="fas fa-truck-pickup"></i> Confirm Food Picked Up
@@ -415,6 +435,45 @@
                 Click this once the NGO arrives and picks up the food.
             </p>
         `;
+      }
+    }
+
+    async function acceptRequest() {
+      if (!confirm('Accept this volunteer request? They will be notified to pick up the food.')) return;
+
+      try {
+        const { error } = await window.sb.from('food_table')
+          .update({ status: 'Accepted' })
+          .eq('id', foodId);
+
+        if (error) throw error;
+
+        showAlert('Request accepted. Pickup confirmation is now enabled.', 'success');
+        loadStatus();
+      } catch (err) {
+        console.error(err);
+        showAlert('Error accepting request', 'error');
+      }
+    }
+
+    async function rejectRequest() {
+      if (!confirm('Reject this volunteer request? The donation will become available again.')) return;
+
+      try {
+        const { error } = await window.sb.from('food_table')
+          .update({
+            status: 'available',
+            ngo_phone: null
+          })
+          .eq('id', foodId);
+
+        if (error) throw error;
+
+        showAlert('Request rejected. The donation is available again.', 'info');
+        loadStatus();
+      } catch (err) {
+        console.error(err);
+        showAlert('Error rejecting request', 'error');
       }
     }
 
