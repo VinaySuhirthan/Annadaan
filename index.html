@@ -382,7 +382,7 @@
     </p>
 
     <div class="action-stack">
-      <a href="donor-home.html" class="card-btn animate-fade-in" style="animation-delay: 0.5s;">
+      <a href="login.html" class="card-btn animate-fade-in" style="animation-delay: 0.5s;">
         <div class="icon-box">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -433,7 +433,7 @@
     // Intelligent Redirect for Logged-in Users
     (function () {
       try {
-        const user = JSON.parse(localStorage.getItem('currentUser'));
+        const user = JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(localStorage.getItem('donor'));
         if (user) {
           if (user.type === 'ngo') window.location.href = 'ngo-dashboard.html';
           else if (user.type === 'volunteer') window.location.href = 'volunteer-dashboard.html';

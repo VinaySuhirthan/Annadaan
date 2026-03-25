@@ -281,6 +281,13 @@
 <body>
   <script>
     let donor = JSON.parse(localStorage.getItem("donor"));
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if (!donor && currentUser && currentUser.type === "donor") {
+      donor = currentUser;
+      localStorage.setItem("donor", JSON.stringify(donor));
+    }
+
     if (!donor) location.href = "login.html";
   </script>
 
@@ -299,7 +306,7 @@
       </div>
       <div class="nav-item" onclick="showDashboard()"><i class="fas fa-home"></i> Home</div>
       <div class="nav-item" onclick="showProfile()"><i class="fas fa-user-circle"></i> Profile</div>
-      <div class="nav-item logout" onclick="logout()" style="margin-top: 40px;"><i class="fas fa-sign-out-alt"></i>
+      <div class="nav-item logout" onclick="donorLogout()" style="margin-top: 40px;"><i class="fas fa-sign-out-alt"></i>
         Logout</div>
     </div>
 
@@ -351,7 +358,12 @@
 
     function openMenu() { sidebar.classList.add("open"); overlay.classList.add("show") }
     function closeMenu() { sidebar.classList.remove("open"); overlay.classList.remove("show") }
-    function logout() { localStorage.removeItem("donor"); location.href = "index.html" }
+    function donorLogout() {
+      localStorage.removeItem("donor");
+      localStorage.removeItem("currentUser");
+      sessionStorage.removeItem("temp_donor");
+      location.href = "index.html";
+    }
 
     function switchTab(tab) {
       currentTab = tab;
