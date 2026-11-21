@@ -5,8 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>My Requests — Annadaan</title>
+    <link rel="stylesheet" href="../fluid-background.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase-client.js"></script>
+    <script src="../fluid-background.js" defer></script>
     <link rel="stylesheet" href="../discovery.css">
     <script src="../discovery.js" defer></script>
 
@@ -50,65 +52,9 @@
             padding: 0;
             width: 100%;
             min-height: 100vh;
-            background: #ffffff;
+            background: transparent;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-        }
-
-        /* Mesh Background */
-        .mesh-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: #ffffff;
-        }
-
-        .mesh-bg div {
-            position: absolute;
-            filter: blur(80px);
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: move 20s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
-        }
-
-        .blob1 {
-            width: 400px;
-            height: 400px;
-            background: #dcfce7;
-            top: -10%;
-            right: -5%;
-        }
-
-        .blob2 {
-            width: 350px;
-            height: 350px;
-            background: #f0fdf4;
-            bottom: -5%;
-            left: -5%;
-            animation-delay: -5s;
-        }
-
-        .blob3 {
-            width: 300px;
-            height: 300px;
-            background: #fef9c3;
-            top: 30%;
-            left: 20%;
-            animation-delay: -10s;
-        }
-
-        @keyframes move {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            100% {
-                transform: translate(50px, 100px) scale(1.1);
-            }
         }
 
         .glass {
@@ -458,12 +404,6 @@
 </head>
 
 <body>
-
-    <div class="mesh-bg">
-        <div class="blob1"></div>
-        <div class="blob2"></div>
-        <div class="blob3"></div>
-    </div>
 
     <div class="container">
         <a href="ngo-dashboard.html" class="back-btn">

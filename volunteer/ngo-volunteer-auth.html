@@ -5,8 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>NGO & Volunteer Login — Annadaan</title>
+    <link rel="stylesheet" href="../fluid-background.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase-client.js"></script>
+    <script src="../fluid-background.js" defer></script>
 
     <style>
         /* --- Global Styles from index.css --- */
@@ -43,7 +45,6 @@
         body {
             margin: 0;
             font-family: 'Inter', sans-serif;
-            background-color: var(--background);
             color: var(--text-main);
             line-height: 1.5;
             display: flex;
@@ -51,13 +52,25 @@
             justify-content: center;
             min-height: 100vh;
             padding: 20px;
-            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            background: transparent;
         }
 
         .login-card {
             max-width: 440px;
             width: 100%;
             animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.90);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            padding: 28px 24px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
         }
 
         .logo-circle {

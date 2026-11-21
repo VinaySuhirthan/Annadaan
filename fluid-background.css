@@ -1,0 +1,577 @@
+/* ==========================================================================
+   ANNADAAN — IMMERSIVE FLUID MOTION BACKGROUND
+   Combines 4 visual directions into ONE unified animated composition:
+   1. Large floating translucent 3D glass bubbles with specular reflections.
+   2. Minimal rotating & drifting geometric elements (circles, triangles, lines).
+   3. Continuous multi-layered pastel gradient mesh (sky blue, lavender, soft pink,
+      mint green, peach, cyan, cream).
+   4. Smooth morphing organic fluid blobs.
+   ========================================================================== */
+
+:root {
+  --fluid-sky-blue: #bae6fd;
+  --fluid-lavender: #e9d5ff;
+  --fluid-pink: #fbcfe8;
+  --fluid-mint: #a7f3d0;
+  --fluid-peach: #fed7aa;
+  --fluid-cyan: #cffafe;
+  --fluid-cream: #fef3c7;
+  --fluid-speed-multiplier: 1;
+}
+
+/* Base Fullscreen Fixed Container */
+.fluid-motion-viewport {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -10;
+  pointer-events: none;
+  contain: strict;
+  transform: translate3d(0, 0, 0);
+  background-color: #fafbfc;
+}
+
+/* --------------------------------------------------------------------------
+   LAYER 1: Shifting Pastel Gradient Mesh
+   -------------------------------------------------------------------------- */
+.fluid-layer-mesh {
+  position: absolute;
+  inset: -20%;
+  width: 140%;
+  height: 140%;
+  background: 
+    radial-gradient(ellipse 55% 45% at 20% 25%, rgba(186, 230, 253, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 80% 20%, rgba(233, 213, 255, 0.6) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 85%, rgba(167, 243, 208, 0.55) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 55% at 85% 75%, rgba(254, 215, 170, 0.5) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 15% 80%, rgba(251, 207, 232, 0.5) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 50% 30%, rgba(254, 243, 199, 0.45) 0%, transparent 70%),
+    linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #eff6ff 100%);
+  animation: meshFlow 28s ease-in-out infinite alternate;
+  will-change: transform;
+  filter: blur(60px);
+  opacity: 0.88;
+}
+
+@keyframes meshFlow {
+  0% {
+    transform: translate3d(-3%, -3%, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, 3%, 0) rotate(1.5deg) scale(1.05);
+  }
+  100% {
+    transform: translate3d(-2%, 4%, 0) rotate(-1.5deg) scale(0.98);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LAYER 2: Large Organic Morphing Fluid Blobs
+   -------------------------------------------------------------------------- */
+.fluid-layer-blobs {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.morph-blob {
+  position: absolute;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  filter: blur(45px);
+  opacity: 0.55;
+  will-change: border-radius, transform;
+  mix-blend-mode: multiply;
+}
+
+.morph-blob-1 {
+  width: 520px;
+  height: 520px;
+  top: -100px;
+  right: -50px;
+  background: radial-gradient(circle at 40% 40%, var(--fluid-lavender) 0%, var(--fluid-sky-blue) 100%);
+  animation: morphAnimation1 24s ease-in-out infinite alternate;
+}
+
+.morph-blob-2 {
+  width: 600px;
+  height: 600px;
+  bottom: -150px;
+  left: -120px;
+  background: radial-gradient(circle at 60% 60%, var(--fluid-mint) 0%, var(--fluid-cyan) 100%);
+  animation: morphAnimation2 30s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+
+.morph-blob-3 {
+  width: 440px;
+  height: 440px;
+  top: 35%;
+  left: 20%;
+  background: radial-gradient(circle at 50% 50%, var(--fluid-pink) 0%, var(--fluid-peach) 100%);
+  animation: morphAnimation3 26s ease-in-out infinite alternate;
+  animation-delay: -12s;
+  opacity: 0.45;
+}
+
+.morph-blob-4 {
+  width: 480px;
+  height: 480px;
+  top: 15%;
+  right: 15%;
+  background: radial-gradient(circle at 40% 60%, var(--fluid-cream) 0%, var(--fluid-mint) 100%);
+  animation: morphAnimation2 32s ease-in-out infinite alternate;
+  animation-delay: -18s;
+  opacity: 0.4;
+}
+
+@keyframes morphAnimation1 {
+  0% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    border-radius: 42% 58% 62% 38% / 48% 65% 35% 52%;
+    transform: translate3d(50px, 40px, 0) rotate(60deg) scale(1.08);
+  }
+  66% {
+    border-radius: 70% 30% 52% 48% / 32% 42% 58% 68%;
+    transform: translate3d(-30px, 70px, 0) rotate(130deg) scale(0.96);
+  }
+  100% {
+    border-radius: 48% 52% 41% 59% / 64% 36% 64% 36%;
+    transform: translate3d(20px, -20px, 0) rotate(180deg) scale(1.03);
+  }
+}
+
+@keyframes morphAnimation2 {
+  0% {
+    border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    border-radius: 65% 35% 38% 62% / 55% 68% 32% 45%;
+    transform: translate3d(70px, -50px, 0) rotate(90deg) scale(1.12);
+  }
+  100% {
+    border-radius: 35% 65% 55% 45% / 62% 38% 62% 38%;
+    transform: translate3d(-40px, 40px, 0) rotate(-70deg) scale(0.94);
+  }
+}
+
+@keyframes morphAnimation3 {
+  0% {
+    border-radius: 50% 50% 34% 66% / 56% 68% 32% 44%;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    border-radius: 70% 30% 60% 40% / 40% 35% 65% 60%;
+    transform: translate3d(-60px, 30px, 0) rotate(110deg) scale(1.06);
+  }
+  100% {
+    border-radius: 38% 62% 48% 52% / 65% 45% 55% 35%;
+    transform: translate3d(40px, -40px, 0) rotate(220deg) scale(0.95);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LAYER 3 & 4: Floating Translucent 3D Glass Bubbles
+   -------------------------------------------------------------------------- */
+.fluid-layer-bubbles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.glass-sphere {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, 
+    rgba(255, 255, 255, 0.95) 0%, 
+    rgba(255, 255, 255, 0.45) 20%, 
+    rgba(255, 255, 255, 0.08) 55%, 
+    rgba(224, 242, 254, 0.3) 85%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  box-shadow: 
+    inset -10px -12px 24px rgba(186, 230, 253, 0.38),
+    inset 12px 14px 22px rgba(255, 255, 255, 0.85),
+    inset 0 0 16px rgba(233, 213, 255, 0.35),
+    0 24px 48px -8px rgba(100, 116, 139, 0.14),
+    0 4px 12px rgba(148, 163, 184, 0.06);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  will-change: transform;
+}
+
+/* Glare & Specular Reflection Highlights */
+.glass-sphere::before {
+  content: '';
+  position: absolute;
+  top: 14%;
+  left: 20%;
+  width: 28%;
+  height: 16%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 80%);
+  transform: rotate(-35deg);
+}
+
+.glass-sphere::after {
+  content: '';
+  position: absolute;
+  bottom: 16%;
+  right: 22%;
+  width: 25%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 75%);
+  transform: rotate(35deg);
+}
+
+/* Individual Spheres with Varied Depth & Sizes */
+.sphere-huge-1 {
+  width: 260px;
+  height: 260px;
+  top: 8%;
+  left: 5%;
+  animation: floatDrift1 22s ease-in-out infinite alternate;
+}
+
+.sphere-huge-2 {
+  width: 210px;
+  height: 210px;
+  bottom: 12%;
+  right: 8%;
+  animation: floatDrift2 26s ease-in-out infinite alternate;
+  animation-delay: -5s;
+}
+
+.sphere-medium-1 {
+  width: 140px;
+  height: 140px;
+  top: 48%;
+  left: 12%;
+  animation: floatDrift3 18s ease-in-out infinite alternate;
+  animation-delay: -8s;
+  box-shadow: 
+    inset -6px -8px 16px rgba(167, 243, 208, 0.4),
+    inset 8px 10px 16px rgba(255, 255, 255, 0.9),
+    0 16px 32px rgba(100, 116, 139, 0.12);
+}
+
+.sphere-medium-2 {
+  width: 120px;
+  height: 120px;
+  top: 18%;
+  right: 22%;
+  animation: floatDrift1 20s ease-in-out infinite alternate;
+  animation-delay: -12s;
+}
+
+.sphere-small-1 {
+  width: 70px;
+  height: 70px;
+  bottom: 30%;
+  left: 28%;
+  animation: floatDrift2 15s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+
+.sphere-small-2 {
+  width: 85px;
+  height: 85px;
+  bottom: 22%;
+  right: 32%;
+  animation: floatDrift3 17s ease-in-out infinite alternate;
+  animation-delay: -9s;
+}
+
+.sphere-tiny-1 {
+  width: 44px;
+  height: 44px;
+  top: 32%;
+  left: 45%;
+  animation: floatDrift1 14s ease-in-out infinite alternate;
+}
+
+.sphere-tiny-2 {
+  width: 36px;
+  height: 36px;
+  top: 72%;
+  left: 70%;
+  animation: floatDrift2 16s ease-in-out infinite alternate;
+  animation-delay: -7s;
+}
+
+@keyframes floatDrift1 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translate3d(35px, -45px, 0) rotate(4deg) scale(1.04);
+  }
+  66% {
+    transform: translate3d(-25px, -75px, 0) rotate(-3deg) scale(0.97);
+  }
+  100% {
+    transform: translate3d(20px, -110px, 0) rotate(5deg) scale(1.02);
+  }
+}
+
+@keyframes floatDrift2 {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(-40px, 60px, 0) rotate(-6deg) scale(1.06);
+  }
+  100% {
+    transform: translate3d(30px, 95px, 0) rotate(5deg) scale(0.98);
+  }
+}
+
+@keyframes floatDrift3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(50px, -35px, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-35px, 45px, 0) scale(0.94);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LAYER 5: Geometric Line Art & Minimal Elements
+   -------------------------------------------------------------------------- */
+.fluid-layer-geometry {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.geo-concentric-ring {
+  position: absolute;
+  top: 14%;
+  right: 12%;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px dashed rgba(167, 243, 208, 0.55);
+  animation: geoSpin 38s linear infinite;
+}
+
+.geo-concentric-ring::before {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border-radius: 50%;
+  border: 1px solid rgba(186, 230, 253, 0.45);
+}
+
+.geo-concentric-ring::after {
+  content: '';
+  position: absolute;
+  inset: 38px;
+  border-radius: 50%;
+  border: 1px dotted rgba(233, 213, 255, 0.5);
+}
+
+.geo-triangle {
+  position: absolute;
+  bottom: 24%;
+  left: 8%;
+  width: 48px;
+  height: 48px;
+  opacity: 0.35;
+  animation: geoWobble 24s ease-in-out infinite alternate;
+}
+
+.geo-triangle svg {
+  width: 100%;
+  height: 100%;
+  stroke: #a1a1aa;
+  fill: none;
+  stroke-width: 1.5;
+}
+
+.geo-curved-spline {
+  position: absolute;
+  top: 28%;
+  left: 30%;
+  width: 240px;
+  height: 180px;
+  opacity: 0.32;
+  animation: geoFloatSpline 30s ease-in-out infinite alternate;
+}
+
+.geo-dashed-arc {
+  position: absolute;
+  bottom: 18%;
+  right: 25%;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border-top: 2px dashed rgba(254, 215, 170, 0.55);
+  border-right: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-left: 2px dashed rgba(186, 230, 253, 0.45);
+  animation: geoSpinReverse 42s linear infinite;
+}
+
+@keyframes geoSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes geoSpinReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes geoWobble {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(25px, -30px, 0) rotate(45deg) scale(1.1);
+  }
+  100% {
+    transform: translate3d(-20px, 20px, 0) rotate(-30deg) scale(0.92);
+  }
+}
+
+@keyframes geoFloatSpline {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-35px, 30px, 0) rotate(15deg);
+  }
+  100% {
+    transform: translate3d(40px, -20px, 0) rotate(-10deg);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   LAYER 6: Tiny Floating Ambient Particles
+   -------------------------------------------------------------------------- */
+.fluid-layer-particles {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.particle-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 8px rgba(186, 230, 253, 0.8);
+  animation: particleFloat 12s ease-in-out infinite alternate;
+}
+
+.p-dot-1 { width: 6px; height: 6px; top: 22%; left: 18%; animation-duration: 11s; }
+.p-dot-2 { width: 4px; height: 4px; top: 64%; left: 34%; animation-duration: 15s; animation-delay: -3s; }
+.p-dot-3 { width: 5px; height: 5px; top: 15%; right: 30%; animation-duration: 13s; animation-delay: -6s; }
+.p-dot-4 { width: 7px; height: 7px; bottom: 35%; right: 18%; animation-duration: 14s; animation-delay: -2s; }
+.p-dot-5 { width: 3px; height: 3px; top: 78%; left: 82%; animation-duration: 16s; animation-delay: -8s; }
+.p-dot-6 { width: 5px; height: 5px; top: 40%; left: 62%; animation-duration: 12s; animation-delay: -4s; }
+
+@keyframes particleFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate3d(15px, -25px, 0) scale(1.3);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(-10px, -45px, 0) scale(0.9);
+    opacity: 0.3;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CONTEXTUAL MODES: Immersive vs Ambient Dashboard
+   -------------------------------------------------------------------------- */
+
+/* Immersive (Landing & Auth pages): rich, vibrant visual presence */
+.fluid-bg-immersive {
+  opacity: 1;
+}
+
+/* Ambient Mode (Dashboards): very soft, non-distracting so tables & cards pop */
+.fluid-bg-ambient {
+  opacity: 0.6;
+}
+
+.fluid-bg-ambient .morph-blob {
+  filter: blur(65px);
+  opacity: 0.32;
+}
+
+.fluid-bg-ambient .glass-sphere {
+  opacity: 0.45;
+  box-shadow: 
+    inset -6px -6px 16px rgba(186, 230, 253, 0.25),
+    inset 8px 8px 16px rgba(255, 255, 255, 0.7),
+    0 16px 32px rgba(100, 116, 139, 0.08);
+}
+
+.fluid-bg-ambient .fluid-layer-geometry {
+  opacity: 0.35;
+}
+
+/* --------------------------------------------------------------------------
+   PERFORMANCE & ACCESSIBILITY GUARANTEES
+   -------------------------------------------------------------------------- */
+
+/* When tab is hidden / page paused */
+.fluid-motion-paused * {
+  animation-play-state: paused !important;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .fluid-layer-mesh {
+    filter: blur(40px);
+  }
+  .morph-blob-1 { width: 340px; height: 340px; }
+  .morph-blob-2 { width: 380px; height: 380px; }
+  .morph-blob-3, .morph-blob-4 { display: none; }
+  .sphere-huge-1 { width: 170px; height: 170px; }
+  .sphere-huge-2 { width: 150px; height: 150px; }
+  .sphere-medium-1 { width: 100px; height: 100px; }
+  .sphere-medium-2 { display: none; }
+  .geo-curved-spline { display: none; }
+}
+
+/* Respect user's motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .fluid-motion-viewport * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
