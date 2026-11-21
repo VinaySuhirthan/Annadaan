@@ -8,8 +8,10 @@
 
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../discovery.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../supabase-client.js"></script>
+  <script src="../discovery.js" defer></script>
 
   <style>
     * {
@@ -333,7 +335,26 @@
       localStorage.setItem("donor", JSON.stringify(donor));
     }
 
-    if (!donor) location.href = "login.html";
+    // Defensive async recovery for Google OAuth redirects
+    if (!donor && window.sb && window.sb.auth) {
+      window.sb.auth.getSession().then(({ data: { session } }) => {
+        if (session && session.user) {
+          const user = session.user;
+          const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+          const phone = user.phone || user.user_metadata?.phone || ('G-' + user.id.replace(/-/g, '').slice(0, 10));
+          donor = { id: user.id, name, phone, email: user.email, type: "donor" };
+          localStorage.setItem("donor", JSON.stringify(donor));
+          localStorage.setItem("currentUser", JSON.stringify(donor));
+          window.location.reload();
+        } else {
+          location.href = "login.html";
+        }
+      }).catch(() => {
+        location.href = "login.html";
+      });
+    } else if (!donor) {
+      location.href = "login.html";
+    }
   </script>
 
   <div class="container">

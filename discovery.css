@@ -1,0 +1,289 @@
+/* ==========================================================================
+   Annadaan - Intelligent Contextual Onboarding & Feature Discovery Styles
+   Theme: Nature Forest Green, Glassmorphism & High-Contrast Typography
+   ========================================================================== */
+
+:root {
+  --guide-primary: #2D6A4F;
+  --guide-primary-dark: #1B4332;
+  --guide-secondary: #52B788;
+  --guide-accent: #D8F3DC;
+  --guide-bg: #FFFFFF;
+  --guide-text-main: #0F172A;
+  --guide-text-muted: #64748B;
+  --guide-shadow: 0 20px 35px -5px rgba(15, 23, 42, 0.18), 0 10px 15px -5px rgba(15, 23, 42, 0.08);
+}
+
+/* --- Driver.js Custom Popover Skinning --- */
+.driver-popover.annadaan-popover {
+  background: var(--guide-bg) !important;
+  color: var(--guide-text-main) !important;
+  border-radius: 16px !important;
+  padding: 20px 22px !important;
+  box-shadow: var(--guide-shadow) !important;
+  border: 1px solid rgba(45, 106, 79, 0.15) !important;
+  max-width: 360px !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  backdrop-filter: blur(16px);
+  animation: annadaanPopoverFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes annadaanPopoverFade {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.driver-popover.annadaan-popover .driver-popover-title {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--guide-primary-dark) !important;
+  margin-bottom: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-description {
+  font-size: 13.5px !important;
+  line-height: 1.55 !important;
+  color: var(--guide-text-muted) !important;
+  margin-bottom: 16px !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid #F1F5F9 !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-progress-text {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--guide-primary) !important;
+  background: var(--guide-accent) !important;
+  padding: 3px 8px !important;
+  border-radius: 20px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.driver-popover.annadaan-popover button {
+  font-family: inherit !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 7px 14px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-prev-btn {
+  background: #F1F5F9 !important;
+  color: var(--guide-text-muted) !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-prev-btn:hover {
+  background: #E2E8F0 !important;
+  color: var(--guide-text-main) !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-next-btn {
+  background: var(--guide-primary) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 10px rgba(45, 106, 79, 0.25) !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-next-btn:hover {
+  background: var(--guide-primary-dark) !important;
+  transform: translateY(-1px) !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-close-btn {
+  color: #94A3B8 !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  padding: 4px !important;
+  transition: color 0.2s ease !important;
+}
+
+.driver-popover.annadaan-popover .driver-popover-close-btn:hover {
+  color: #0F172A !important;
+}
+
+/* --- Floating Help / Feature Guide Trigger (Discreet & Non-Intrusive) --- */
+.annadaan-guide-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9998;
+  background: var(--guide-primary);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 18px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.35);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+  backdrop-filter: blur(8px);
+}
+
+.annadaan-guide-fab:hover {
+  background: var(--guide-primary-dark);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 28px rgba(45, 106, 79, 0.45);
+}
+
+.annadaan-guide-fab svg {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.annadaan-guide-fab .fab-badge {
+  background: #10B981;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px white;
+}
+
+/* Adjust position when donor FAB '+' button exists to avoid collision */
+body:has(#fab) .annadaan-guide-fab {
+  right: 88px;
+}
+
+/* --- Non-Intrusive First-Time Beacon Banner --- */
+.annadaan-discovery-banner {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 9997;
+  max-width: 380px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(45, 106, 79, 0.2);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: bannerSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+@keyframes bannerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.annadaan-discovery-banner .banner-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--guide-accent);
+  color: var(--guide-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.annadaan-discovery-banner .banner-content {
+  flex: 1;
+}
+
+.annadaan-discovery-banner .banner-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0F172A;
+  margin-bottom: 2px;
+}
+
+.annadaan-discovery-banner .banner-sub {
+  font-size: 12px;
+  color: #64748B;
+  line-height: 1.35;
+}
+
+.annadaan-discovery-banner .banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.annadaan-discovery-banner button.btn-banner-start {
+  background: var(--guide-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.annadaan-discovery-banner button.btn-banner-start:hover {
+  background: var(--guide-primary-dark);
+}
+
+.annadaan-discovery-banner button.btn-banner-dismiss {
+  background: transparent;
+  color: #94A3B8;
+  border: none;
+  padding: 5px 8px;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.annadaan-discovery-banner button.btn-banner-dismiss:hover {
+  color: #64748B;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .annadaan-discovery-banner {
+    left: 16px;
+    right: 16px;
+    bottom: 80px;
+    max-width: none;
+  }
+  
+  .annadaan-guide-fab {
+    bottom: 16px;
+    right: 16px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  
+  body:has(#fab) .annadaan-guide-fab {
+    right: 80px;
+  }
+}
+

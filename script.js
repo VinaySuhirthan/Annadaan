@@ -220,16 +220,13 @@ function setupForms() {
     if (loginForm) {
         loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
-            const phone = document.getElementById('login-phone').value.trim();
+            const identifier = document.getElementById('login-phone').value.trim();
             const userType = document.getElementById('user-type').value;
+            const pwdInput = document.getElementById('login-pwd');
+            const password = pwdInput ? pwdInput.value.trim() : '';
 
-            if (!phone || !userType) {
+            if (!identifier || !userType) {
                 showAlert('Please fill all fields', 'error');
-                return;
-            }
-
-            if (!validatePhone(phone)) {
-                showAlert('Please enter a valid 10-digit phone number', 'error');
                 return;
             }
 
@@ -239,14 +236,61 @@ function setupForms() {
                 return;
             }
 
-            // Authenticate from Supabase ONLY
+            const tableName = userType === 'ngo' ? 'ngo_table' : 'volunteer_table';
+
+            // Scenario A: Email & Password provided
+            if (password && identifier.includes('@')) {
+                try {
+                    const { data: authData, error: authErr } = await window.sb.auth.signInWithPassword({
+                        email: identifier,
+                        password: password
+                    });
+
+                    if (authErr) {
+                        showAlert('Login failed: ' + authErr.message, 'error');
+                        return;
+                    }
+
+                    // Look up profile by email or auth_id
+                    const { data: profile } = await window.sb.from(tableName)
+                        .select('*')
+                        .or(`email.eq.${identifier},auth_id.eq.${authData.user.id}`)
+                        .single();
+
+                    const userSession = profile || {
+                        id: authData.user.id,
+                        name: authData.user.user_metadata?.full_name || identifier.split('@')[0],
+                        email: identifier,
+                        type: userType,
+                        phone: authData.user.user_metadata?.phone || ''
+                    };
+
+                    setCurrentUser(userSession);
+                    showAlert('Login successful!', 'success');
+                    const dashboard = userType === 'ngo'
+                        ? appPath('volunteer/ngo-dashboard.html')
+                        : appPath('volunteer/volunteer-dashboard.html');
+                    setTimeout(() => { window.location.href = dashboard; }, 800);
+                    return;
+                } catch (err) {
+                    console.error('Email login exception:', err);
+                    showAlert('Login error: ' + err.message, 'error');
+                    return;
+                }
+            }
+
+            // Scenario B: Phone Number Authentication
+            if (!validatePhone(identifier)) {
+                showAlert('Please enter a valid 10-digit phone number or email address', 'error');
+                return;
+            }
+
             try {
-                const tableName = userType === 'ngo' ? 'ngo_table' : 'volunteer_table';
                 console.log(`Authenticating ${userType} from Supabase ${tableName}...`);
 
                 const { data, error } = await window.sb.from(tableName)
                     .select('*')
-                    .eq('phone', phone)
+                    .eq('phone', identifier)
                     .eq('type', userType)
                     .single();
 
@@ -254,7 +298,6 @@ function setupForms() {
                     console.error('Supabase login error:', error);
 
                     if (error.code === 'PGRST116') {
-                        // No rows returned - user doesn't exist
                         showAlert('No account found with this phone number. Please register first.', 'error');
                     } else {
                         showAlert('Login failed: ' + error.message, 'error');
@@ -268,8 +311,6 @@ function setupForms() {
                 }
 
                 console.log('✅ User authenticated from Supabase:', data);
-
-                // Set current user and redirect
                 setCurrentUser(data);
 
                 const dashboard = userType === 'ngo'
@@ -277,10 +318,9 @@ function setupForms() {
                     : appPath('volunteer/volunteer-dashboard.html');
 
                 showAlert('Login successful!', 'success');
-
                 setTimeout(() => {
                     window.location.href = dashboard;
-                }, 1000);
+                }, 800);
 
             } catch (err) {
                 console.error('Login failed:', err);
@@ -356,6 +396,25 @@ async function registerVolunteer() {
     }
 
     // Create volunteer object
+    const email = document.getElementById('reg-email') ? document.getElementById('reg-email').value.trim() : '';
+    const password = document.getElementById('reg-password') ? document.getElementById('reg-password').value.trim() : '';
+
+    let authUserId = null;
+    if (email && password && window.sb && window.sb.auth) {
+        try {
+            const { data: authData, error: authErr } = await window.sb.auth.signUp({
+                email,
+                password,
+                options: { data: { full_name: name, phone } }
+            });
+            if (!authErr && authData && authData.user) {
+                authUserId = authData.user.id;
+            }
+        } catch (e) {
+            console.warn('Supabase Auth sign up note:', e);
+        }
+    }
+
     const volunteer = {
         id: 'V' + Date.now(),
         type: 'volunteer',
@@ -363,6 +422,8 @@ async function registerVolunteer() {
         address: address,
         phone: phone,
         location: location,
+        email: email || null,
+        auth_id: authUserId || null,
         registered_at: new Date().toISOString(),
         status: 'active'
     };
@@ -457,6 +518,25 @@ async function registerNGO() {
 
 
     // Create NGO object
+    const ngoEmail = document.getElementById('reg-email') ? document.getElementById('reg-email').value.trim() : '';
+    const ngoPassword = document.getElementById('reg-password') ? document.getElementById('reg-password').value.trim() : '';
+
+    let ngoAuthId = null;
+    if (ngoEmail && ngoPassword && window.sb && window.sb.auth) {
+        try {
+            const { data: authData, error: authErr } = await window.sb.auth.signUp({
+                email: ngoEmail,
+                password: ngoPassword,
+                options: { data: { full_name: name, phone } }
+            });
+            if (!authErr && authData && authData.user) {
+                ngoAuthId = authData.user.id;
+            }
+        } catch (e) {
+            console.warn('Supabase Auth NGO sign up note:', e);
+        }
+    }
+
     const ngo = {
         id: 'N' + Date.now(),
         type: 'ngo',
@@ -466,6 +546,8 @@ async function registerNGO() {
         address: address,
         phone: phone,
         location: location,
+        email: ngoEmail || null,
+        auth_id: ngoAuthId || null,
         registered_at: new Date().toISOString(),
         status: 'active'
     };
