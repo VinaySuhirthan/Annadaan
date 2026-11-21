@@ -1,6 +1,7 @@
 /**
  * ============================================================================
- * Annadaan - Intelligent Contextual Onboarding & Feature Discovery System
+ * Annadaan - Intelligent Contextual Guided Walkthrough & Feature Discovery
+ * Automatically guides new users through high-impact, non-obvious features.
  * Reference: https://driverjs.com/docs/animated-tour
  * ============================================================================
  */
@@ -12,14 +13,14 @@
   const DRIVER_CSS_URL = 'https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css';
   const DRIVER_JS_URL = 'https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js';
 
-  // State Persistence Key
+  // State Persistence Key per Authenticated User
   function getStorageKey() {
     try {
       const user = JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(localStorage.getItem('donor'));
       const id = (user && (user.phone || user.id || user.email)) || 'guest';
-      return `annadaan_discovery_${id}`;
+      return `annadaan_walkthrough_${id}`;
     } catch (e) {
-      return 'annadaan_discovery_guest';
+      return 'annadaan_walkthrough_guest';
     }
   }
 
@@ -35,7 +36,7 @@
     try {
       localStorage.setItem(getStorageKey(), JSON.stringify(state));
     } catch (e) {
-      console.warn('Discovery state save warning:', e);
+      console.warn('Walkthrough state save warning:', e);
     }
   }
 
@@ -56,7 +57,7 @@
     saveUserDiscoveryState(state);
   }
 
-  // Identify Current Page
+  // Identify Current Page / Role
   function getPageKey() {
     const path = window.location.pathname.toLowerCase();
     if (path.includes('donor-home')) return 'donor_home';
@@ -66,40 +67,49 @@
     if (path.includes('volunteer-dashboard')) return 'volunteer_dashboard';
     if (path.includes('my-volunteering')) return 'volunteer_my_deliveries';
     if (path.includes('my-requests')) return 'ngo_my_requests';
-    if (path.includes('delivery-feedback')) return 'delivery_feedback';
     return null;
   }
 
-  // Curated Feature Discovery Configurations
-  // IMPORTANT: Highlights ONLY non-obvious, hidden, or critical operational features
+  // Curated Walkthrough Configurations (Explains only hidden or critical operational workflows)
   const TOURS = {
     donor_home: {
       title: 'Donor Command Center',
       steps: [
         {
-          element: '#fab',
+          element: '#statsGrid',
           popover: {
-            title: '🚀 Post Surplus in 60 Seconds',
-            description: 'This floating button is your instant action trigger. Tap it anytime to post surplus meals right after an event or commercial meal service.',
-            side: 'left',
-            align: 'end'
+            title: '📊 Real-Time Community Impact',
+            description: 'These 4 metrics calculate live meals nourished and verified shelter drop-offs from real delivery confirmations.',
+            side: 'bottom',
+            align: 'start'
           }
         },
         {
-          element: '#homeTabs',
+          element: '#donorTabs',
           popover: {
-            title: '⏱️ Active vs. Delivered Batches',
-            description: 'Switch between live listings currently being claimed by local shelters and your archived proof-of-delivery receipts.',
+            title: '🤝 Two-Way Shelter Approval Gate',
+            description: 'When a local NGO requests your surplus food, an "Accept Request" action appears here. You authorize the pickup before volunteer couriers are dispatched.',
             side: 'bottom',
             align: 'center'
           }
         },
         {
-          element: '#listingsActive',
+          element: '#btnListSurplus',
+          fallbackElement: '#btnTopDonate',
           popover: {
-            title: '🤝 Two-Way Approval Gate',
-            description: 'When an NGO requests your food, you will see an "Accept" button here. You must approve the request before the courier or NGO is cleared for pickup.',
-            side: 'top',
+            title: '🚀 Post Surplus in 60 Seconds',
+            description: 'List food immediately after banquets or meal services with photo verification and exact kitchen entrance GPS coordinates.',
+            side: 'left',
+            align: 'center'
+          }
+        },
+        {
+          element: '#navProfile',
+          fallbackElement: '.sidebar-footer',
+          popover: {
+            title: '🛡️ Verified Contributor Identity',
+            description: 'Access your verified donor reference ID, contact details, and lifetime social audit history anytime.',
+            side: 'right',
             align: 'center'
           }
         }
@@ -107,98 +117,49 @@
     },
 
     donor_add_food: {
-      title: 'Food Listing Safety & Geocoding',
+      title: 'Food Safety & Entrance Geocoding',
       steps: [
         {
           element: '#validHours',
           popover: {
-            title: '⌛ The Safe Freshness Clock',
-            description: 'Crucial food safety control! Specify how long cooked food remains safe to consume. Once this window elapses, listings are prioritized or archived to prevent spoilage.',
+            title: '⌛ The Freshness Safety Clock',
+            description: 'Crucial food safety control: specify how long cooked food remains safe to consume. Once this window nears expiry, notifications escalate.',
             side: 'top',
             align: 'start'
           }
         },
         {
           element: "button[title='Pin on Map']",
+          fallbackElement: '#map-btn',
           popover: {
             title: '📍 Pin Exact Kitchen Entrance',
-            description: 'Hidden gem: Don\'t just type a street name. Click this map pin to drag a marker to your exact loading dock or gate for courier GPS navigation.',
+            description: 'Drag the pin to your exact loading dock or gate so volunteer couriers find your pickup point without phone tag.',
             side: 'bottom',
             align: 'center'
-          }
-        },
-        {
-          element: '#donorType',
-          popover: {
-            title: '🏷️ Occasion & Event Categorization',
-            description: 'Selecting "Others" unlocks custom event tags (e.g., wedding banquet, corporate lunch), helping shelters estimate food packaging style.',
-            side: 'top',
-            align: 'start'
           }
         }
       ]
     },
 
     ngo_dashboard: {
-      title: 'NGO Dispatch & Verification Hub',
+      title: 'NGO Dispatch & Claim Hub',
       steps: [
         {
           element: '.dashboard-card:nth-child(1)',
+          fallbackElement: '.stat-card:nth-child(1)',
           popover: {
-            title: '🍲 Live Food Marketplace',
-            description: 'Browse incoming surplus food filtered by live distance, check freshness timers, and claim portions for your community kitchen.',
+            title: '🍲 Live Distance-Sorted Marketplace',
+            description: 'Browse incoming surplus food filtered by live GPS distance and claim portions for your community kitchen.',
             side: 'bottom',
             align: 'start'
-          }
-        },
-        {
-          element: '#feedbackPrompt',
-          fallbackElement: '.dashboard-card:nth-child(4)',
-          popover: {
-            title: '📊 Delivery Verification Protocol',
-            description: 'Critical step! Whenever food is distributed, confirm the number of people fed and drop-site GPS coordinates here. This keeps the community audit trail transparent.',
-            side: 'top',
-            align: 'center'
           }
         },
         {
           element: '.dashboard-card:nth-child(2)',
+          fallbackElement: '.stat-card:nth-child(2)',
           popover: {
             title: '📦 Real-Time Request Tracking',
-            description: 'Monitor your claim statuses from "Waiting for Donor Approval" to "Volunteer Dispatched" in real time.',
-            side: 'bottom',
-            align: 'start'
-          }
-        }
-      ]
-    },
-
-    view_food: {
-      title: 'Food Salvage Marketplace',
-      steps: [
-        {
-          element: '#detect-btn',
-          popover: {
-            title: '🛰️ Real-Time Haversine Geolocation',
-            description: 'Tap "Detect" to calculate exact travel distances from your facility to each donor using OpenStreetMap reverse geocoding.',
-            side: 'bottom',
-            align: 'end'
-          }
-        },
-        {
-          element: '#sort-filter',
-          popover: {
-            title: '⚡ Emergency "Expiring Soon" Sort',
-            description: 'High-priority feature for food rescue: sort by time remaining to claim fresh meals right before their safe consumption deadline expires.',
-            side: 'bottom',
-            align: 'center'
-          }
-        },
-        {
-          element: '#distance-filter',
-          popover: {
-            title: '🚗 45-Minute Transit Radius',
-            description: 'Filter food within 5 km to 10 km to ensure hot meals reach beneficiaries quickly without cooling down.',
+            description: 'Monitor claim progress from "Waiting for Donor Approval" to "Courier Dispatched" in real time.',
             side: 'bottom',
             align: 'start'
           }
@@ -207,148 +168,84 @@
     },
 
     volunteer_dashboard: {
-      title: 'Volunteer Logistics Console',
+      title: 'Volunteer Dispatch Center',
       steps: [
         {
-          element: '#recommendationsCard',
+          element: '.stat-card:nth-child(1)',
+          fallbackElement: '.container',
           popover: {
-            title: '🗺️ High-Need Drop-off Hotspots',
-            description: 'Intelligent spatial feature: Analyzes recent verified deliveries to recommend exact neighborhoods and clusters with the highest community need today.',
-            side: 'top',
-            align: 'center'
-          }
-        },
-        {
-          element: '#greenCreditsCard',
-          popover: {
-            title: '🌿 Green Sustainability Credits',
-            description: 'Every completed meal distribution awards you Green Credits, redeemable for volunteer impact badges and sustainability partner rewards.',
+            title: '🛵 Live Delivery Assignments',
+            description: 'Accept urgent pickup runs, view donor kitchen directions, and confirm food handoff.',
             side: 'bottom',
-            align: 'center'
-          }
-        },
-        {
-          element: '.dashboard-card:nth-child(2)',
-          popover: {
-            title: '📋 Logistics Progression',
-            description: 'Manage active deliveries. You update status to "Picked Up" at the kitchen, and "Delivered" once meals reach people in need.',
-            side: 'top',
-            align: 'center'
-          }
-        }
-      ]
-    },
-
-    volunteer_my_deliveries: {
-      title: 'Active Deliveries Protocol',
-      steps: [
-        {
-          element: '.tabs',
-          popover: {
-            title: '📦 Active Transit vs. History',
-            description: 'Switch between current assignments requiring pickup/delivery and completed distribution logs with verified people served.',
-            side: 'bottom',
-            align: 'center'
-          }
-        },
-        {
-          element: '#content-area',
-          popover: {
-            title: '🚚 Two-Stage Handover Confirmation',
-            description: 'Always click "Confirm Food Picked Up" upon receiving containers from the donor, and "Confirm Delivery to Needy" after distributing to beneficiaries.',
-            side: 'top',
-            align: 'center'
-          }
-        }
-      ]
-    },
-
-    ngo_my_requests: {
-      title: 'NGO Food Request Life Cycle',
-      steps: [
-        {
-          element: '#requests-container',
-          popover: {
-            title: '⏳ Live Request State Machine',
-            description: 'Status moves from "NGO Requested" (waiting for donor approval) to "Accepted" (pickup unlocked), then "Picked Up" and "Delivered".',
-            side: 'top',
-            align: 'center'
+            align: 'start'
           }
         }
       ]
     }
   };
 
-  // Helper to dynamically inject Driver.js assets if not already on page
-  function ensureDriverAssets(callback) {
-    if (window.driver && window.driver.js && window.driver.js.driver) {
-      return callback();
-    }
+  // Asynchronous Asset Loader
+  let driverLoadPromise = null;
+  function loadDriverAssets() {
+    if (driverLoadPromise) return driverLoadPromise;
 
-    if (!document.getElementById('driver-css')) {
-      const link = document.createElement('link');
-      link.id = 'driver-css';
-      link.rel = 'stylesheet';
-      link.href = DRIVER_CSS_URL;
-      document.head.appendChild(link);
-    }
+    driverLoadPromise = new Promise((resolve) => {
+      if (window.driver && window.driver.js && window.driver.js.driver) {
+        return resolve(true);
+      }
 
-    if (!document.getElementById('driver-js')) {
-      const script = document.createElement('script');
-      script.id = 'driver-js';
-      script.src = DRIVER_JS_URL;
-      script.onload = () => callback();
-      script.onerror = () => {
-        console.warn('Driver.js CDN failed to load; using native spotlight fallback.');
-        callback(new Error('Driver.js load failed'));
-      };
-      document.head.appendChild(script);
-    } else {
-      // Script tag exists, wait for load
-      const checkInterval = setInterval(() => {
-        if (window.driver && window.driver.js) {
-          clearInterval(checkInterval);
-          callback();
-        }
-      }, 50);
-    }
+      if (!document.querySelector(`link[href="${DRIVER_CSS_URL}"]`)) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = DRIVER_CSS_URL;
+        document.head.appendChild(link);
+      }
+
+      if (!document.querySelector(`script[src="${DRIVER_JS_URL}"]`)) {
+        const script = document.createElement('script');
+        script.src = DRIVER_JS_URL;
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.head.appendChild(script);
+      } else {
+        resolve(true);
+      }
+    });
+
+    return driverLoadPromise;
   }
 
-  // Filter Steps to only elements currently existing & visible in DOM
-  function sanitizeSteps(tourConfig) {
-    return tourConfig.steps
-      .map((step) => {
+  // Launch Guided Walkthrough
+  function launchTour(pageKey, isManualTrigger = false) {
+    const config = TOURS[pageKey];
+    if (!config) return;
+
+    loadDriverAssets().then((loaded) => {
+      const validSteps = [];
+      config.steps.forEach((step) => {
         let el = document.querySelector(step.element);
         if (!el && step.fallbackElement) {
           el = document.querySelector(step.fallbackElement);
         }
         if (el && el.offsetParent !== null) {
-          return {
+          validSteps.push({
             element: el,
             popover: {
-              ...step.popover,
-              popoverClass: 'annadaan-popover'
+              title: step.popover.title,
+              description: `
+                <div>${step.popover.description}</div>
+                <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.08); display: flex; justify-content: flex-end;">
+                  <button class="annadaan-dont-show-btn" style="background: none; border: none; color: #6b7280; font-size: 11px; cursor: pointer; text-decoration: underline;" onclick="window.AnnadaanGuide.dismissPage('${pageKey}')">Don't show again</button>
+                </div>
+              `,
+              side: step.popover.side || 'bottom',
+              align: step.popover.align || 'start'
             }
-          };
+          });
         }
-        return null;
-      })
-      .filter(Boolean);
-  }
+      });
 
-  // Launch Tour via Driver.js
-  function launchTour(pageKey, isExplicit = false) {
-    const tourConfig = TOURS[pageKey];
-    if (!tourConfig) return;
-
-    ensureDriverAssets((err) => {
-      const validSteps = sanitizeSteps(tourConfig);
-      if (validSteps.length === 0) {
-        if (isExplicit && window.showAlert) {
-          window.showAlert('No interactive feature guides available on this view.', 'info');
-        }
-        return;
-      }
+      if (validSteps.length === 0) return;
 
       if (window.driver && window.driver.js && window.driver.js.driver) {
         const driverObj = window.driver.js.driver({
@@ -369,135 +266,54 @@
         });
 
         driverObj.drive();
-      } else {
-        // Fallback simple spotlight if offline
-        runNativeFallbackTour(validSteps, pageKey);
       }
     });
   }
 
-  // Graceful Native Fallback if CDN is offline
-  function runNativeFallbackTour(steps, pageKey) {
-    let currentIdx = 0;
-
-    function showStep(idx) {
-      if (idx >= steps.length) {
-        markPageCompleted(pageKey);
-        cleanup();
-        return;
-      }
-
-      const step = steps[idx];
-      step.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      step.element.style.outline = '3px solid #2D6A4F';
-      step.element.style.boxShadow = '0 0 20px rgba(45, 106, 79, 0.5)';
-
-      const confirmMsg = `${step.popover.title}\n\n${step.popover.description}\n\n(Step ${idx + 1} of ${steps.length})`;
-      setTimeout(() => {
-        if (confirm(confirmMsg + '\n\nClick OK for next feature, or Cancel to finish.')) {
-          step.element.style.outline = '';
-          step.element.style.boxShadow = '';
-          showStep(idx + 1);
-        } else {
-          step.element.style.outline = '';
-          step.element.style.boxShadow = '';
-          cleanup();
-        }
-      }, 300);
-    }
-
-    function cleanup() {
-      steps.forEach((s) => {
-        if (s.element) {
-          s.element.style.outline = '';
-          s.element.style.boxShadow = '';
-        }
-      });
-    }
-
-    showStep(0);
-  }
-
-  // Inject Floating Help Beacon Trigger ("? Feature Guide")
-  function injectFloatingGuideButton(pageKey) {
-    if (document.getElementById('annadaan-guide-fab-btn')) return;
-
-    const btn = document.createElement('button');
-    btn.id = 'annadaan-guide-fab-btn';
-    btn.className = 'annadaan-guide-fab animate-fade-in';
-    btn.setAttribute('aria-label', 'Open Feature Discovery Guide');
-    btn.innerHTML = `
-      <svg viewBox="0 0 24 24">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
-      </svg>
-      <span>Feature Guide</span>
-      <span class="fab-badge"></span>
-    `;
-
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      launchTour(pageKey, true);
-    });
-
-    document.body.appendChild(btn);
-  }
-
-  // Inject Non-Intrusive First-Time Slide-in Beacon
-  function injectFirstTimeBanner(pageKey) {
-    if (isPageDismissedOrCompleted(pageKey)) return;
-    if (document.getElementById('annadaan-discovery-banner')) return;
-
-    const banner = document.createElement('div');
-    banner.id = 'annadaan-discovery-banner';
-    banner.className = 'annadaan-discovery-banner';
-    banner.innerHTML = `
-      <div class="banner-icon">✨</div>
-      <div class="banner-content">
-        <div class="banner-title">Feature Discovery</div>
-        <div class="banner-sub">Take a 20-second tour of non-obvious tools on this page.</div>
-        <div class="banner-actions">
-          <button class="btn-banner-start" id="btnBannerStartTour">Start Tour</button>
-          <button class="btn-banner-dismiss" id="btnBannerDismissTour">Don't show again</button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(banner);
-
-    document.getElementById('btnBannerStartTour').addEventListener('click', () => {
-      banner.remove();
-      launchTour(pageKey, true);
-    });
-
-    document.getElementById('btnBannerDismissTour').addEventListener('click', () => {
-      markPageDismissed(pageKey);
-      banner.remove();
-    });
-  }
-
-  // Auto-Initialization on DOM Ready
-  document.addEventListener('DOMContentLoaded', () => {
+  // Automatic Launch on First Eligible Visit
+  function checkAndAutoLaunch() {
     const pageKey = getPageKey();
     if (!pageKey || !TOURS[pageKey]) return;
 
-    // Inject permanent floating trigger so users are always in control
-    injectFloatingGuideButton(pageKey);
+    if (!isPageDismissedOrCompleted(pageKey)) {
+      // Delay slightly so layout and Supabase stats have finished rendering
+      setTimeout(() => {
+        launchTour(pageKey, false);
+      }, 1400);
+    }
+  }
 
-    // Offer subtle, non-intrusive prompt after 1.8 seconds on first visit
-    setTimeout(() => {
-      injectFirstTimeBanner(pageKey);
-    }, 1800);
-  });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkAndAutoLaunch);
+  } else {
+    checkAndAutoLaunch();
+  }
 
-  // Global API exposed for manual re-triggering from navigation menus or settings
-  window.AnnadaanDiscovery = {
-    startTour: () => {
-      const pageKey = getPageKey();
-      if (pageKey) launchTour(pageKey, true);
+  // Public API
+  window.AnnadaanGuide = {
+    launchTour: (key, manual = true) => {
+      const pageKey = key || getPageKey();
+      if (pageKey) launchTour(pageKey, manual);
+    },
+    dismissPage: (key) => {
+      const pageKey = key || getPageKey();
+      if (pageKey) markPageDismissed(pageKey);
+      if (window.driver && window.driver.js) {
+        const activeDriver = document.querySelector('.driver-popover');
+        if (activeDriver) {
+          const closeBtn = activeDriver.querySelector('.driver-popover-close-btn');
+          if (closeBtn) closeBtn.click();
+        }
+      }
     },
     resetState: () => {
       localStorage.removeItem(getStorageKey());
-      if (window.showAlert) window.showAlert('Feature discovery reset. You will see guides again.', 'success');
+      alert('Walkthrough state reset. You will see guides again on your next visit.');
     }
+  };
+
+  window.AnnadaanDiscovery = {
+    startTour: () => window.AnnadaanGuide.launchTour(null, true),
+    resetState: () => window.AnnadaanGuide.resetState()
   };
 })();

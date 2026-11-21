@@ -521,26 +521,26 @@
   opacity: 1;
 }
 
-/* Ambient Mode (Dashboards): very soft, non-distracting so tables & cards pop */
+/* Ambient Mode (Dashboards & Portals): clearly noticeable living motion with high readability */
 .fluid-bg-ambient {
-  opacity: 0.6;
+  opacity: 0.88;
 }
 
 .fluid-bg-ambient .morph-blob {
-  filter: blur(65px);
-  opacity: 0.32;
+  filter: blur(52px);
+  opacity: 0.46;
 }
 
 .fluid-bg-ambient .glass-sphere {
-  opacity: 0.45;
+  opacity: 0.78;
   box-shadow: 
-    inset -6px -6px 16px rgba(186, 230, 253, 0.25),
-    inset 8px 8px 16px rgba(255, 255, 255, 0.7),
-    0 16px 32px rgba(100, 116, 139, 0.08);
+    inset -8px -10px 20px rgba(186, 230, 253, 0.35),
+    inset 10px 12px 20px rgba(255, 255, 255, 0.85),
+    0 20px 40px rgba(100, 116, 139, 0.12);
 }
 
 .fluid-bg-ambient .fluid-layer-geometry {
-  opacity: 0.35;
+  opacity: 0.55;
 }
 
 /* --------------------------------------------------------------------------
@@ -575,3 +575,4 @@
     transition-duration: 0.01ms !important;
   }
 }
+

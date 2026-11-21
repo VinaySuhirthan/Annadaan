@@ -112,18 +112,24 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background-color: var(--background);
+      background: transparent;
       color: var(--text-main);
       line-height: 1.5;
+      padding: 24px 16px;
     }
 
     .container {
-      max-width: 480px;
+      max-width: 860px;
+      width: 100%;
       margin: 0 auto;
-      min-height: 100vh;
+      min-height: auto;
       position: relative;
-      background: var(--surface);
-      box-shadow: var(--shadow-premium);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 16px 48px rgba(15, 23, 42, 0.08);
+      border-radius: 24px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 32px;
     }
 
     .card {
