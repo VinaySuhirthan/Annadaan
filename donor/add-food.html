@@ -17,6 +17,7 @@
   <script src="../supabase-client.js"></script>
   <link rel="stylesheet" href="../discovery.css">
   <script src="../discovery.js" defer></script>
+  <script src="photo-verification.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -459,6 +460,139 @@
       border-color: var(--primary);
       background: #F0FDF4;
     }
+
+    /* Simulated Food Photo Verification (Demo Experience) */
+    .verification-container {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid #E2E8F0;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      position: relative;
+      overflow: hidden;
+      animation: verifFadeIn 0.35s ease;
+    }
+
+    @keyframes verifFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .verification-disclaimer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #64748B;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      margin-bottom: 14px;
+    }
+
+    .verification-disclaimer-pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3B82F6;
+    }
+
+    .verification-active-state {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .verification-active-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .verification-scan-icon-wrap {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #F0FDF4;
+      border: 1px solid #DCFCE7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .verification-scan-icon-wrap svg {
+      animation: scanPulse 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scanPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+
+    .verification-progress-track {
+      width: 100%;
+      height: 7px;
+      background: #E2E8F0;
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .verification-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2D6A4F 0%, #52B788 100%);
+      border-radius: 9999px;
+      transition: width 0.08s linear;
+    }
+
+    .verification-completion-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 4px 2px;
+      animation: verifSuccessPop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes verifSuccessPop {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .verification-checkmark-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #DCFCE7;
+      color: #15803D;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .verification-checkmark-circle svg {
+      width: 26px;
+      height: 26px;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      animation: drawCheck 0.5s ease-out 0.15s forwards;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
   </style>
 </head>
 
@@ -542,6 +676,56 @@
         <div id="photoHelperText" class="photo-helper-text" style="color: #B45309;">
           <i class="fas fa-info-circle"></i>
           <span>Please select at least 2 photos of the food before posting.</span>
+        </div>
+
+        <!-- SIMULATED FOOD PHOTO VERIFICATION (DEMO EXPERIENCE) -->
+        <div id="photoVerificationSection" class="verification-container">
+          <div class="verification-disclaimer-pill">DEMO SIMULATION · NOT AN ACTUAL AI CHECK</div>
+
+          <!-- ACTIVE SCANNING STATE (0–7.5s) -->
+          <div id="verifActiveState" class="verification-active-state">
+            <div class="verification-active-header">
+              <div class="verification-scan-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                  <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                  <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                  <h4 id="verifStageTitle" style="margin: 0; font-size: 14px; font-weight: 700; color: #1E293B;">Food Image Review</h4>
+                  <span id="verifProgressPercent" style="font-size: 12px; font-weight: 700; color: var(--primary);">0%</span>
+                </div>
+                <p id="verifStageSubtitle" style="margin: 3px 0 0; font-size: 12.5px; color: #64748B; font-weight: 500;">Preparing your uploaded photo...</p>
+              </div>
+            </div>
+
+            <div class="verification-progress-track">
+              <div id="verifProgressBar" class="verification-progress-bar"></div>
+            </div>
+          </div>
+
+          <!-- COMPLETION STATE (After 7.5s) -->
+          <div id="verifCompletionState" class="verification-completion-state">
+            <div class="verification-checkmark-circle">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h4 style="margin: 0 0 6px; font-size: 16px; font-weight: 800; color: #1B4332;">Photo successfully received!</h4>
+            <div id="verifQuoteText" style="font-size: 13.5px; font-weight: 600; color: var(--primary); font-style: italic; margin-bottom: 8px; line-height: 1.4;">
+              "A thoughtful donation can make someone's day."
+            </div>
+            <p style="margin: 0 0 8px; font-size: 12px; color: #64748B; line-height: 1.4;">
+              Your contribution starts with a thoughtful step. Thank you!
+            </p>
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 12px; font-size: 11.5px; color: #64748B; line-height: 1.45; text-align: left; margin-top: 4px;">
+              <strong style="color: #475569;">Notice:</strong> This demo does not verify food freshness, hygiene or safety. Please ensure the food is safe, properly stored and suitable for donation.
+            </div>
+          </div>
         </div>
 
         <input id="media" type="file" accept="image/*" multiple style="display: none;">
@@ -647,8 +831,27 @@
     const media = document.getElementById("media");
 
     media.onchange = (e) => {
-      const files = Array.from(e.target.files || []);
-      if (!files.length) return;
+      const rawFiles = Array.from(e.target.files || []);
+      if (!rawFiles.length) return;
+
+      // Validate file type (must be image) and size (<= 15MB)
+      const validFiles = [];
+      for (const file of rawFiles) {
+        if (!file.type || !file.type.startsWith('image/')) {
+          showAlert(`"${file.name}" is not a supported image file.`, "error");
+          continue;
+        }
+        if (file.size > 15 * 1024 * 1024) {
+          showAlert(`"${file.name}" exceeds the 15MB size limit.`, "error");
+          continue;
+        }
+        validFiles.push(file);
+      }
+
+      if (!validFiles.length) {
+        media.value = "";
+        return;
+      }
 
       const remainingSlots = 6 - selectedPhotos.length;
       if (remainingSlots <= 0) {
@@ -657,10 +860,10 @@
         return;
       }
 
-      let filesToAdd = files;
-      if (files.length > remainingSlots) {
+      let filesToAdd = validFiles;
+      if (validFiles.length > remainingSlots) {
         showAlert(`Only ${remainingSlots} more photo(s) can be added (maximum 6).`, "warning");
-        filesToAdd = files.slice(0, remainingSlots);
+        filesToAdd = validFiles.slice(0, remainingSlots);
       }
 
       let processed = 0;
@@ -674,6 +877,10 @@
           processed++;
           if (processed === filesToAdd.length) {
             renderPhotoGrid();
+            // Automatically start simulated 7.5s verification on every new upload/change
+            if (window.PhotoVerification) {
+              window.PhotoVerification.start();
+            }
           }
         };
         reader.readAsDataURL(file);
@@ -686,6 +893,9 @@
       if (event) event.stopPropagation();
       selectedPhotos.splice(index, 1);
       renderPhotoGrid();
+      if (selectedPhotos.length === 0 && window.PhotoVerification) {
+        window.PhotoVerification.reset();
+      }
     }
 
     function renderPhotoGrid() {
