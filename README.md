@@ -1,16 +1,21 @@
-# 🍛 Annadaan: Every Plate Counts
+# 🍛 Annadaan – Every Plate Counts
 
-**Surplus food, matched to the people who need it, before it spoils.**
+**Surplus food, matched with the people who need it, before it spoils.**
 
-> Built for **Codebenders ACE Builders Hackathon 2026**, **Problem Statement 2: Rescue the Surplus** (Society & Environment)
+Built for **Codebenders ACE Builders Hackathon 2026**  
+**Problem Statement 2:** Rescue the Surplus  
+**Domain:** Society & Environment
 
-🌐 **Live project:** https://annadaan.vinaysuhirthan.tech
+🌐 **Live Project:** https://annadaan.vinaysuhirthan.tech
 
-👤 **Built by:** Vinay Suhirthan · ksvinaysuhirthan@gmail.com
+▶️ **Demo Video:** https://youtu.be/JxgImNb3lYo
 
-▶️ **Demo Link:**  https://youtu.be/JxgImNb3lYo
+👤 **Built by:** Vinay Suhirthan  
+📧 **Email:** ksvinaysuhirthan@gmail.com
+
 ---
 
+*Every plate counts. Every donation makes a difference.*
 ## The problem, in one breath
 
 Caterers, wedding halls, restaurants and hostel messes throw away edible food every single day. A few kilometres away, shelters and community kitchens are short of meals. Nobody is ignoring anyone. There's just no fast, reliable way to connect the two **before the food goes bad**.
