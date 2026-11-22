@@ -1,11 +1,11 @@
 /* ==========================================================================
-   ANNADAAN — IMMERSIVE FLUID MOTION BACKGROUND
-   Combines 4 visual directions into ONE unified animated composition:
+   ANNADAAN — IMMERSIVE FLUID MOTION BACKGROUND (HIGH-PERFORMANCE GPU ENGINE)
+   Hardware-accelerated rendering architecture preserving ALL visual elements:
    1. Large floating translucent 3D glass bubbles with specular reflections.
    2. Minimal rotating & drifting geometric elements (circles, triangles, lines).
-   3. Continuous multi-layered pastel gradient mesh (sky blue, lavender, soft pink,
-      mint green, peach, cyan, cream).
+   3. Continuous multi-layered pastel gradient mesh.
    4. Smooth morphing organic fluid blobs.
+   5. Tiny floating ambient particles.
    ========================================================================== */
 
 :root {
@@ -19,7 +19,7 @@
   --fluid-speed-multiplier: 1;
 }
 
-/* Base Fullscreen Fixed Container */
+/* Base Fullscreen Fixed Layer - Strict Isolation & GPU Plane */
 .fluid-motion-viewport {
   position: fixed;
   top: 0;
@@ -30,18 +30,23 @@
   z-index: -10;
   pointer-events: none;
   contain: strict;
+  isolation: isolate;
   transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
   background-color: #fafbfc;
 }
 
 /* --------------------------------------------------------------------------
-   LAYER 1: Shifting Pastel Gradient Mesh
+   LAYER 1: Shifting Pastel Gradient Mesh (GPU Cached Texture)
    -------------------------------------------------------------------------- */
 .fluid-layer-mesh {
   position: absolute;
-  inset: -20%;
-  width: 140%;
-  height: 140%;
+  inset: -15%;
+  width: 130%;
+  height: 130%;
   background: 
     radial-gradient(ellipse 55% 45% at 20% 25%, rgba(186, 230, 253, 0.55) 0%, transparent 70%),
     radial-gradient(ellipse 50% 50% at 80% 20%, rgba(233, 213, 255, 0.6) 0%, transparent 70%),
@@ -52,8 +57,14 @@
     linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #eff6ff 100%);
   animation: meshFlow 28s ease-in-out infinite alternate;
   will-change: transform;
-  filter: blur(60px);
+  filter: blur(36px);
+  -webkit-filter: blur(36px);
   opacity: 0.88;
+  contain: strict;
+  transform: translate3d(-2%, -2%, 0);
+  -webkit-transform: translate3d(-2%, -2%, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 @keyframes meshFlow {
@@ -61,7 +72,7 @@
     transform: translate3d(-3%, -3%, 0) rotate(0deg) scale(1);
   }
   50% {
-    transform: translate3d(2%, 3%, 0) rotate(1.5deg) scale(1.05);
+    transform: translate3d(2%, 3%, 0) rotate(1.5deg) scale(1.04);
   }
   100% {
     transform: translate3d(-2%, 4%, 0) rotate(-1.5deg) scale(0.98);
@@ -77,15 +88,20 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  contain: strict;
 }
 
 .morph-blob {
   position: absolute;
   border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-  filter: blur(45px);
-  opacity: 0.55;
-  will-change: border-radius, transform;
-  mix-blend-mode: multiply;
+  filter: blur(28px);
+  -webkit-filter: blur(28px);
+  opacity: 0.52;
+  will-change: transform, border-radius;
+  contain: strict;
+  isolation: isolate;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .morph-blob-1 {
@@ -126,7 +142,7 @@
   background: radial-gradient(circle at 40% 60%, var(--fluid-cream) 0%, var(--fluid-mint) 100%);
   animation: morphAnimation2 32s ease-in-out infinite alternate;
   animation-delay: -18s;
-  opacity: 0.4;
+  opacity: 0.42;
 }
 
 @keyframes morphAnimation1 {
@@ -180,6 +196,7 @@
 
 /* --------------------------------------------------------------------------
    LAYER 3 & 4: Floating Translucent 3D Glass Bubbles
+   Hardware Accelerated: Specular Highlights & Inset Shadows, Zero Filter Jank
    -------------------------------------------------------------------------- */
 .fluid-layer-bubbles {
   position: absolute;
@@ -187,6 +204,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  contain: strict;
 }
 
 .glass-sphere {
@@ -205,10 +223,12 @@
     inset 0 0 16px rgba(233, 213, 255, 0.35),
     0 24px 48px -8px rgba(100, 116, 139, 0.14),
     0 4px 12px rgba(148, 163, 184, 0.06);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
   border: 1.5px solid rgba(255, 255, 255, 0.75);
   will-change: transform;
+  contain: strict;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
 }
 
 /* Glare & Specular Reflection Highlights */
@@ -222,6 +242,7 @@
   border-radius: 50%;
   background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 80%);
   transform: rotate(-35deg);
+  pointer-events: none;
 }
 
 .glass-sphere::after {
@@ -234,6 +255,7 @@
   border-radius: 50%;
   background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 75%);
   transform: rotate(35deg);
+  pointer-events: none;
 }
 
 /* Individual Spheres with Varied Depth & Sizes */
@@ -359,6 +381,7 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
+  contain: strict;
 }
 
 .geo-concentric-ring {
@@ -370,6 +393,9 @@
   border-radius: 50%;
   border: 1px dashed rgba(167, 243, 208, 0.55);
   animation: geoSpin 38s linear infinite;
+  will-change: transform;
+  contain: strict;
+  backface-visibility: hidden;
 }
 
 .geo-concentric-ring::before {
@@ -396,6 +422,9 @@
   height: 48px;
   opacity: 0.35;
   animation: geoWobble 24s ease-in-out infinite alternate;
+  will-change: transform;
+  contain: strict;
+  backface-visibility: hidden;
 }
 
 .geo-triangle svg {
@@ -414,6 +443,9 @@
   height: 180px;
   opacity: 0.32;
   animation: geoFloatSpline 30s ease-in-out infinite alternate;
+  will-change: transform;
+  contain: strict;
+  backface-visibility: hidden;
 }
 
 .geo-dashed-arc {
@@ -428,6 +460,9 @@
   border-bottom: 2px solid transparent;
   border-left: 2px dashed rgba(186, 230, 253, 0.45);
   animation: geoSpinReverse 42s linear infinite;
+  will-change: transform;
+  contain: strict;
+  backface-visibility: hidden;
 }
 
 @keyframes geoSpin {
@@ -480,6 +515,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  contain: strict;
 }
 
 .particle-dot {
@@ -488,6 +524,9 @@
   background: rgba(255, 255, 255, 0.85);
   box-shadow: 0 0 8px rgba(186, 230, 253, 0.8);
   animation: particleFloat 12s ease-in-out infinite alternate;
+  will-change: transform;
+  contain: strict;
+  backface-visibility: hidden;
 }
 
 .p-dot-1 { width: 6px; height: 6px; top: 22%; left: 18%; animation-duration: 11s; }
@@ -527,12 +566,13 @@
 }
 
 .fluid-bg-ambient .morph-blob {
-  filter: blur(52px);
-  opacity: 0.46;
+  filter: blur(32px);
+  -webkit-filter: blur(32px);
+  opacity: 0.44;
 }
 
 .fluid-bg-ambient .glass-sphere {
-  opacity: 0.78;
+  opacity: 0.82;
   box-shadow: 
     inset -8px -10px 20px rgba(186, 230, 253, 0.35),
     inset 10px 12px 20px rgba(255, 255, 255, 0.85),
@@ -552,19 +592,25 @@
   animation-play-state: paused !important;
 }
 
-/* Mobile optimizations */
+/* Mobile optimizations: PRESERVE ALL ELEMENTS (Scale gracefully without hiding) */
 @media (max-width: 768px) {
   .fluid-layer-mesh {
-    filter: blur(40px);
+    filter: blur(28px);
+    -webkit-filter: blur(28px);
   }
   .morph-blob-1 { width: 340px; height: 340px; }
-  .morph-blob-2 { width: 380px; height: 380px; }
-  .morph-blob-3, .morph-blob-4 { display: none; }
+  .morph-blob-2 { width: 360px; height: 360px; }
+  .morph-blob-3 { width: 260px; height: 260px; }
+  .morph-blob-4 { width: 280px; height: 280px; }
   .sphere-huge-1 { width: 170px; height: 170px; }
   .sphere-huge-2 { width: 150px; height: 150px; }
-  .sphere-medium-1 { width: 100px; height: 100px; }
-  .sphere-medium-2 { display: none; }
-  .geo-curved-spline { display: none; }
+  .sphere-medium-1 { width: 110px; height: 110px; }
+  .sphere-medium-2 { width: 95px; height: 95px; }
+  .sphere-small-1 { width: 55px; height: 55px; }
+  .sphere-small-2 { width: 65px; height: 65px; }
+  .sphere-tiny-1 { width: 32px; height: 32px; }
+  .sphere-tiny-2 { width: 28px; height: 28px; }
+  .geo-curved-spline { width: 160px; height: 120px; }
 }
 
 /* Respect user's motion preference */
@@ -575,4 +621,3 @@
     transition-duration: 0.01ms !important;
   }
 }
-

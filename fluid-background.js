@@ -1,6 +1,7 @@
 /**
  * Annadaan — Immersive Fluid Motion Background Controller
- * Manages life-cycle, GPU acceleration, visibility-pause, and DOM mounting.
+ * High-Performance Hardware-Accelerated Engine
+ * Manages life-cycle, GPU composition layer, visibility-pause, and DOM isolation.
  */
 
 (function () {
@@ -21,7 +22,7 @@
     container.setAttribute('aria-hidden', 'true');
 
     container.innerHTML = `
-      <!-- Layer 1: Slowly shifting pastel gradient mesh -->
+      <!-- Layer 1: Slowly shifting pastel gradient mesh (GPU Cached) -->
       <div class="fluid-layer-mesh"></div>
 
       <!-- Layer 2: Large organic morphing fluid blobs -->
@@ -32,7 +33,7 @@
         <div class="morph-blob morph-blob-4"></div>
       </div>
 
-      <!-- Layer 3 & 4: Large and medium floating translucent 3D glass bubbles -->
+      <!-- Layer 3 & 4: Large and medium floating translucent 3D glass bubbles (All 8 Preserved) -->
       <div class="fluid-layer-bubbles">
         <div class="glass-sphere sphere-huge-1"></div>
         <div class="glass-sphere sphere-huge-2"></div>
@@ -62,7 +63,7 @@
         </div>
       </div>
 
-      <!-- Layer 6: Tiny floating ambient particles -->
+      <!-- Layer 6: Tiny floating ambient particles (All 6 Preserved) -->
       <div class="fluid-layer-particles">
         <div class="particle-dot p-dot-1"></div>
         <div class="particle-dot p-dot-2"></div>
@@ -82,7 +83,7 @@
       } else {
         container.classList.remove('fluid-motion-paused');
       }
-    });
+    }, { passive: true });
 
     window.FluidBackground = {
       setMode: function (mode) {
@@ -99,9 +100,8 @@
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFluidBackground);
+    document.addEventListener('DOMContentLoaded', initFluidBackground, { once: true });
   } else {
     initFluidBackground();
   }
 })();
-

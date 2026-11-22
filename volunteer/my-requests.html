@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>My Requests — Annadaan</title>
     <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../fluid-background.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -16,8 +19,6 @@
 
     <style>
         /* --- Global Styles from index.css --- */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
         :root {
             --primary: #2D6A4F;
             --primary-light: #40916C;
@@ -768,10 +769,24 @@ ${request.status === 'Emergency' ? '🚨 EMERGENCY REQUEST' : ''}
             alert(details);
         }
 
-        // Live Auto-Refresh
-        setInterval(() => {
-            loadMyRequests();
-        }, 5000);
+        // Performance Optimized Visibility-Aware Live Auto-Refresh
+        let refreshTimer = null;
+        function scheduleNextRefresh() {
+            if (refreshTimer) clearTimeout(refreshTimer);
+            refreshTimer = setTimeout(() => {
+                if (!document.hidden) {
+                    loadMyRequests();
+                }
+                scheduleNextRefresh();
+            }, 10000);
+        }
+        scheduleNextRefresh();
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                loadMyRequests();
+            }
+        }, { passive: true });
 
     </script>
 
