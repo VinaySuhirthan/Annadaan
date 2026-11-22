@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="../discovery.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css">
+  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../supabase-client.js"></script>
   <script src="../fluid-background.js" defer></script>
@@ -20,6 +22,29 @@
 
   <style>
     /* Custom page-specific enhancements */
+    .topbar-guide-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      background: white;
+      border: 1.5px solid #E2E8F0;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .topbar-guide-btn:hover {
+      background: #F8FAFC;
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
     .ngo-approval-box {
       background: linear-gradient(135deg, rgba(209, 250, 229, 0.6) 0%, rgba(240, 253, 244, 0.8) 100%);
       border: 1px solid rgba(167, 243, 208, 0.8);
@@ -179,6 +204,10 @@
             <span class="pulse-dot"></span>
             <span>Live Dispatch Active</span>
           </div>
+          <button class="topbar-guide-btn" onclick="relaunchGuide()" title="Start Feature Walkthrough">
+            <i class="fas fa-compass" style="color: var(--primary);"></i>
+            <span>Guide</span>
+          </button>
           <a href="add-food.html" class="btn btn-primary btn-sm" id="btnTopDonate">
             <i class="fas fa-plus"></i>
             <span>Donate Food</span>

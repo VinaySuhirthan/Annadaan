@@ -457,7 +457,8 @@
 
       showAlert(`Welcome, ${name}! Redirecting...`, "success");
       setTimeout(() => {
-        location.href = nextPage;
+        const targetUrl = nextPage + (nextPage.includes('?') ? '&' : '?') + 'tour=1';
+        location.href = targetUrl;
       }, 800);
     }
 
@@ -515,7 +516,8 @@
           localStorage.setItem("donor", JSON.stringify(donorSession));
           localStorage.setItem("currentUser", JSON.stringify(donorSession));
         }
-        location.href = nextPage;
+        const targetUrl = nextPage + (nextPage.includes('?') ? '&' : '?') + 'tour=1';
+        location.href = targetUrl;
       } else {
         showAlert("Invalid OTP! Try 1234", "error");
       }

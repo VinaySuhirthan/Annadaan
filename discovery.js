@@ -105,12 +105,12 @@
         },
         {
           element: '#navProfile',
-          fallbackElement: '.sidebar-footer',
+          fallbackElement: '#topAvatar',
           popover: {
             title: 'Verified Contributor Profile',
             description: 'Access your verified donor reference ID, contact details, and lifetime social audit history anytime.',
-            side: 'right',
-            align: 'center'
+            side: 'bottom',
+            align: 'end'
           }
         }
       ]
@@ -270,16 +270,19 @@
     });
   }
 
-  // Automatic Launch on First Eligible Visit
+  // Automatic Launch on First Eligible Visit or Explicit ?tour=1 Param
   function checkAndAutoLaunch() {
     const pageKey = getPageKey();
     if (!pageKey || !TOURS[pageKey]) return;
 
-    if (!isPageDismissedOrCompleted(pageKey)) {
-      // Delay slightly so layout and Supabase stats have finished rendering
+    const urlParams = new URLSearchParams(window.location.search);
+    const forceTour = urlParams.has('tour') || urlParams.has('guide');
+
+    if (forceTour || !isPageDismissedOrCompleted(pageKey)) {
+      // Delay slightly so layout and Supabase stats have finished initial render
       setTimeout(() => {
-        launchTour(pageKey, false);
-      }, 1400);
+        launchTour(pageKey, forceTour);
+      }, 600);
     }
   }
 
