@@ -670,13 +670,13 @@ Organization: ${currentUser.name}
 Report Period: ${timePeriod}
 Generated: ${new Date().toLocaleString()}
 
-📊 Summary Statistics
+Summary Statistics
 --------------------
 Total Distributions: ${totalDistributions}
 Total People Served: ${totalPeopleServed}
 Average Restaurant Rating: ${avgRating}/5
 
-📈 Detailed Breakdown
+Detailed Breakdown
 --------------------
 ${filteredData.map((fb, index) => `
 ${index + 1}. ${fb.restaurant}
@@ -687,7 +687,7 @@ ${index + 1}. ${fb.restaurant}
    ${fb.successStories ? `• Success: ${fb.successStories}` : ''}
 `).join('\n')}
 
-🌟 Key Highlights
+Key Highlights
 ----------------
 • Emergency Distributions: ${ngoRequests.filter(req => req.emergency).length}
 • Food Saved from Waste: ~${totalDistributions * 25} kg

@@ -78,7 +78,7 @@
         {
           element: '#statsGrid',
           popover: {
-            title: '📊 Real-Time Community Impact',
+            title: 'Real-Time Community Impact',
             description: 'These 4 metrics calculate live meals nourished and verified shelter drop-offs from real delivery confirmations.',
             side: 'bottom',
             align: 'start'
@@ -87,7 +87,7 @@
         {
           element: '#donorTabs',
           popover: {
-            title: '🤝 Two-Way Shelter Approval Gate',
+            title: 'Two-Way Shelter Approval Gate',
             description: 'When a local NGO requests your surplus food, an "Accept Request" action appears here. You authorize the pickup before volunteer couriers are dispatched.',
             side: 'bottom',
             align: 'center'
@@ -97,7 +97,7 @@
           element: '#btnListSurplus',
           fallbackElement: '#btnTopDonate',
           popover: {
-            title: '🚀 Post Surplus in 60 Seconds',
+            title: 'Post Surplus Listings',
             description: 'List food immediately after banquets or meal services with photo verification and exact kitchen entrance GPS coordinates.',
             side: 'left',
             align: 'center'
@@ -107,7 +107,7 @@
           element: '#navProfile',
           fallbackElement: '.sidebar-footer',
           popover: {
-            title: '🛡️ Verified Contributor Identity',
+            title: 'Verified Contributor Profile',
             description: 'Access your verified donor reference ID, contact details, and lifetime social audit history anytime.',
             side: 'right',
             align: 'center'
@@ -122,7 +122,7 @@
         {
           element: '#validHours',
           popover: {
-            title: '⌛ The Freshness Safety Clock',
+            title: 'Freshness Safety Window',
             description: 'Crucial food safety control: specify how long cooked food remains safe to consume. Once this window nears expiry, notifications escalate.',
             side: 'top',
             align: 'start'
@@ -132,7 +132,7 @@
           element: "button[title='Pin on Map']",
           fallbackElement: '#map-btn',
           popover: {
-            title: '📍 Pin Exact Kitchen Entrance',
+            title: 'Kitchen Entrance Geolocation',
             description: 'Drag the pin to your exact loading dock or gate so volunteer couriers find your pickup point without phone tag.',
             side: 'bottom',
             align: 'center'
@@ -148,7 +148,7 @@
           element: '.dashboard-card:nth-child(1)',
           fallbackElement: '.stat-card:nth-child(1)',
           popover: {
-            title: '🍲 Live Distance-Sorted Marketplace',
+            title: 'Live Distance-Sorted Marketplace',
             description: 'Browse incoming surplus food filtered by live GPS distance and claim portions for your community kitchen.',
             side: 'bottom',
             align: 'start'
@@ -158,7 +158,7 @@
           element: '.dashboard-card:nth-child(2)',
           fallbackElement: '.stat-card:nth-child(2)',
           popover: {
-            title: '📦 Real-Time Request Tracking',
+            title: 'Real-Time Request Tracking',
             description: 'Monitor claim progress from "Waiting for Donor Approval" to "Courier Dispatched" in real time.',
             side: 'bottom',
             align: 'start'
@@ -174,7 +174,7 @@
           element: '.stat-card:nth-child(1)',
           fallbackElement: '.container',
           popover: {
-            title: '🛵 Live Delivery Assignments',
+            title: 'Live Delivery Assignments',
             description: 'Accept urgent pickup runs, view donor kitchen directions, and confirm food handoff.',
             side: 'bottom',
             align: 'start'
@@ -258,7 +258,7 @@
           popoverClass: 'annadaan-popover',
           nextBtnText: 'Next →',
           prevBtnText: '← Back',
-          doneBtnText: 'Finish ✓',
+          doneBtnText: 'Finish',
           steps: validSteps,
           onDestroyed: () => {
             markPageCompleted(pageKey);

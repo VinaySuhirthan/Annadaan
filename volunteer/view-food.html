@@ -453,7 +453,7 @@
     <div id="map-modal">
         <div class="map-content">
             <div class="map-header">
-                <h3 style="margin:0; font-size:18px;">📌 Pin Location</h3>
+                <h3 style="margin:0; font-size:18px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Pin Location</h3>
                 <button onclick="closeMap()"
                     style="background:none; border:none; cursor:pointer; font-size:20px;">&times;</button>
             </div>
@@ -1159,9 +1159,7 @@
         function viewLocation(foodId) {
             const food = allFoodItems.find(f => f.id === foodId);
             if (food) {
-                // If we have coordinates, openness in maps would be cool, but alert is fine for now as per previous code
-                // alert(`📍 ${food.restaurant || food.donor_type || 'Food Source'}\n\nLocation: ${food.location || food.address}\nDistance: ${food.distance || 'Unknown'} from you`);
-                showAlert(`📍 ${food.restaurant || food.donor_type || 'Food Source'}<br><br>Location: ${food.location || food.address}<br>Distance: ${food.distance || 'Unknown'} from you`, 'info');
+                showAlert(`${food.restaurant || food.donor_type || 'Food Source'}<br><br>Location: ${food.location || food.address}<br>Distance: ${food.distance || 'Unknown'} from you`, 'info');
             }
         }
 
@@ -1200,7 +1198,7 @@
                     }
                 }
 
-                showAlert('✅ Request sent to donor! You will be notified once the donor accepts your request.', 'success');
+                showAlert('Request sent to donor! You will be notified once the donor accepts your request.', 'success');
                 window.location.href = 'my-requests.html';
 
             } catch (err) {
@@ -1245,7 +1243,7 @@
                     return;
                 }
 
-                showAlert('✅ You have volunteered! The donor will be notified.', 'success');
+                showAlert('You have volunteered! The donor will be notified.', 'success');
                 window.location.href = 'my-volunteering.html';
 
             } catch (err) {

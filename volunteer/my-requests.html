@@ -721,7 +721,7 @@
 
                 if (error) throw error;
 
-                showAlert('✅ Delivery confirmed! Thank you for helping those in need.', 'success');
+                showAlert('Delivery confirmed! Thank you for helping those in need.', 'success');
                 loadMyRequests();
             } catch (err) {
                 console.error('Error confirming delivery:', err);
@@ -750,20 +750,20 @@
             if (!request) return;
 
             const details = `
-📋 Request Details
-=================
+Request Details
+===============
 
 Donor: ${request.donor_type || 'Unknown'}
 Food Type: ${request.food_type}
 Quantity: ${request.serves} people
 
-📍 Location: ${request.address || 'N/A'}
-📏 Distance: ${request.distance || 'Near you'}
+Location: ${request.address || 'N/A'}
+Distance: ${request.distance || 'Near you'}
 
-⏰ Requested: ${new Date(request.created_at).toLocaleString()}
-📊 Status: ${request.status}
+Requested: ${new Date(request.created_at).toLocaleString()}
+Status: ${request.status}
 
-${request.status === 'Emergency' ? '🚨 EMERGENCY REQUEST' : ''}
+${request.status === 'Emergency' ? '[EMERGENCY REQUEST]' : ''}
       `;
 
             alert(details);

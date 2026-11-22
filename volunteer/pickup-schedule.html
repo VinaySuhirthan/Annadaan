@@ -264,20 +264,20 @@
 
                 // Show success message
                 const confirmationMessage = `
-                    ✅ Pickup Scheduled Successfully!
-                    
-                    📅 Date: ${formattedDate}
-                    ⏰ Time: ${pickupTime}
-                    
-                    👤 Pickup Person: ${pickupPerson}
-                    📱 Contact: ${pickupContact}
-                    
-                    🚚 Vehicle: ${document.getElementById('vehicle-type').value}
-                    
-                    📍 Restaurant: ${currentRequest.restaurant}
-                    📦 Food: ${currentRequest.foodType} (${currentRequest.quantity})
-                    
-                    💡 Please save this confirmation and arrive on time.
+Pickup Scheduled Successfully!
+
+Date: ${formattedDate}
+Time: ${pickupTime}
+
+Pickup Person: ${pickupPerson}
+Contact: ${pickupContact}
+
+Vehicle: ${document.getElementById('vehicle-type').value}
+
+Restaurant: ${currentRequest.restaurant}
+Food: ${currentRequest.foodType} (${currentRequest.quantity})
+
+Please save this confirmation and arrive on time.
                 `;
 
                 showAlert('Pickup scheduled successfully!', 'success');

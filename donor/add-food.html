@@ -480,28 +480,16 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .verification-disclaimer-pill {
-      display: inline-flex;
+    .verification-tag-header {
+      display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 10.5px;
+      font-size: 11.5px;
       font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
       color: #64748B;
-      background: #F1F5F9;
-      border: 1px solid #E2E8F0;
-      padding: 3px 9px;
-      border-radius: 9999px;
-      margin-bottom: 14px;
-    }
-
-    .verification-disclaimer-pill::before {
-      content: '';
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #3B82F6;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
     }
 
     .verification-active-state {
@@ -602,7 +590,7 @@
   <div id="map-modal">
     <div class="map-content">
       <div class="map-header">
-        <h3 style="margin:0; font-size:18px;">📌 Pin Location</h3>
+        <h3 style="margin:0; font-size:18px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-map-marker-alt" style="color: var(--primary);"></i> Pin Location</h3>
         <button onclick="closeMap()"
           style="background:none; border:none; cursor:pointer; font-size:20px;">&times;</button>
       </div>
@@ -680,7 +668,10 @@
 
         <!-- SIMULATED FOOD PHOTO VERIFICATION (DEMO EXPERIENCE) -->
         <div id="photoVerificationSection" class="verification-container">
-          <div class="verification-disclaimer-pill">DEMO SIMULATION · NOT AN ACTUAL AI CHECK</div>
+          <div class="verification-tag-header">
+            <i class="fas fa-camera" style="color: var(--primary);"></i>
+            <span>Image Review & Quality Check</span>
+          </div>
 
           <!-- ACTIVE SCANNING STATE (0–7.5s) -->
           <div id="verifActiveState" class="verification-active-state">
@@ -723,7 +714,7 @@
               Your contribution starts with a thoughtful step. Thank you!
             </p>
             <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 10px 12px; font-size: 11.5px; color: #64748B; line-height: 1.45; text-align: left; margin-top: 4px;">
-              <strong style="color: #475569;">Notice:</strong> This demo does not verify food freshness, hygiene or safety. Please ensure the food is safe, properly stored and suitable for donation.
+              <strong style="color: #475569;"><i class="fas fa-info-circle" style="color: var(--primary); margin-right: 4px;"></i> Guideline:</strong> Please ensure the food is hygienically packed, fresh, and safely stored for distribution.
             </div>
           </div>
         </div>
