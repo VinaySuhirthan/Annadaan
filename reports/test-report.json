@@ -1,0 +1,402 @@
+{
+  "summary": {
+    "total": 38,
+    "passed": 20,
+    "failed": 15,
+    "partial": 3
+  },
+  "results": [
+    {
+      "testId": "DB-01",
+      "name": "Supabase Reachability",
+      "status": "FAIL",
+      "error": "permission denied for table food_table",
+      "latency": 1331,
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-SCHEMA-donor_table",
+      "name": "Table [donor_table] Existence",
+      "status": "FAIL",
+      "error": "permission denied for table donor_table",
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-SCHEMA-ngo_table",
+      "name": "Table [ngo_table] Existence",
+      "status": "FAIL",
+      "error": "permission denied for table ngo_table",
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-SCHEMA-volunteer_table",
+      "name": "Table [volunteer_table] Existence",
+      "status": "FAIL",
+      "error": "permission denied for table volunteer_table",
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-SCHEMA-food_table",
+      "name": "Table [food_table] Existence",
+      "status": "FAIL",
+      "error": "permission denied for table food_table",
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-COLUMNS-FOOD",
+      "name": "food_table Required Columns",
+      "status": "FAIL",
+      "error": "permission denied for table food_table",
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-STORAGE",
+      "name": "Storage Bucket [food_images]",
+      "status": "PARTIAL",
+      "message": "Bucket not listed via anon key (protected by RLS)",
+      "suite": "Database Connectivity"
+    },
+    {
+      "testId": "DB-CRUD-CREATE",
+      "name": "Insert Food Donation",
+      "status": "FAIL",
+      "error": "permission denied for table food_table",
+      "duration": 931,
+      "suite": "Database CRUD"
+    },
+    {
+      "testId": "DB-CONCURRENCY-SETUP",
+      "name": "Setup Concurrency Test Batch",
+      "status": "FAIL",
+      "error": "permission denied for table food_table",
+      "suite": "Database Concurrency"
+    },
+    {
+      "testId": "SEC-RLS-ANON-FOOD",
+      "name": "Anonymous SELECT food_table",
+      "status": "FAIL",
+      "message": "permission denied for table food_table",
+      "suite": "Row Level Security"
+    },
+    {
+      "testId": "SEC-RLS-DONOR-TABLE",
+      "name": "donor_table Direct Write Control",
+      "status": "PASS",
+      "message": "Direct anonymous insert was successfully blocked",
+      "suite": "Row Level Security"
+    },
+    {
+      "testId": "DB-REALTIME-CONNECT",
+      "name": "Realtime WebSocket Channel Connection",
+      "status": "PASS",
+      "message": "Channel [qa-realtime-1795332443459] joined successfully",
+      "suite": "Realtime Sync"
+    },
+    {
+      "testId": "DB-REALTIME-TRIGGER",
+      "name": "Realtime Insert Trigger",
+      "status": "FAIL",
+      "error": "permission denied for table food_table",
+      "suite": "Realtime Sync"
+    },
+    {
+      "testId": "DB-REALTIME-SYNC",
+      "name": "Live Realtime Postgres Changes Delivery",
+      "status": "PARTIAL",
+      "message": "Realtime WebSocket connected, but Postgres Changes event timed out (verify supabase_realtime publication on food_table)",
+      "evidence": "Timeout 12000ms",
+      "suite": "Realtime Sync"
+    },
+    {
+      "testId": "SEC-SECRET-SCAN",
+      "name": "Repository Secrets Scan",
+      "status": "PASS",
+      "message": "Scanned 65 repository source files. Zero service-role keys, OAuth secrets, or private tokens leaked.",
+      "suite": "Secret Exposure"
+    },
+    {
+      "testId": "SEC-HEADER-HSTS",
+      "name": "Strict-Transport-Security (HSTS)",
+      "status": "PASS",
+      "value": "max-age=63072000",
+      "suite": "Security Headers"
+    },
+    {
+      "testId": "SEC-HEADER-NOSNIFF",
+      "name": "X-Content-Type-Options",
+      "status": "DEFECT",
+      "severity": "Low",
+      "message": "Missing or weak X-Content-Type-Options: nosniff",
+      "suite": "Security Headers"
+    },
+    {
+      "testId": "SEC-HEADER-FRAME",
+      "name": "X-Frame-Options",
+      "status": "PARTIAL",
+      "severity": "Low",
+      "message": "Consider adding X-Frame-Options: SAMEORIGIN to prevent framing attacks",
+      "suite": "Security Headers"
+    },
+    {
+      "testId": "SEC-HEADER-CSP",
+      "name": "Content-Security-Policy (CSP)",
+      "status": "DEFECT",
+      "severity": "Medium",
+      "message": "Missing Content-Security-Policy header",
+      "suite": "Security Headers"
+    },
+    {
+      "testId": "SEC-AUTH-6HR-CONST",
+      "name": "Six-Hour Session Timeout Definition",
+      "status": "PASS",
+      "message": "Enforced 6-hour absolute session boundary (21,600,000ms)",
+      "suite": "Authentication Security"
+    },
+    {
+      "testId": "SEC-AUTH-EXPIRY-CHECK",
+      "name": "Client Session Expiration Guard",
+      "status": "PASS",
+      "message": "Session start recorded at login and validated against current timestamp on route transitions",
+      "suite": "Authentication Security"
+    },
+    {
+      "testId": "SEC-AUTH-SIGNOUT-SCOPE",
+      "name": "Multi-Device SignOut Scope Isolation",
+      "status": "PASS",
+      "message": "SignOut correctly uses scope: local to protect other concurrent sessions",
+      "suite": "Authentication Security"
+    },
+    {
+      "testId": "SEC-AUTH-ROUTE-GUARD",
+      "name": "Role-Based Route Protection Guard",
+      "status": "PASS",
+      "message": "Route protection enforces role authentication prior to dashboard mounting",
+      "suite": "Authentication Security"
+    },
+    {
+      "testId": "PAGE-OK-index.html",
+      "name": "Route Load: index.html",
+      "status": "PASS",
+      "duration": 3283,
+      "message": "Loaded successfully in 3283ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-ERR-food-status.html",
+      "name": "Route Load: food-status.html",
+      "status": "FAIL",
+      "error": "Unhandled JS Exception: showAlert is not defined",
+      "duration": 456,
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-donor/login.html",
+      "name": "Route Load: donor/login.html",
+      "status": "PASS",
+      "duration": 114,
+      "message": "Loaded successfully in 114ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-donor/donor-home.html",
+      "name": "Route Load: donor/donor-home.html",
+      "status": "PASS",
+      "duration": 168,
+      "message": "Loaded successfully in 168ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-donor/add-food.html",
+      "name": "Route Load: donor/add-food.html",
+      "status": "PASS",
+      "duration": 397,
+      "message": "Loaded successfully in 397ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/ngo-volunteer-auth.html",
+      "name": "Route Load: volunteer/ngo-volunteer-auth.html",
+      "status": "PASS",
+      "duration": 76,
+      "message": "Loaded successfully in 76ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/volunteer-login.html",
+      "name": "Route Load: volunteer/volunteer-login.html",
+      "status": "PASS",
+      "duration": 402,
+      "message": "Loaded successfully in 402ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/ngo-dashboard.html",
+      "name": "Route Load: volunteer/ngo-dashboard.html",
+      "status": "PASS",
+      "duration": 220,
+      "message": "Loaded successfully in 220ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-FATAL-volunteer/view-food.html",
+      "name": "Route Load: volunteer/view-food.html",
+      "status": "FAIL",
+      "error": "page.goto: Navigation to \"http://localhost:3000/volunteer/view-food.html\" is interrupted by another navigation to \"http://localhost:3000/index.html\"\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/volunteer/view-food.html\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/my-requests.html",
+      "name": "Route Load: volunteer/my-requests.html",
+      "status": "PASS",
+      "duration": 148,
+      "message": "Loaded successfully in 148ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-FATAL-volunteer/volunteer-dashboard.html",
+      "name": "Route Load: volunteer/volunteer-dashboard.html",
+      "status": "FAIL",
+      "error": "page.goto: Navigation to \"http://localhost:3000/volunteer/volunteer-dashboard.html\" is interrupted by another navigation to \"http://localhost:3000/index.html\"\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3000/volunteer/volunteer-dashboard.html\", waiting until \"domcontentloaded\"\u001b[22m\n",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/my-volunteering.html",
+      "name": "Route Load: volunteer/my-volunteering.html",
+      "status": "PASS",
+      "duration": 128,
+      "message": "Loaded successfully in 128ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/pickup-schedule.html",
+      "name": "Route Load: volunteer/pickup-schedule.html",
+      "status": "PASS",
+      "duration": 51,
+      "message": "Loaded successfully in 51ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/delivery-feedback.html",
+      "name": "Route Load: volunteer/delivery-feedback.html",
+      "status": "PASS",
+      "duration": 110,
+      "message": "Loaded successfully in 110ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    },
+    {
+      "testId": "PAGE-OK-volunteer/statistics.html",
+      "name": "Route Load: volunteer/statistics.html",
+      "status": "PASS",
+      "duration": 46,
+      "message": "Loaded successfully in 46ms with 0 unhandled exceptions",
+      "suite": "Route Integrity"
+    }
+  ],
+  "featureRegistry": [
+    {
+      "page": "index.html",
+      "feature": "Landing & Role Selection",
+      "userRole": "public",
+      "expectedBehavior": "Accessible to public, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "food-status.html",
+      "feature": "Realtime Food Tracking",
+      "userRole": "public",
+      "expectedBehavior": "Accessible to public, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "donor/login.html",
+      "feature": "Donor Authentication & Google OAuth",
+      "userRole": "donor",
+      "expectedBehavior": "Accessible to donor, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "donor/donor-home.html",
+      "feature": "Donor Dashboard & Two-Way Gate",
+      "userRole": "donor",
+      "expectedBehavior": "Accessible to donor, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "donor/add-food.html",
+      "feature": "Food Surplus Posting & GPS Geocoding",
+      "userRole": "donor",
+      "expectedBehavior": "Accessible to donor, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/ngo-volunteer-auth.html",
+      "feature": "NGO & Volunteer Unified Auth",
+      "userRole": "ngo/volunteer",
+      "expectedBehavior": "Accessible to ngo/volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/volunteer-login.html",
+      "feature": "Volunteer Dedicated Login",
+      "userRole": "volunteer",
+      "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/ngo-dashboard.html",
+      "feature": "NGO Dispatch & Claim Hub",
+      "userRole": "ngo",
+      "expectedBehavior": "Accessible to ngo, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/view-food.html",
+      "feature": "Distance-Sorted Food Marketplace",
+      "userRole": "ngo/volunteer",
+      "expectedBehavior": "Accessible to ngo/volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/my-requests.html",
+      "feature": "NGO Claim Tracking & Status",
+      "userRole": "ngo",
+      "expectedBehavior": "Accessible to ngo, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/volunteer-dashboard.html",
+      "feature": "Volunteer Courier Dashboard",
+      "userRole": "volunteer",
+      "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/my-volunteering.html",
+      "feature": "Volunteer Active Runs",
+      "userRole": "volunteer",
+      "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/pickup-schedule.html",
+      "feature": "Pickup Schedule",
+      "userRole": "volunteer",
+      "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/delivery-feedback.html",
+      "feature": "Shelter Proof of Delivery",
+      "userRole": "ngo",
+      "expectedBehavior": "Accessible to ngo, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    },
+    {
+      "page": "volunteer/statistics.html",
+      "feature": "Community Impact Statistics",
+      "userRole": "volunteer",
+      "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+      "testStatus": "IMPLEMENTED"
+    }
+  ]
+}

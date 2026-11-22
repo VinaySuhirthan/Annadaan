@@ -70,9 +70,9 @@
       }
 
       if (donor) {
-        populateDonorProfile();
-        loadDonations();
-        subscribeToDonationUpdates();
+        if (typeof populateDonorProfile === 'function') populateDonorProfile();
+        if (typeof loadDonations === 'function') loadDonations();
+        if (typeof subscribeToDonationUpdates === 'function') subscribeToDonationUpdates();
       }
     }
 
@@ -90,14 +90,18 @@
             localStorage.setItem("donor", JSON.stringify(donor));
             localStorage.setItem("currentUser", JSON.stringify(donor));
           }
-          populateDonorProfile();
-          loadDonations();
-          subscribeToDonationUpdates();
+          if (typeof populateDonorProfile === 'function') populateDonorProfile();
+          if (typeof loadDonations === 'function') loadDonations();
+          if (typeof subscribeToDonationUpdates === 'function') subscribeToDonationUpdates();
         }
       });
     }
 
-    initAuth();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAuth);
+    } else {
+      initAuth();
+    }
   </script>
 
   <div class="app-shell">

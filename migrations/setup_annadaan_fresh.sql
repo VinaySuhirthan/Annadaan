@@ -88,7 +88,15 @@ CREATE POLICY "Public Full Access ngo_table" ON public.ngo_table FOR ALL USING (
 CREATE POLICY "Public Full Access volunteer_table" ON public.volunteer_table FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Public Full Access food_table" ON public.food_table FOR ALL USING (true) WITH CHECK (true);
 
--- 6. Setup Supabase Realtime for instant UI sync
+-- 6. Grant Table Permissions to API Roles (anon, authenticated, service_role)
+-- Fixes PostgreSQL 'permission denied for table' error prior to RLS evaluation
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+
+-- 7. Setup Supabase Realtime for instant UI sync
 DO $$
 BEGIN
     IF NOT EXISTS (

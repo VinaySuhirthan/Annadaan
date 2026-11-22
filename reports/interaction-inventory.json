@@ -1,0 +1,1072 @@
+[
+  {
+    "page": "index.html",
+    "role": "public",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Be a Donor\r\n          Donate surplus food now",
+    "action": "donor/login.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "index.html",
+    "role": "public",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Be a Volunteer\r\n          Help deliver meals",
+    "action": "volunteer/ngo-volunteer-auth.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Go Back",
+    "action": "location.href=",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "${feedbackBtnId}",
+    "label": "Provide Feedback",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Accept",
+    "action": "acceptRequest()",
+    "classification": "Database mutation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Reject",
+    "action": "rejectRequest()",
+    "classification": "Destructive action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm Food Picked Up",
+    "action": "updateStatus(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm Delivery to Needy",
+    "action": "updateStatus(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "submitFeedbackBtn",
+    "label": "Submit Feedback",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm Delivery to Needy",
+    "action": "updateStatus(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back to Dashboard",
+    "action": "donor/donor-home.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Call ${assigneeContact.typeLabel}",
+    "action": "tel:${assigneeContact.phone}",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "food-status.html",
+    "role": "public",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back to Dashboard",
+    "action": "${backHome}",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "button",
+    "id": "btnGoogleLogin",
+    "label": "Sign in with Google",
+    "action": "signInWithGoogle()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Send OTP",
+    "action": "sendOtp()",
+    "classification": "Authentication action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Verify & Continue",
+    "action": "verifyOtp()",
+    "classification": "Authentication action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Sign In",
+    "action": "handleEmailLogin()",
+    "classification": "Authentication action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Or sign in with email & password",
+    "action": "toggleEmailSection()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "← Back to phone number",
+    "action": "backToStep1()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/login.html",
+    "role": "donor",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "← Back to phone login",
+    "action": "toggleEmailSection()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Sign Out",
+    "action": "donorLogout()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Button",
+    "action": "toggleSidebar()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "tabActive",
+    "label": "Active Listings\n                0",
+    "action": "switchTab(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "tabHistory",
+    "label": "Donation History\n                0",
+    "action": "switchTab(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Back to Dashboard",
+    "action": "showDashboard()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Log Out",
+    "action": "donorLogout()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Accept Request",
+    "action": "event.stopPropagation(); acceptRequest(",
+    "classification": "Database mutation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Reject",
+    "action": "event.stopPropagation(); rejectRequest(",
+    "classification": "Destructive action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm Pickup",
+    "action": "event.stopPropagation(); confirmPickup(",
+    "classification": "Database mutation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "appSidebar",
+    "label": "Annadaan\n              Donor Portal\n            \n          \n        \n\n        \n          \n            \n            Dashboard",
+    "action": "",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "navDonateFood",
+    "label": "Donate Food",
+    "action": "add-food.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "navHistory",
+    "label": "Donation History",
+    "action": "showHistoryTab()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "navProfile",
+    "label": "My Profile",
+    "action": "showProfile()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "navFeatureGuide",
+    "label": "Feature Guide",
+    "action": "relaunchGuide()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "btnTopDonate",
+    "label": "Donate Food",
+    "action": "add-food.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "btnListSurplus",
+    "label": "List Surplus Food",
+    "action": "add-food.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "role": "donor",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Post Surplus Food Now",
+    "action": "add-food.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "&times;",
+    "action": "closeMap()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Search",
+    "action": "searchMapLocation()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm",
+    "action": "confirmMapLocation()",
+    "classification": "Database mutation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "vegBtn",
+    "label": "Veg",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "nonVegBtn",
+    "label": "Non-Veg",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "clearImageBtn",
+    "label": "×",
+    "action": "clearImage(event)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Button",
+    "action": "openMap()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "locBtn",
+    "label": "locBtn",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "donor/add-food.html",
+    "role": "donor",
+    "type": "button",
+    "id": "postBtn",
+    "label": "Post Donation",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "btnGoogleAuth",
+    "label": "Sign in with Google",
+    "action": "signInWithGoogleRole()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "login-tab",
+    "label": "Login",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "register-tab",
+    "label": "Register",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "btnAuthSubmit",
+    "label": "Login to Dashboard",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "btnRegisterSubmit",
+    "label": "Create Account",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "link",
+    "id": "toggleLoginMethod",
+    "label": "Switch to Email & Password login",
+    "action": "toggleLoginMethod()",
+    "classification": "Authentication action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "form",
+    "id": "login-form",
+    "label": "Form login-form",
+    "action": "Form Submit Event",
+    "classification": "Form submission",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "role": "ngo/volunteer",
+    "type": "form",
+    "id": "register-form",
+    "label": "Form register-form",
+    "action": "Form Submit Event",
+    "classification": "Form submission",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "btnGoogleAuthVol",
+    "label": "Sign in with Google",
+    "action": "signInWithGoogleRole()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "login-tab",
+    "label": "Login",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "register-tab",
+    "label": "Register",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Login to Dashboard",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Create Account",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Switch to Email & Password login",
+    "action": "togglePwdField()",
+    "classification": "Interactive / Read-only UI",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "form",
+    "id": "login-form",
+    "label": "Form login-form",
+    "action": "Form Submit Event",
+    "classification": "Form submission",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "role": "volunteer",
+    "type": "form",
+    "id": "register-form",
+    "label": "Form register-form",
+    "action": "Form Submit Event",
+    "classification": "Form submission",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-dashboard.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Logout",
+    "action": "logout()",
+    "classification": "Authentication action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/ngo-dashboard.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "reviewPendingBtn",
+    "label": "Review Now",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/ngo-dashboard.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "dismissPromptBtn",
+    "label": "Remind me later",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/ngo-dashboard.html",
+    "role": "ngo",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "#",
+    "action": "#",
+    "classification": "Defect: Broken Anchor without Handler",
+    "status": "DEFECT: Broken Anchor"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "&times;",
+    "action": "closeMap()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Search",
+    "action": "searchMapLocation()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm",
+    "action": "confirmMapLocation()",
+    "classification": "Database mutation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Button",
+    "action": "openMap()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "detect-btn",
+    "label": "Detect",
+    "action": "detectLocation()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Retry",
+    "action": "location.reload()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Retry",
+    "action": "loadAvailableFood()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Refresh",
+    "action": "loadAvailableFood()",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "View Location",
+    "action": "viewLocation(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Request",
+    "action": "requestFood(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Volunteer",
+    "action": "volunteerHelp(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "role": "ngo/volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back to Dashboard",
+    "action": "goBack(); return false;",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-requests.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm Delivery to Needy",
+    "action": "confirmDelivery(",
+    "classification": "Database mutation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-requests.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "View Card Details",
+    "action": "viewRequestDetails(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-requests.html",
+    "role": "ngo",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back to Dashboard",
+    "action": "ngo-dashboard.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-requests.html",
+    "role": "ngo",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Request Food Now",
+    "action": "view-food.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-requests.html",
+    "role": "ngo",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Track Status",
+    "action": "../food-status.html?id=${request.id}",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-dashboard.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Button",
+    "action": "logout()",
+    "classification": "Authentication action",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-dashboard.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "greenCreditsBtn",
+    "label": "→",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/volunteer-dashboard.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Map",
+    "action": "window.open(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/volunteer-dashboard.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Go",
+    "action": "suggestRoute(${area.lat}, ${area.lng})",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Current Tasks",
+    "action": "switchTab(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Delivery History",
+    "action": "switchTab(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "volunteer-dashboard.html",
+    "action": "volunteer-dashboard.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Find Food to Deliver",
+    "action": "view-food.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Track Status",
+    "action": "../food-status.html?id=${d.id}",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Call Donor",
+    "action": "tel:${d.donor_phone}",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "View Journey",
+    "action": "../food-status.html?id=${d.id}",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/pickup-schedule.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Confirm Pickup Schedule",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/pickup-schedule.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back to Requests",
+    "action": "my-requests.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/pickup-schedule.html",
+    "role": "volunteer",
+    "type": "form",
+    "id": "pickup-form",
+    "label": "Form pickup-form",
+    "action": "Form Submit Event",
+    "classification": "Form submission",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/delivery-feedback.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "captureLocationBtn",
+    "label": "Use Current Location",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/delivery-feedback.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Submit Feedback",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/delivery-feedback.html",
+    "role": "ngo",
+    "type": "button",
+    "id": "cancelFeedback",
+    "label": "Cancel",
+    "action": "(form submit)",
+    "classification": "Interactive element",
+    "status": "DEFECT: Missing Action"
+  },
+  {
+    "page": "volunteer/delivery-feedback.html",
+    "role": "ngo",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back to Requests",
+    "action": "my-requests.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/delivery-feedback.html",
+    "role": "ngo",
+    "type": "form",
+    "id": "feedback-form",
+    "label": "Form feedback-form",
+    "action": "Form Submit Event",
+    "classification": "Form submission",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/statistics.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Monthly",
+    "action": "exportReport(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/statistics.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Quarterly",
+    "action": "exportReport(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/statistics.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Annual",
+    "action": "exportReport(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/statistics.html",
+    "role": "volunteer",
+    "type": "button",
+    "id": "(anonymous button)",
+    "label": "Impact PDF",
+    "action": "exportReport(",
+    "classification": "Interactive element",
+    "status": "FUNCTIONAL"
+  },
+  {
+    "page": "volunteer/statistics.html",
+    "role": "volunteer",
+    "type": "link",
+    "id": "(anonymous link)",
+    "label": "Back",
+    "action": "ngo-dashboard.html",
+    "classification": "Navigation",
+    "status": "FUNCTIONAL"
+  }
+]

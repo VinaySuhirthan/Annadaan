@@ -1,0 +1,37 @@
+{
+  "name": "annadaan",
+  "version": "1.0.0",
+  "description": "Annadaan Autonomous End-to-End QA, Database Validation & Security Testing Suite",
+  "main": "tests/helpers/test-runner.js",
+  "scripts": {
+    "test": "node tests/helpers/test-runner.js",
+    "test:all": "node tests/helpers/test-runner.js",
+    "test:smoke": "node tests/database/connectivity.test.js && node tests/security/secrets.test.js",
+    "test:ui": "npx playwright test",
+    "test:database": "node tests/database/connectivity.test.js && node tests/database/crud.test.js && node tests/database/concurrency.test.js && node tests/database/rls.test.js",
+    "test:realtime": "node tests/database/realtime.test.js",
+    "test:security": "node tests/security/secrets.test.js && node tests/security/headers.test.js && node tests/security/authentication.test.js && node tests/database/rls.test.js",
+    "test:performance": "node tests/performance/browser-errors.test.js",
+    "test:report": "node tests/helpers/crawler.js && node tests/helpers/test-runner.js",
+    "test:dashboard": "node tests/helpers/dev-server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezhilloganathan7-blip/Annadaan.git"
+  },
+  "keywords": [
+    "qa",
+    "testing",
+    "playwright",
+    "supabase",
+    "security",
+    "annadaan"
+  ],
+  "author": "Annadaan Engineering",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "dotenv": "^16.4.7"
+  }
+}

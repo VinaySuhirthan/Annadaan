@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Annadaan QA Automation & Security Test Report</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 32px 24px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 24px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end; }
+    h1 { margin: 0 0 8px 0; font-size: 28px; color: #34d399; }
+    .meta { color: #94a3b8; font-size: 14px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: #1e293b; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; text-align: center; }
+    .stat-val { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+    .stat-label { font-size: 13px; text-transform: uppercase; color: #94a3b8; font-weight: 600; }
+    .color-pass { color: #10b981; }
+    .color-fail { color: #ef4444; }
+    .color-warn { color: #f59e0b; }
+    .color-blue { color: #38bdf8; }
+    h2 { font-size: 20px; color: #e2e8f0; margin: 32px 0 16px; border-left: 4px solid #10b981; padding-left: 12px; }
+    table { width: 100%; border-collapse: collapse; background: #1e293b; border-radius: 12px; overflow: hidden; margin-bottom: 28px; }
+    th { text-align: left; padding: 14px 16px; background: #334155; font-size: 13px; text-transform: uppercase; color: #cbd5e1; }
+    td { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 14px; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .badge-pass { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-fail { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .badge-warn { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    code { background: #0f172a; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 13px; color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Annadaan Automated QA & Security Report</h1>
+        <div class="meta">Target: <code>annadaan.vinaysuhirthan.tech</code> / Local QA Test Suite &bull; Generated: 22/11/2026, 12:57:44 pm</div>
+      </div>
+      <div>
+        <span class="badge badge-warn" style="font-size: 16px; padding: 8px 16px;">Pass Rate: 53%</span>
+      </div>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val color-blue">38</div>
+        <div class="stat-label">Total Tests Executed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val color-pass">20</div>
+        <div class="stat-label">Passed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val color-fail">15</div>
+        <div class="stat-label">Failed / Defects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val color-warn">3</div>
+        <div class="stat-label">Partial / Blocked</div>
+      </div>
+    </div>
+
+    <h2>1. Automated Test Execution Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Test ID</th>
+          <th>Suite</th>
+          <th>Test Scenario</th>
+          <th>Status</th>
+          <th>Latency / Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td><code>DB-01</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>Supabase Reachability</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>1331ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-SCHEMA-donor_table</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>Table [donor_table] Existence</strong><br><small style="color: #94a3b8;">permission denied for table donor_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-SCHEMA-ngo_table</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>Table [ngo_table] Existence</strong><br><small style="color: #94a3b8;">permission denied for table ngo_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-SCHEMA-volunteer_table</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>Table [volunteer_table] Existence</strong><br><small style="color: #94a3b8;">permission denied for table volunteer_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-SCHEMA-food_table</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>Table [food_table] Existence</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-COLUMNS-FOOD</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>food_table Required Columns</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-STORAGE</code></td>
+            <td>Database Connectivity</td>
+            <td><strong>Storage Bucket [food_images]</strong><br><small style="color: #94a3b8;">Bucket not listed via anon key (protected by RLS)</small></td>
+            <td><span class="badge badge-warn">PARTIAL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-CRUD-CREATE</code></td>
+            <td>Database CRUD</td>
+            <td><strong>Insert Food Donation</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>931ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-CONCURRENCY-SETUP</code></td>
+            <td>Database Concurrency</td>
+            <td><strong>Setup Concurrency Test Batch</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-RLS-ANON-FOOD</code></td>
+            <td>Row Level Security</td>
+            <td><strong>Anonymous SELECT food_table</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-RLS-DONOR-TABLE</code></td>
+            <td>Row Level Security</td>
+            <td><strong>donor_table Direct Write Control</strong><br><small style="color: #94a3b8;">Direct anonymous insert was successfully blocked</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-REALTIME-CONNECT</code></td>
+            <td>Realtime Sync</td>
+            <td><strong>Realtime WebSocket Channel Connection</strong><br><small style="color: #94a3b8;">Channel [qa-realtime-1795332443459] joined successfully</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-REALTIME-TRIGGER</code></td>
+            <td>Realtime Sync</td>
+            <td><strong>Realtime Insert Trigger</strong><br><small style="color: #94a3b8;">permission denied for table food_table</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>DB-REALTIME-SYNC</code></td>
+            <td>Realtime Sync</td>
+            <td><strong>Live Realtime Postgres Changes Delivery</strong><br><small style="color: #94a3b8;">Realtime WebSocket connected, but Postgres Changes event timed out (verify supabase_realtime publication on food_table)</small></td>
+            <td><span class="badge badge-warn">PARTIAL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-SECRET-SCAN</code></td>
+            <td>Secret Exposure</td>
+            <td><strong>Repository Secrets Scan</strong><br><small style="color: #94a3b8;">Scanned 65 repository source files. Zero service-role keys, OAuth secrets, or private tokens leaked.</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-HEADER-HSTS</code></td>
+            <td>Security Headers</td>
+            <td><strong>Strict-Transport-Security (HSTS)</strong><br><small style="color: #94a3b8;"></small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-HEADER-NOSNIFF</code></td>
+            <td>Security Headers</td>
+            <td><strong>X-Content-Type-Options</strong><br><small style="color: #94a3b8;">Missing or weak X-Content-Type-Options: nosniff</small></td>
+            <td><span class="badge badge-warn">DEFECT</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-HEADER-FRAME</code></td>
+            <td>Security Headers</td>
+            <td><strong>X-Frame-Options</strong><br><small style="color: #94a3b8;">Consider adding X-Frame-Options: SAMEORIGIN to prevent framing attacks</small></td>
+            <td><span class="badge badge-warn">PARTIAL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-HEADER-CSP</code></td>
+            <td>Security Headers</td>
+            <td><strong>Content-Security-Policy (CSP)</strong><br><small style="color: #94a3b8;">Missing Content-Security-Policy header</small></td>
+            <td><span class="badge badge-warn">DEFECT</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-AUTH-6HR-CONST</code></td>
+            <td>Authentication Security</td>
+            <td><strong>Six-Hour Session Timeout Definition</strong><br><small style="color: #94a3b8;">Enforced 6-hour absolute session boundary (21,600,000ms)</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-AUTH-EXPIRY-CHECK</code></td>
+            <td>Authentication Security</td>
+            <td><strong>Client Session Expiration Guard</strong><br><small style="color: #94a3b8;">Session start recorded at login and validated against current timestamp on route transitions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-AUTH-SIGNOUT-SCOPE</code></td>
+            <td>Authentication Security</td>
+            <td><strong>Multi-Device SignOut Scope Isolation</strong><br><small style="color: #94a3b8;">SignOut correctly uses scope: local to protect other concurrent sessions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>SEC-AUTH-ROUTE-GUARD</code></td>
+            <td>Authentication Security</td>
+            <td><strong>Role-Based Route Protection Guard</strong><br><small style="color: #94a3b8;">Route protection enforces role authentication prior to dashboard mounting</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-index.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: index.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 3283ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>3283ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-ERR-food-status.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: food-status.html</strong><br><small style="color: #94a3b8;">Unhandled JS Exception: showAlert is not defined</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>456ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-donor/login.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: donor/login.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 114ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>114ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-donor/donor-home.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: donor/donor-home.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 168ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>168ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-donor/add-food.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: donor/add-food.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 397ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>397ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/ngo-volunteer-auth.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/ngo-volunteer-auth.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 76ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>76ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/volunteer-login.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/volunteer-login.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 402ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>402ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/ngo-dashboard.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/ngo-dashboard.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 220ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>220ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-FATAL-volunteer/view-food.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/view-food.html</strong><br><small style="color: #94a3b8;">page.goto: Navigation to "http://localhost:3000/volunteer/view-food.html" is interrupted by another navigation to "http://localhost:3000/index.html"
+Call log:
+[2m  - navigating to "http://localhost:3000/volunteer/view-food.html", waiting until "domcontentloaded"[22m
+</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/my-requests.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/my-requests.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 148ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>148ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-FATAL-volunteer/volunteer-dashboard.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/volunteer-dashboard.html</strong><br><small style="color: #94a3b8;">page.goto: Navigation to "http://localhost:3000/volunteer/volunteer-dashboard.html" is interrupted by another navigation to "http://localhost:3000/index.html"
+Call log:
+[2m  - navigating to "http://localhost:3000/volunteer/volunteer-dashboard.html", waiting until "domcontentloaded"[22m
+</small></td>
+            <td><span class="badge badge-fail">FAIL</span></td>
+            <td>-</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/my-volunteering.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/my-volunteering.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 128ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>128ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/pickup-schedule.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/pickup-schedule.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 51ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>51ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/delivery-feedback.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/delivery-feedback.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 110ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>110ms</td>
+          </tr>
+        
+          <tr>
+            <td><code>PAGE-OK-volunteer/statistics.html</code></td>
+            <td>Route Integrity</td>
+            <td><strong>Route Load: volunteer/statistics.html</strong><br><small style="color: #94a3b8;">Loaded successfully in 46ms with 0 unhandled exceptions</small></td>
+            <td><span class="badge badge-pass">PASS</span></td>
+            <td>46ms</td>
+          </tr>
+        
+      </tbody>
+    </table>
+
+    <h2>2. Feature Inventory Registry (15 Core Modules)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Feature</th>
+          <th>User Role</th>
+          <th>Expected Behavior</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td><code>index.html</code></td>
+            <td><strong>Landing & Role Selection</strong></td>
+            <td><span class="badge badge-pass">public</span></td>
+            <td>Accessible to public, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td><strong>Realtime Food Tracking</strong></td>
+            <td><span class="badge badge-pass">public</span></td>
+            <td>Accessible to public, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td><strong>Donor Authentication & Google OAuth</strong></td>
+            <td><span class="badge badge-pass">donor</span></td>
+            <td>Accessible to donor, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td><strong>Donor Dashboard & Two-Way Gate</strong></td>
+            <td><span class="badge badge-pass">donor</span></td>
+            <td>Accessible to donor, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/add-food.html</code></td>
+            <td><strong>Food Surplus Posting & GPS Geocoding</strong></td>
+            <td><span class="badge badge-pass">donor</span></td>
+            <td>Accessible to donor, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/ngo-volunteer-auth.html</code></td>
+            <td><strong>NGO & Volunteer Unified Auth</strong></td>
+            <td><span class="badge badge-pass">ngo/volunteer</span></td>
+            <td>Accessible to ngo/volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/volunteer-login.html</code></td>
+            <td><strong>Volunteer Dedicated Login</strong></td>
+            <td><span class="badge badge-pass">volunteer</span></td>
+            <td>Accessible to volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/ngo-dashboard.html</code></td>
+            <td><strong>NGO Dispatch & Claim Hub</strong></td>
+            <td><span class="badge badge-pass">ngo</span></td>
+            <td>Accessible to ngo, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/view-food.html</code></td>
+            <td><strong>Distance-Sorted Food Marketplace</strong></td>
+            <td><span class="badge badge-pass">ngo/volunteer</span></td>
+            <td>Accessible to ngo/volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/my-requests.html</code></td>
+            <td><strong>NGO Claim Tracking & Status</strong></td>
+            <td><span class="badge badge-pass">ngo</span></td>
+            <td>Accessible to ngo, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/volunteer-dashboard.html</code></td>
+            <td><strong>Volunteer Courier Dashboard</strong></td>
+            <td><span class="badge badge-pass">volunteer</span></td>
+            <td>Accessible to volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/my-volunteering.html</code></td>
+            <td><strong>Volunteer Active Runs</strong></td>
+            <td><span class="badge badge-pass">volunteer</span></td>
+            <td>Accessible to volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/pickup-schedule.html</code></td>
+            <td><strong>Pickup Schedule</strong></td>
+            <td><span class="badge badge-pass">volunteer</span></td>
+            <td>Accessible to volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/delivery-feedback.html</code></td>
+            <td><strong>Shelter Proof of Delivery</strong></td>
+            <td><span class="badge badge-pass">ngo</span></td>
+            <td>Accessible to ngo, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>volunteer/statistics.html</code></td>
+            <td><strong>Community Impact Statistics</strong></td>
+            <td><span class="badge badge-pass">volunteer</span></td>
+            <td>Accessible to volunteer, mounts fluid background, enforces session security where applicable.</td>
+            <td><span class="badge badge-pass">IMPLEMENTED</span></td>
+          </tr>
+        
+      </tbody>
+    </table>
+
+    <h2>3. Crawled Interactive Elements (107 Buttons & Controls)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th>Element Label</th>
+          <th>Action Type</th>
+          <th>Target Handler</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td><code>index.html</code></td>
+            <td>Be a Donor
+          Donate surplus food now</td>
+            <td><span class="badge badge-pass">Navigation</span></td>
+            <td><code>donor/login.html</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>index.html</code></td>
+            <td>Be a Volunteer
+          Help deliver meals</td>
+            <td><span class="badge badge-pass">Navigation</span></td>
+            <td><code>volunteer/ngo-volunteer-auth.html</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Go Back</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>location.href=</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Provide Feedback</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>(form submit)</code></td>
+            <td><span class="badge badge-fail">DEFECT: Missing Action</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Accept</td>
+            <td><span class="badge badge-pass">Database mutation</span></td>
+            <td><code>acceptRequest()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Reject</td>
+            <td><span class="badge badge-pass">Destructive action</span></td>
+            <td><code>rejectRequest()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Confirm Food Picked Up</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>updateStatus(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Confirm Delivery to Needy</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>updateStatus(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Submit Feedback</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>(form submit)</code></td>
+            <td><span class="badge badge-fail">DEFECT: Missing Action</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Confirm Delivery to Needy</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>updateStatus(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Back to Dashboard</td>
+            <td><span class="badge badge-pass">Navigation</span></td>
+            <td><code>donor/donor-home.html</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Call ${assigneeContact.typeLabel}</td>
+            <td><span class="badge badge-pass">Navigation</span></td>
+            <td><code>tel:${assigneeContact.phone}</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>food-status.html</code></td>
+            <td>Back to Dashboard</td>
+            <td><span class="badge badge-pass">Navigation</span></td>
+            <td><code>${backHome}</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>Sign in with Google</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>signInWithGoogle()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>Send OTP</td>
+            <td><span class="badge badge-pass">Authentication action</span></td>
+            <td><code>sendOtp()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>Verify & Continue</td>
+            <td><span class="badge badge-pass">Authentication action</span></td>
+            <td><code>verifyOtp()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>Sign In</td>
+            <td><span class="badge badge-pass">Authentication action</span></td>
+            <td><code>handleEmailLogin()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>Or sign in with email & password</td>
+            <td><span class="badge badge-pass">Interactive / Read-only UI</span></td>
+            <td><code>toggleEmailSection()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>← Back to phone number</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>backToStep1()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/login.html</code></td>
+            <td>← Back to phone login</td>
+            <td><span class="badge badge-pass">Interactive / Read-only UI</span></td>
+            <td><code>toggleEmailSection()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Sign Out</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>donorLogout()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Button</td>
+            <td><span class="badge badge-pass">Interactive / Read-only UI</span></td>
+            <td><code>toggleSidebar()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Active Listings
+                0</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>switchTab(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Donation History
+                0</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>switchTab(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Back to Dashboard</td>
+            <td><span class="badge badge-pass">Interactive / Read-only UI</span></td>
+            <td><code>showDashboard()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Log Out</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code>donorLogout()</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Accept Request</td>
+            <td><span class="badge badge-pass">Database mutation</span></td>
+            <td><code>event.stopPropagation(); acceptRequest(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Reject</td>
+            <td><span class="badge badge-pass">Destructive action</span></td>
+            <td><code>event.stopPropagation(); rejectRequest(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Confirm Pickup</td>
+            <td><span class="badge badge-pass">Database mutation</span></td>
+            <td><code>event.stopPropagation(); confirmPickup(</code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+          <tr>
+            <td><code>donor/donor-home.html</code></td>
+            <td>Annadaan
+              Donor Portal
+            
+          
+        
+
+        
+          
+            
+            Dashboard</td>
+            <td><span class="badge badge-pass">Interactive element</span></td>
+            <td><code></code></td>
+            <td><span class="badge badge-pass">FUNCTIONAL</span></td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

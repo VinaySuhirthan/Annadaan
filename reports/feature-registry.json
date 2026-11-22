@@ -1,0 +1,107 @@
+[
+  {
+    "page": "index.html",
+    "feature": "Landing & Role Selection",
+    "userRole": "public",
+    "expectedBehavior": "Accessible to public, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "food-status.html",
+    "feature": "Realtime Food Tracking",
+    "userRole": "public",
+    "expectedBehavior": "Accessible to public, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "donor/login.html",
+    "feature": "Donor Authentication & Google OAuth",
+    "userRole": "donor",
+    "expectedBehavior": "Accessible to donor, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "donor/donor-home.html",
+    "feature": "Donor Dashboard & Two-Way Gate",
+    "userRole": "donor",
+    "expectedBehavior": "Accessible to donor, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "donor/add-food.html",
+    "feature": "Food Surplus Posting & GPS Geocoding",
+    "userRole": "donor",
+    "expectedBehavior": "Accessible to donor, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/ngo-volunteer-auth.html",
+    "feature": "NGO & Volunteer Unified Auth",
+    "userRole": "ngo/volunteer",
+    "expectedBehavior": "Accessible to ngo/volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/volunteer-login.html",
+    "feature": "Volunteer Dedicated Login",
+    "userRole": "volunteer",
+    "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/ngo-dashboard.html",
+    "feature": "NGO Dispatch & Claim Hub",
+    "userRole": "ngo",
+    "expectedBehavior": "Accessible to ngo, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/view-food.html",
+    "feature": "Distance-Sorted Food Marketplace",
+    "userRole": "ngo/volunteer",
+    "expectedBehavior": "Accessible to ngo/volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/my-requests.html",
+    "feature": "NGO Claim Tracking & Status",
+    "userRole": "ngo",
+    "expectedBehavior": "Accessible to ngo, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/volunteer-dashboard.html",
+    "feature": "Volunteer Courier Dashboard",
+    "userRole": "volunteer",
+    "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/my-volunteering.html",
+    "feature": "Volunteer Active Runs",
+    "userRole": "volunteer",
+    "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/pickup-schedule.html",
+    "feature": "Pickup Schedule",
+    "userRole": "volunteer",
+    "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/delivery-feedback.html",
+    "feature": "Shelter Proof of Delivery",
+    "userRole": "ngo",
+    "expectedBehavior": "Accessible to ngo, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  },
+  {
+    "page": "volunteer/statistics.html",
+    "feature": "Community Impact Statistics",
+    "userRole": "volunteer",
+    "expectedBehavior": "Accessible to volunteer, mounts fluid background, enforces session security where applicable.",
+    "testStatus": "IMPLEMENTED"
+  }
+]
