@@ -282,14 +282,47 @@
 
       const assigneeContact = await getAssigneeContact(food);
 
+      // Parse multi-photo URLs
+      let photoList = [];
+      if (food.photo_url) {
+        try {
+          if (food.photo_url.startsWith('[') || food.photo_url.startsWith('{')) {
+            const parsed = JSON.parse(food.photo_url);
+            if (Array.isArray(parsed)) photoList = parsed;
+          } else if (food.photo_url.includes(',')) {
+            photoList = food.photo_url.split(',').map(s => s.trim());
+          } else {
+            photoList = [food.photo_url];
+          }
+        } catch (e) {
+          photoList = [food.photo_url];
+        }
+      }
+      if (!photoList.length) {
+        photoList = ['https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1470&auto=format&fit=crop'];
+      }
+
       const foodContent = document.getElementById("foodContent");
       foodContent.innerHTML = `
         <div style="position: relative;">
-          <img src="${food.photo_url || 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1470&auto=format&fit=crop'}" style="width: 100%; height: 220px; object-fit: cover; border-radius: 20px; margin-bottom: 24px; box-shadow: var(--shadow-lg);">
+          <img id="mainFoodDisplay" src="${photoList[0]}" style="width: 100%; height: 240px; object-fit: cover; border-radius: 20px; margin-bottom: ${photoList.length > 1 ? '12px' : '24px'}; box-shadow: var(--shadow-lg); transition: all 0.3s ease;">
           <div style="position: absolute; top: 12px; right: 12px;">
              <span class="status-badge status-${getStatusClass(food.status)}">${food.status}</span>
           </div>
+          ${photoList.length > 1 ? `
+            <div style="position: absolute; bottom: 20px; right: 16px; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 9999px;">
+              <i class="fas fa-camera"></i> ${photoList.length} Photos
+            </div>
+          ` : ''}
         </div>
+
+        ${photoList.length > 1 ? `
+          <div style="display: flex; gap: 8px; margin-bottom: 24px; overflow-x: auto; padding: 2px 2px 6px;">
+            ${photoList.map((url, i) => `
+              <img src="${url}" onclick="selectGalleryPhoto('${url}', this)" style="width: 60px; height: 60px; object-fit: cover; border-radius: 12px; cursor: pointer; border: 2.5px solid ${i === 0 ? 'var(--primary)' : 'transparent'}; opacity: ${i === 0 ? '1' : '0.6'}; transition: all 0.2s; flex-shrink: 0;" class="gallery-thumb" alt="Photo ${i+1}">
+            `).join('')}
+          </div>
+        ` : ''}
 
         <div class="card" style="padding: 20px;">
           <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">${food.food_type}</h3>
@@ -397,6 +430,19 @@
       renderActions(food.status);
     }
 
+
+    window.selectGalleryPhoto = function(url, el) {
+      const mainImg = document.getElementById('mainFoodDisplay');
+      if (mainImg) mainImg.src = url;
+      document.querySelectorAll('.gallery-thumb').forEach(t => {
+        t.style.border = '2.5px solid transparent';
+        t.style.opacity = '0.6';
+      });
+      if (el) {
+        el.style.border = '2.5px solid var(--primary)';
+        el.style.opacity = '1';
+      }
+    };
 
     function getStatusClass(status) {
       if (status === 'Accepted') return 'accepted';
