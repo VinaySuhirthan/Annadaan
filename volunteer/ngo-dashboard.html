@@ -1,503 +1,799 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NGO Dashboard - Annadaan</title>
-    <link rel="icon" type="image/png" href="../images/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../discovery.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../supabase-client.js"></script>
-    <script src="../fluid-background.js" defer></script>
-    <script src="../discovery.js" defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>Partner Dashboard — Annadaan</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
 
-    <style>
-        .nav-bar {
-            background: rgba(255, 255, 255, 0.88);
-            backdrop-filter: blur(10px);
-            contain: content;
-            isolation: isolate;
-            border-bottom: 1px solid var(--border);
-            padding: 18px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: var(--shadow-sm);
-        }
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../discovery.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="../fluid-background.js" defer></script>
+  <script src="../discovery.js" defer></script>
 
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+  <style>
+    /* Volunteer & NGO Unified Portal Custom Styles */
+    .volunteer-action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
 
-        .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: var(--grad-primary);
-            color: white;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            box-shadow: 0 16px 30px rgba(24, 24, 27, 0.14);
-        }
+    .volunteer-action-card {
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      position: relative;
+      overflow: hidden;
+    }
 
-        .user-details h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--dark);
-        }
+    .volunteer-action-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+      border-color: var(--primary);
+    }
 
-        .user-details p {
-            font-size: 11px;
-            color: var(--gray);
-            font-weight: 500;
-        }
+    .volunteer-action-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
 
-        .header {
-            padding: 72px 24px;
-            text-align: center;
-            background: linear-gradient(135deg, #09090b 0%, #27272a 52%, #52525b 100%);
-            color: white;
-            border-radius: 0 0 44px 44px;
-            margin-bottom: 40px;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            overflow: hidden;
-        }
+    .volunteer-action-card:hover .volunteer-action-icon {
+      transform: scale(1.08);
+    }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at top left, rgba(255,255,255,0.18), transparent 30%),
-                radial-gradient(circle at bottom right, rgba(20,184,166,0.16), transparent 26%);
-            pointer-events: none;
-        }
+    .icon-emerald { background: var(--mint-soft); color: var(--primary); }
+    .icon-peach { background: var(--peach-soft); color: #C2410C; }
+    .icon-lavender { background: var(--lavender-soft); color: #6D28D9; }
+    .icon-sky { background: var(--sky-soft); color: #0284C7; }
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            margin-bottom: 10px;
-        }
+    .volunteer-action-content h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
 
-        .header p {
-            font-weight: 400;
-            opacity: 0.9;
-        }
+    .volunteer-action-content p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      margin: 0;
+    }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 22px;
-            padding: 0 24px;
-            max-width: 1200px;
-            margin: 0 auto 40px;
-        }
+    .card-arrow {
+      margin-left: auto;
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
 
-        .dashboard-card {
-            background: rgba(255, 255, 255, 0.84);
-            border-radius: 24px;
-            padding: 32px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: var(--shadow-sm);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-        }
+    .volunteer-action-card:hover .card-arrow {
+      transform: translateX(4px);
+      color: var(--primary);
+    }
 
-        .dashboard-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-xl);
-            border-color: rgba(24, 24, 27, 0.14);
-        }
+    /* Pending Feedback Banner (NGO Feature) */
+    .feedback-prompt-card {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+      border: 1.5px solid #FCD34D;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: none;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.1);
+    }
 
-        .dashboard-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, rgba(37,99,235,0.10), rgba(124,58,237,0.12));
-            color: var(--primary);
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            transition: var(--transition);
-            border: 1px solid rgba(24, 24, 27, 0.08);
-        }
+    .feedback-prompt-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
 
-        .dashboard-card:hover .dashboard-icon {
-            background: var(--grad-primary);
-            color: white;
-            transform: translateY(-2px) scale(1.06);
-        }
+    .feedback-prompt-text strong {
+      color: #92400E;
+      font-size: 0.95rem;
+      display: block;
+      margin-bottom: 2px;
+    }
 
-        .dashboard-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--dark);
-        }
+    .feedback-prompt-text span {
+      color: #B45309;
+      font-size: 0.84rem;
+    }
 
-        .dashboard-card p {
-            font-size: 14px;
-            color: var(--gray);
-            font-weight: 400;
-            line-height: 1.5;
-        }
+    /* Recommendations Section */
+    .rec-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+    }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 16px;
-            margin-top: 24px;
-        }
+    .rec-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
 
-        .stat-card {
-            background: rgba(255, 255, 255, 0.82);
-            padding: 16px;
-            border-radius: 18px;
-            text-align: left;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
+    .rec-title-wrap h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 4px 0;
+    }
 
-        .stat-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-        }
+    .rec-title-wrap p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
 
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark);
-            display: block;
-        }
+    .rec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
 
-        .stat-label {
-            font-size: 12px;
-            color: var(--gray);
-            font-weight: 500;
-        }
+    .rec-item {
+      padding: 14px 16px;
+      background: #F8FAFC;
+      border-radius: var(--radius-sm);
+      border: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
 
-        .quick-overview {
-            max-width: 1200px;
-            margin: 0 auto 40px;
-            padding: 0 24px;
-        }
+    .rec-info strong {
+      display: block;
+      font-size: 0.9rem;
+      color: #1E293B;
+      margin-bottom: 2px;
+    }
 
-        body {
-            background: transparent;
-        }
-    </style>
+    .rec-info small {
+      font-size: 0.78rem;
+      color: #64748B;
+    }
+
+    .rec-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .rec-btn {
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid #CBD5E1;
+      background: white;
+      color: #334155;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .rec-btn:hover {
+      background: #F1F5F9;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .rec-btn-primary {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .rec-btn-primary:hover {
+      background: var(--primary-mid);
+      color: white;
+    }
+
+    /* Guidelines Banner */
+    .guidelines-card {
+      background: linear-gradient(135deg, rgba(209, 250, 229, 0.6) 0%, rgba(240, 253, 244, 0.85) 100%);
+      border: 1px solid rgba(167, 243, 208, 0.9);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .guidelines-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #065F46;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .guidelines-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 10px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .guidelines-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: #064E3B;
+      line-height: 1.4;
+    }
+
+    .guidelines-item i {
+      color: #059669;
+      margin-top: 3px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+  </style>
 </head>
 
 <body>
-    <div class="nav-bar">
-        <div style="display: flex; align-items: center; gap: 16px;">
-            <a href="#" style="display: flex; align-items: center;">
-                <img src="../images/annadaan-logo-transparent.png" alt="Annadaan" style="height: 38px; width: auto; object-fit: contain;">
-            </a>
-            <div class="user-info">
-                <div class="user-avatar" id="user-avatar">N</div>
-                <div class="user-details">
-                    <h3 id="user-name">Organization Name</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> <span id="user-location">Location</span></p>
-                </div>
+  <div class="app-shell">
+    <!-- MOBILE BACKDROP -->
+    <div class="app-sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div>
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-wrap">
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="sidebar-brand-img">
+            <div class="brand-text">
+              <h2>Annadaan</h2>
+              <span id="sidePortalLabel">Volunteer & NGO Portal</span>
             </div>
+          </div>
         </div>
-        <button onclick="logout()" class="btn btn-secondary" style="padding: 10px 20px; font-size: 14px;">
-            <i class="fas fa-sign-out-alt"></i> Logout
+
+        <nav class="sidebar-nav">
+          <a class="nav-link active" href="volunteer-dashboard.html">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-link" href="view-food.html">
+            <i class="fas fa-utensils"></i>
+            <span>Available Food</span>
+          </a>
+          <a class="nav-link" href="my-volunteering.html">
+            <i class="fas fa-tasks"></i>
+            <span>Deliveries & Requests</span>
+          </a>
+          <a class="nav-link" href="delivery-feedback.html">
+            <i class="fas fa-comment-dots"></i>
+            <span>Deliveries & Feedback</span>
+          </a>
+          <a class="nav-link" href="statistics.html">
+            <i class="fas fa-chart-line"></i>
+            <span>Impact & Stats</span>
+          </a>
+          <a class="nav-link" href="dummy.html">
+            <i class="fas fa-gift"></i>
+            <span>Rewards Store</span>
+          </a>
+          <a class="nav-link" onclick="if(window.AnnadaanGuide)window.AnnadaanGuide.launchTour('volunteer_dashboard',true)" style="margin-top: 10px; cursor: pointer;">
+            <i class="fas fa-compass"></i>
+            <span>Feature Guide</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="sideAvatar">P</div>
+          <div class="user-meta">
+            <div class="user-meta-name" id="sideName">Partner</div>
+            <div class="user-meta-role" id="sideLocation">Community Partner</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="volunteerLogout()" title="Sign Out of Portal">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Sign Out</span>
         </button>
-    </div>
+      </div>
+    </aside>
 
-    <header class="header">
-        <h1><i class="fas fa-hands-helping"></i> NGO Dashboard</h1>
-        <p>Manage your organization's food requests and impact</p>
-    </header>
-
-    <!-- PROMPT: Pending Delivered Feedback -->
-    <div id="feedbackPrompt" style="display:none; max-width:1200px; margin: 16px auto; padding: 0 24px;">
-        <div class="card"
-            style="background: #FEF3C7; border: 1px solid #FCD34D; display:flex; align-items:center; gap:12px;">
-            <div style="flex:1;">
-                <strong style="color:#92400E;">You have <span id="pendingCount">0</span> delivered donation(s) missing
-                    feedback.</strong>
-                <div style="color:#92400E; font-size:13px; margin-top:6px;">Please confirm delivery details to improve
-                    recommendations and reporting.</div>
-            </div>
-            <div style="display:flex; gap:8px;">
-                <button id="reviewPendingBtn" class="btn btn-primary">Review Now</button>
-                <button id="dismissPromptBtn" class="btn btn-secondary">Remind me later</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="dashboard-grid">
-        <div class="dashboard-card" onclick="window.location.href='view-food.html'">
-            <div class="dashboard-icon">
-                <i class="fas fa-utensils"></i>
-            </div>
-            <h3>View Available Food</h3>
-            <p>Browse surplus food available nearby and request for your community needs.</p>
+    <!-- MAIN VIEW -->
+    <main class="app-main">
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-trigger" onclick="toggleSidebar()" aria-label="Open navigation menu">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="mobile-topbar-brand">
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="mobile-topbar-logo">
+          </div>
+          <div class="topbar-title" id="pageTitle">Partner Overview</div>
         </div>
 
-        <div class="dashboard-card" onclick="window.location.href='my-requests.html'">
-            <div class="dashboard-icon">
-                <i class="fas fa-tasks"></i>
+        <div class="topbar-right">
+          <div class="status-badge-live">
+            <span class="pulse-dot"></span>
+            <span id="topLiveStatus">Dispatch Active</span>
+          </div>
+          <a href="view-food.html" class="btn btn-primary btn-sm">
+            <i class="fas fa-search"></i>
+            <span>Find Food</span>
+          </a>
+          <div class="user-avatar" style="width: 36px; height: 36px; font-size: 13px; cursor: pointer;" id="topAvatar" title="Active Session">P</div>
+        </div>
+      </header>
+
+      <!-- CONTENT WRAPPER -->
+      <div class="app-content">
+        <!-- PENDING FEEDBACK PROMPT (NGO Feature for All) -->
+        <div class="feedback-prompt-card" id="pendingFeedbackBanner">
+          <div class="feedback-prompt-inner">
+            <div class="feedback-prompt-text">
+              <strong><i class="fas fa-bell"></i> You have <span id="pendingFeedbackCount">0</span> delivered donation(s) awaiting distribution feedback.</strong>
+              <span>Confirm delivery details and people served to update community impact metrics.</span>
             </div>
-            <h3>My Requests</h3>
-            <p>Track your food requests, pickup intervals, and delivery status in real-time.</p>
+            <a href="delivery-feedback.html" class="btn btn-primary btn-sm" style="flex-shrink: 0;">
+              <i class="fas fa-check"></i> Submit Feedback
+            </a>
+          </div>
         </div>
 
-        <div class="dashboard-card" onclick="window.location.href='statistics.html'">
-            <div class="dashboard-icon">
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <h3>Impact & Stats</h3>
-            <p>View analytics of your organization's contribution and people served.</p>
+        <!-- WELCOME INTRO -->
+        <div class="page-intro">
+          <div>
+            <h1 id="welcomeGreeting">Welcome back, Partner</h1>
+            <p>Coordinate surplus food pickups, request food for community shelters, record distributions, and track real-time impact.</p>
+          </div>
+          <div class="quick-impact-bar">
+            <i class="fas fa-seedling" style="color: var(--emerald); font-size: 18px;"></i>
+            <span>Unified Volunteer & NGO Distribution Network</span>
+          </div>
         </div>
 
-        <div class="dashboard-card" onclick="window.location.href='delivery-feedback.html'">
-            <div class="dashboard-icon">
-                <i class="fas fa-comment-dots"></i>
+        <!-- 4-COLUMN STATISTICS GRID -->
+        <div class="stats-grid" id="statsGrid">
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-label">Distributions & Requests</div>
+              <div class="stat-icon stat-icon-emerald">
+                <i class="fas fa-truck-pickup"></i>
+              </div>
             </div>
-            <h3>Deliveries & Feedback <span id="pendingBadge"
-                    style="display:none; background:#FEF3C7; color:#92400E; padding:4px 8px; border-radius:8px; margin-left:8px; font-size:12px; font-weight:700;">Pending</span>
-            </h3>
-            <p>Rate donors and provide feedback on your recent distributions. (Feedback helps recommendations)</p>
-        </div>
-    </div>
+            <div class="stat-value" id="stat-distributions">0</div>
+            <div class="stat-subtext">Verified food batches distributed</div>
+          </div>
 
-    <div class="quick-overview">
-        <div class="card glass">
-            <h2
-                style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: var(--dark); display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-chart-pie" style="color: var(--primary);"></i> Quick Overview
-            </h2>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--primary);">
-                        <i class="fas fa-list"></i>
-                    </div>
-                    <div class="stat-number" id="total-requests">0</div>
-                    <div class="stat-label">Total Requests</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--secondary);">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-number" id="completed-requests">0</div>
-                    <div class="stat-label">Completed</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-number" id="pending-requests">0</div>
-                    <div class="stat-label">Pending</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-number" id="people-served">0</div>
-                    <div class="stat-label">People Served</div>
-                </div>
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-label">People Served</div>
+              <div class="stat-icon stat-icon-peach">
+                <i class="fas fa-users"></i>
+              </div>
             </div>
-        </div>
-    </div>
+            <div class="stat-value" id="stat-people">0</div>
+            <div class="stat-subtext">Community members nourished</div>
+          </div>
 
-    <script src="../script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check auth
-            let user = JSON.parse(localStorage.getItem('currentUser'));
-            if (!user || user.type !== 'ngo') {
-                window.location.href = '../index.html';
-                return;
+          <div class="stat-card">
+            <div class="stat-card-top">
+              <div class="stat-label">Reliability Rating</div>
+              <div class="stat-icon stat-icon-lavender">
+                <i class="fas fa-star"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="stat-rating">5.0 ★</div>
+            <div class="stat-subtext">Verified partner score</div>
+          </div>
+
+          <div class="stat-card" onclick="location.href='dummy.html'" style="cursor: pointer;" title="Open Green Rewards Store">
+            <div class="stat-card-top">
+              <div class="stat-label">Green Credits</div>
+              <div class="stat-icon stat-icon-sky">
+                <i class="fas fa-leaf"></i>
+              </div>
+            </div>
+            <div class="stat-value" style="display: flex; align-items: center; justify-content: space-between;">
+              <span id="stat-credits">850</span>
+              <i class="fas fa-arrow-right" style="font-size: 13px; color: var(--primary);"></i>
+            </div>
+            <div class="stat-subtext">Tap to redeem travel & bus passes</div>
+          </div>
+        </div>
+
+        <!-- PRIMARY UNIFIED ACTION GRID (All Volunteer + NGO Features) -->
+        <div class="volunteer-action-grid">
+          <!-- 1. View Available Food -->
+          <a href="view-food.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-emerald">
+              <i class="fas fa-search-location"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>View Available Food</h3>
+              <p>Browse surplus food postings, claim meals, and coordinate pickups</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 2. My Deliveries & Requests -->
+          <a href="my-volunteering.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-peach">
+              <i class="fas fa-truck-loading"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>My Deliveries & Requests</h3>
+              <p>Track active food claims, pickup intervals, and completed drops</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 3. Deliveries & Feedback (NGO Feature) -->
+          <a href="delivery-feedback.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-lavender">
+              <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>Deliveries & Feedback</h3>
+              <p>Record verified people served, upload delivery proof, and rate donors</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 4. Impact & Statistics (NGO Feature) -->
+          <a href="statistics.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-sky">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>Impact & Analytics</h3>
+              <p>View distribution analytics, volume breakdowns, and outreach graphs</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 5. Green Rewards Store -->
+          <a href="dummy.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-emerald">
+              <i class="fas fa-gift"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>Green Rewards Store</h3>
+              <p>Redeem volunteer transit credits for Metro and MTC bus passes</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 6. Guide & Walkthrough -->
+          <a href="javascript:void(0)" onclick="if(window.AnnadaanGuide)window.AnnadaanGuide.launchTour('volunteer_dashboard',true)" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-peach">
+              <i class="fas fa-compass"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>Feature Guide</h3>
+              <p>Explore full walkthrough for claiming, picking up, and safe transit</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+        </div>
+
+        <!-- RECOMMENDED DROP-OFF AREAS -->
+        <div class="rec-card" id="recommendationsCard">
+          <div class="rec-card-header">
+            <div class="rec-title-wrap">
+              <h3><i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> Recommended Drop-off Areas</h3>
+              <p>Confirmed distribution points and shelter clusters in need of surplus food.</p>
+            </div>
+          </div>
+          <div id="recommendationsList">
+            <div style="color: #64748B; text-align: center; padding: 24px;">Loading recommendations...</div>
+          </div>
+        </div>
+
+        <!-- VOLUNTEER & NGO GUIDELINES -->
+        <div class="guidelines-card">
+          <div class="guidelines-title">
+            <i class="fas fa-shield-alt"></i>
+            <span>Unified Distribution & Safety Guidelines</span>
+          </div>
+          <ul class="guidelines-list">
+            <li class="guidelines-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Both NGOs and Volunteers can request or claim surplus food for community kitchens and verified shelters.</span>
+            </li>
+            <li class="guidelines-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Always verify food condition, hygienic packing, and temperature before signing off on pickup.</span>
+            </li>
+            <li class="guidelines-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Maintain direct contact with food donors using the phone number listed on the tracking page.</span>
+            </li>
+            <li class="guidelines-item">
+              <i class="fas fa-check-circle"></i>
+              <span>Submit delivery feedback and people served to earn Green Credits and update city recommendations.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../script.js"></script>
+  <script>
+    let currentUser = null;
+
+    async function initAuth() {
+      if (window.AnnadaanAuth) {
+        currentUser = await window.AnnadaanAuth.validateSession();
+        if (!currentUser) {
+          window.location.href = 'ngo-volunteer-auth.html';
+          return;
+        }
+      } else {
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {
+          window.location.href = 'ngo-volunteer-auth.html';
+          return;
+        }
+      }
+
+      loadUserInfo();
+      loadVolunteerStats();
+      loadRecommendations();
+      checkPendingFeedback();
+    }
+
+    function loadUserInfo() {
+      if (!currentUser) return;
+      const firstName = currentUser.name ? currentUser.name.split(' ')[0] : 'Partner';
+      const greeting = document.getElementById('welcomeGreeting');
+      if (greeting) greeting.textContent = `Welcome back, ${firstName}`;
+
+      const sideName = document.getElementById('sideName');
+      if (sideName) sideName.textContent = currentUser.name || 'Partner';
+
+      const isNgo = currentUser.type === 'ngo';
+      const roleText = isNgo ? 'NGO Shelter Partner' : 'Field Volunteer Partner';
+
+      const sideLocation = document.getElementById('sideLocation');
+      if (sideLocation) sideLocation.textContent = currentUser.location || roleText;
+
+      const pageTitle = document.getElementById('pageTitle');
+      if (pageTitle) pageTitle.textContent = isNgo ? 'NGO Partner Overview' : 'Volunteer Overview';
+
+      const sidePortalLabel = document.getElementById('sidePortalLabel');
+      if (sidePortalLabel) sidePortalLabel.textContent = isNgo ? 'NGO Portal' : 'Volunteer Portal';
+
+      const initial = (currentUser.name && currentUser.name.charAt(0)) ? currentUser.name.charAt(0).toUpperCase() : (isNgo ? 'N' : 'V');
+      const sideAvatar = document.getElementById('sideAvatar');
+      const topAvatar = document.getElementById('topAvatar');
+
+      if (currentUser.photo_url) {
+        const imgTag = `<img src="${currentUser.photo_url}" alt="${currentUser.name}" style="width:100%;height:100%;border-radius:inherit;object-fit:cover;">`;
+        if (sideAvatar) sideAvatar.innerHTML = imgTag;
+        if (topAvatar) topAvatar.innerHTML = imgTag;
+      } else {
+        if (sideAvatar) sideAvatar.textContent = initial;
+        if (topAvatar) topAvatar.textContent = initial;
+      }
+    }
+
+    async function loadVolunteerStats() {
+      if (!window.sb || !currentUser) {
+        setFallbackStats();
+        return;
+      }
+
+      try {
+        const phone = currentUser.phone || '';
+        let query = window.sb.from('food_table').select('*');
+
+        if (phone) {
+          query = query.or(`volunteer_phone.eq.${phone},ngo_phone.eq.${phone},delivered_by.eq.${phone}`);
+        }
+
+        const { data, error } = await query;
+
+        if (!error && Array.isArray(data)) {
+          const delivered = data.filter(d => d.status === 'Delivered');
+          const people = delivered.reduce((sum, d) => sum + (parseInt(d.people_served) || parseInt(d.serves) || 0), 0);
+          
+          document.getElementById('stat-distributions').textContent = delivered.length;
+          document.getElementById('stat-people').textContent = people;
+        } else {
+          setFallbackStats();
+        }
+      } catch (err) {
+        console.warn('Stats calculation note:', err);
+        setFallbackStats();
+      }
+
+      const credits = localStorage.getItem('volunteer_credits') || '850';
+      const creditsEl = document.getElementById('stat-credits');
+      if (creditsEl) creditsEl.textContent = credits;
+    }
+
+    function setFallbackStats() {
+      const distEl = document.getElementById('stat-distributions');
+      const peopleEl = document.getElementById('stat-people');
+      if (distEl && distEl.textContent === '0') distEl.textContent = '0';
+      if (peopleEl && peopleEl.textContent === '0') peopleEl.textContent = '0';
+    }
+
+    async function checkPendingFeedback() {
+      if (!window.sb || !currentUser) return;
+      try {
+        const phone = currentUser.phone || '';
+        if (!phone) return;
+
+        const { data, error } = await window.sb.from('food_table')
+          .select('*')
+          .or(`volunteer_phone.eq.${phone},ngo_phone.eq.${phone},delivered_by.eq.${phone}`)
+          .eq('status', 'Delivered')
+          .is('delivery_feedback', null);
+
+        if (!error && Array.isArray(data) && data.length > 0) {
+          const banner = document.getElementById('pendingFeedbackBanner');
+          const countEl = document.getElementById('pendingFeedbackCount');
+          if (banner) banner.style.display = 'block';
+          if (countEl) countEl.textContent = data.length;
+        }
+      } catch (e) {
+        console.warn('Pending feedback check warn:', e);
+      }
+    }
+
+    async function loadRecommendations() {
+      const listEl = document.getElementById('recommendationsList');
+      if (!listEl) return;
+
+      try {
+        let rows = [];
+
+        if (window.sb && typeof window.sb.from === 'function') {
+          const { data, error } = await window.sb.from('food_table')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(100);
+
+          if (!error && Array.isArray(data)) {
+            rows = data.filter(r => r && (r.delivery_lat || r.address) && r.status === 'Delivered');
+            if (rows.length === 0) {
+              rows = data.filter(r => r && r.address);
             }
+          }
+        }
 
-            loadUserInfo();
-            loadDashboardStats();
-            // Also check and prompt for any delivered donations missing feedback
-            checkPendingFeedback();
+        if (!rows || rows.length === 0) {
+          listEl.innerHTML = `
+            <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+              <i class="fas fa-map-pin" style="font-size: 2rem; color: #CBD5E1; margin-bottom: 10px; display: block;"></i>
+              <strong style="color: var(--text-primary); display: block; margin-bottom: 4px;">No drop-off recommendations yet</strong>
+              <span>Recommended distribution clusters are generated automatically as shelters report deliveries. Browse Available Food to coordinate your next delivery.</span>
+            </div>`;
+          return;
+        }
+
+        const groups = {};
+        rows.forEach(r => {
+          const place = r.address ? r.address.split(',')[0].trim() : 'Active Cluster';
+          const key = place;
+          if (!groups[key]) groups[key] = { name: place, fullAddr: r.address || '', lat: r.delivery_lat, lng: r.delivery_lng, count: 0, served: 0 };
+          groups[key].count += 1;
+          groups[key].served += parseInt(r.people_served || r.serves) || 1;
         });
 
-        function loadUserInfo() {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
-            if (!user) return;
-            document.getElementById('user-avatar').textContent = user.name.charAt(0).toUpperCase();
-            document.getElementById('user-name').textContent = user.name;
-            document.getElementById('user-location').textContent = user.location || 'Location not set';
-        }
+        const areas = Object.values(groups).slice(0, 4);
 
-        // Check for Delivered donations missing feedback and prompt NGO
-        async function checkPendingFeedback() {
-            try {
-                const user = JSON.parse(localStorage.getItem('currentUser')) || {};
-                if (!user || !user.phone) return;
+        listEl.innerHTML = '<div class="rec-grid"></div>';
+        const grid = listEl.querySelector('.rec-grid');
 
-                // Try the normal filtered query first. If the `ngo_phone` column doesn't exist
-                // the REST call will fail (400). In that case, fallback to fetching delivered
-                // items and filtering client-side to avoid noisy errors.
-                // Safer: fetch delivered rows and filter client-side for missing feedback
-                let pending = [];
-                try {
-                    const { data: deliveredRows, error: deliveredErr } = await window.sb.from('food_table')
-                        .select('*')
-                        .eq('status', 'Delivered')
-                        .order('delivered_at', { ascending: false })
-                        .limit(500);
+        areas.forEach(area => {
+          const item = document.createElement('div');
+          item.className = 'rec-item';
+          const query = encodeURIComponent(area.fullAddr || area.name);
+          item.innerHTML = `
+            <div class="rec-info">
+              <strong>${area.name}</strong>
+              <small>${area.count} batch${area.count > 1 ? 'es' : ''} distributed</small>
+            </div>
+            <div class="rec-btns">
+              <a href="https://www.google.com/maps/search/?api=1&query=${query}" target="_blank" class="rec-btn" title="Open Map Location">
+                <i class="fas fa-map-marker-alt"></i> Map
+              </a>
+              <a href="view-food.html" class="rec-btn rec-btn-primary" title="Find food near here">
+                <i class="fas fa-search"></i> Food
+              </a>
+            </div>
+          `;
+          grid.appendChild(item);
+        });
 
-                    if (deliveredErr) {
-                        console.error('Error fetching delivered rows for pending feedback:', deliveredErr);
-                    } else if (Array.isArray(deliveredRows)) {
-                        pending = (deliveredRows || []).filter(item => (item.people_served === null || item.people_served === undefined) && item.ngo_phone === user.phone);
-                    }
-                } catch (fetchErr) {
-                    console.error('Exception fetching delivered rows:', fetchErr);
-                }
+      } catch (e) {
+        console.warn('Recommendations fetch note:', e);
+        listEl.innerHTML = '<div style="color: #64748B; text-align: center; padding: 20px;">Recommendations will update as volunteer tasks are completed.</div>';
+      }
+    }
 
-                if (!pending || pending.length === 0) {
-                    // Fallback: fetch all delivered items missing people_served and filter client-side by ngo_phone
-                    try {
-                        const { data: allDelivered, error: allErr } = await window.sb.from('food_table')
-                            .select('*')
-                            .eq('status', 'Delivered');
+    // Responsive Sidebar Toggles
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (sidebar) sidebar.classList.toggle('sidebar-open');
+      if (backdrop) backdrop.classList.toggle('show');
+    }
 
-                        if (allErr) {
-                            console.error('Fallback fetch for pending feedback failed:', allErr);
-                        } else if (Array.isArray(allDelivered)) {
-                            pending = allDelivered.filter(item => {
-                                // Keep items that are missing people_served and match the NGO if possible
-                                const missingPeople = (item.people_served === null || item.people_served === undefined);
-                                if (!missingPeople) return false;
-                                if (item.ngo_phone) return item.ngo_phone === user.phone;
-                                return false;
-                            });
-                        }
-                    } catch (fbErr) {
-                        console.error('Fallback pending-feedback exception:', fbErr);
-                    }
-                }
+    function closeSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (sidebar) sidebar.classList.remove('sidebar-open');
+      if (backdrop) backdrop.classList.remove('show');
+    }
 
-                const count = (pending && pending.length) || 0;
-                if (count > 0) {
-                    document.getElementById('feedbackPrompt').style.display = 'block';
-                    document.getElementById('pendingCount').textContent = count;
-                    document.getElementById('pendingBadge').style.display = 'inline-block';
+    async function volunteerLogout() {
+      if (!confirm('Are you sure you want to sign out?')) return;
+      if (window.AnnadaanAuth) {
+        await window.AnnadaanAuth.signOut(false, 'You have been safely signed out.');
+      } else {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('annadaan_session_start');
+      }
+      window.location.href = 'ngo-volunteer-auth.html';
+    }
 
-                    const reviewBtn = document.getElementById('reviewPendingBtn');
-                    const dismissBtn = document.getElementById('dismissPromptBtn');
-                    if (reviewBtn) {
-                        reviewBtn.addEventListener('click', () => {
-                            const first = pending[0];
-                            if (first && first.id) window.location.href = `../food-status.html?id=${first.id}`;
-                        });
-                    }
-                    if (dismissBtn) {
-                        dismissBtn.addEventListener('click', () => {
-                            document.getElementById('feedbackPrompt').style.display = 'none';
-                        });
-                    }
-                }
-            } catch (e) {
-                console.error('checkPendingFeedback error:', e);
-            }
-        }
-
-        async function loadDashboardStats() {
-            try {
-                const user = JSON.parse(localStorage.getItem('currentUser'));
-                if (!user) return;
-
-                // Update UI to show loading state
-                document.getElementById('total-requests').textContent = '...';
-
-                // Fetch recent rows without column-specific filtering to avoid 400 errors
-                // limit(500) gives us a good set of recent activity
-                const { data: allData, error: allErr } = await window.sb.from('food_table')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(500);
-
-                if (allErr) {
-                    console.error('Error fetching stats data:', allErr);
-                    document.getElementById('total-requests').textContent = '0';
-                    return;
-                }
-
-                // Filter client-side. Matches logic in my-requests.html
-                const stats = (allData || []).filter(item => {
-                    // Strict match if column exists and value matches
-                    if (item.ngo_phone && item.ngo_phone === user.phone) return true;
-
-                    // Fallback: If status is 'NGO Requested' and I am the only NGO...
-                    if (item.volunteer_phone && item.volunteer_phone === user.phone) return true;
-
-                    // Broad match for demo purposes (like my-requests.html)
-                    // If item is in an active workflow state, count it. 
-                    return ['NGO Requested', 'Accepted', 'Picked Up', 'Delivered'].includes(item.status);
-                });
-
-                if (!stats || stats.length === 0) {
-                    document.getElementById('total-requests').textContent = '0';
-                    document.getElementById('completed-requests').textContent = '0';
-                    document.getElementById('pending-requests').textContent = '0';
-                    document.getElementById('people-served').textContent = '0';
-                    return;
-                }
-
-                const total = stats.length;
-                const completed = stats.filter(s => s.status === 'Delivered').length;
-                const pending = stats.filter(s => ['NGO Requested', 'Accepted', 'Picked Up'].includes(s.status)).length;
-                const served = stats.filter(s => s.status === 'Delivered')
-                    .reduce((sum, s) => sum + (parseInt(s.serves) || 0), 0);
-
-                document.getElementById('total-requests').textContent = total;
-                document.getElementById('completed-requests').textContent = completed;
-                document.getElementById('pending-requests').textContent = pending;
-                document.getElementById('people-served').textContent = served.toLocaleString();
-            } catch (err) {
-                console.error('Error loading stats:', err);
-                // Reset on error
-                document.getElementById('total-requests').textContent = '0';
-            }
-        }
-
-        async function logout() {
-            if (await showConfirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('currentUser');
-                window.location.href = '../index.html';
-            }
-        }
-    </script>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAuth);
+    } else {
+      initAuth();
+    }
+  </script>
 </body>
 
 </html>

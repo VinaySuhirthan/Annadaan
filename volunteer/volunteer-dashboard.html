@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-  <title>Volunteer Dashboard — Annadaan</title>
+  <title>Partner Dashboard — Annadaan</title>
   <link rel="icon" type="image/png" href="../images/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,10 +19,10 @@
   <script src="../discovery.js" defer></script>
 
   <style>
-    /* Volunteer Portal Custom Enhancements */
+    /* Volunteer & NGO Unified Portal Custom Styles */
     .volunteer-action-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 18px;
       margin-bottom: 28px;
     }
@@ -97,6 +97,37 @@
     .volunteer-action-card:hover .card-arrow {
       transform: translateX(4px);
       color: var(--primary);
+    }
+
+    /* Pending Feedback Banner (NGO Feature) */
+    .feedback-prompt-card {
+      background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+      border: 1.5px solid #FCD34D;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: none;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.1);
+    }
+
+    .feedback-prompt-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .feedback-prompt-text strong {
+      color: #92400E;
+      font-size: 0.95rem;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .feedback-prompt-text span {
+      color: #B45309;
+      font-size: 0.84rem;
     }
 
     /* Recommendations Section */
@@ -261,7 +292,7 @@
             <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="sidebar-brand-img">
             <div class="brand-text">
               <h2>Annadaan</h2>
-              <span>Volunteer Portal</span>
+              <span id="sidePortalLabel">Volunteer & NGO Portal</span>
             </div>
           </div>
         </div>
@@ -276,8 +307,16 @@
             <span>Available Food</span>
           </a>
           <a class="nav-link" href="my-volunteering.html">
-            <i class="fas fa-calendar-check"></i>
-            <span>My Volunteering</span>
+            <i class="fas fa-tasks"></i>
+            <span>Deliveries & Requests</span>
+          </a>
+          <a class="nav-link" href="delivery-feedback.html">
+            <i class="fas fa-comment-dots"></i>
+            <span>Deliveries & Feedback</span>
+          </a>
+          <a class="nav-link" href="statistics.html">
+            <i class="fas fa-chart-line"></i>
+            <span>Impact & Stats</span>
           </a>
           <a class="nav-link" href="dummy.html">
             <i class="fas fa-gift"></i>
@@ -292,13 +331,13 @@
 
       <div class="sidebar-footer">
         <div class="user-snippet">
-          <div class="user-avatar" id="sideAvatar">V</div>
+          <div class="user-avatar" id="sideAvatar">P</div>
           <div class="user-meta">
-            <div class="user-meta-name" id="sideName">Volunteer</div>
-            <div class="user-meta-role" id="sideLocation">Field Partner</div>
+            <div class="user-meta-name" id="sideName">Partner</div>
+            <div class="user-meta-role" id="sideLocation">Community Partner</div>
           </div>
         </div>
-        <button class="btn-logout" onclick="volunteerLogout()" title="Sign Out of Volunteer Portal">
+        <button class="btn-logout" onclick="volunteerLogout()" title="Sign Out of Portal">
           <i class="fas fa-sign-out-alt"></i>
           <span>Sign Out</span>
         </button>
@@ -316,33 +355,46 @@
           <div class="mobile-topbar-brand">
             <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="mobile-topbar-logo">
           </div>
-          <div class="topbar-title" id="pageTitle">Volunteer Overview</div>
+          <div class="topbar-title" id="pageTitle">Partner Overview</div>
         </div>
 
         <div class="topbar-right">
           <div class="status-badge-live">
             <span class="pulse-dot"></span>
-            <span>Volunteer Active</span>
+            <span id="topLiveStatus">Dispatch Active</span>
           </div>
           <a href="view-food.html" class="btn btn-primary btn-sm">
             <i class="fas fa-search"></i>
             <span>Find Food</span>
           </a>
-          <div class="user-avatar" style="width: 36px; height: 36px; font-size: 13px; cursor: pointer;" id="topAvatar" title="Active Volunteer Session">V</div>
+          <div class="user-avatar" style="width: 36px; height: 36px; font-size: 13px; cursor: pointer;" id="topAvatar" title="Active Session">P</div>
         </div>
       </header>
 
       <!-- CONTENT WRAPPER -->
       <div class="app-content">
+        <!-- PENDING FEEDBACK PROMPT (NGO Feature for All) -->
+        <div class="feedback-prompt-card" id="pendingFeedbackBanner">
+          <div class="feedback-prompt-inner">
+            <div class="feedback-prompt-text">
+              <strong><i class="fas fa-bell"></i> You have <span id="pendingFeedbackCount">0</span> delivered donation(s) awaiting distribution feedback.</strong>
+              <span>Confirm delivery details and people served to update community impact metrics.</span>
+            </div>
+            <a href="delivery-feedback.html" class="btn btn-primary btn-sm" style="flex-shrink: 0;">
+              <i class="fas fa-check"></i> Submit Feedback
+            </a>
+          </div>
+        </div>
+
         <!-- WELCOME INTRO -->
         <div class="page-intro">
           <div>
-            <h1 id="welcomeGreeting">Welcome back, Volunteer</h1>
-            <p>Coordinate surplus food pickups, assist community shelters, and track your volunteer impact across your city.</p>
+            <h1 id="welcomeGreeting">Welcome back, Partner</h1>
+            <p>Coordinate surplus food pickups, request food for community shelters, record distributions, and track real-time impact.</p>
           </div>
           <div class="quick-impact-bar">
             <i class="fas fa-seedling" style="color: var(--emerald); font-size: 18px;"></i>
-            <span>Active zero-hunger field responder</span>
+            <span>Unified Volunteer & NGO Distribution Network</span>
           </div>
         </div>
 
@@ -350,13 +402,13 @@
         <div class="stats-grid" id="statsGrid">
           <div class="stat-card">
             <div class="stat-card-top">
-              <div class="stat-label">Total Distributions</div>
+              <div class="stat-label">Distributions & Requests</div>
               <div class="stat-icon stat-icon-emerald">
                 <i class="fas fa-truck-pickup"></i>
               </div>
             </div>
             <div class="stat-value" id="stat-distributions">0</div>
-            <div class="stat-subtext">Completed food batches delivered</div>
+            <div class="stat-subtext">Verified food batches distributed</div>
           </div>
 
           <div class="stat-card">
@@ -396,48 +448,76 @@
           </div>
         </div>
 
-        <!-- PRIMARY NAVIGATION CARDS -->
+        <!-- PRIMARY UNIFIED ACTION GRID (All Volunteer + NGO Features) -->
         <div class="volunteer-action-grid">
+          <!-- 1. View Available Food -->
           <a href="view-food.html" class="volunteer-action-card">
             <div class="volunteer-action-icon icon-emerald">
               <i class="fas fa-search-location"></i>
             </div>
             <div class="volunteer-action-content">
               <h3>View Available Food</h3>
-              <p>Browse active surplus food listings within your city radius</p>
+              <p>Browse surplus food postings, claim meals, and coordinate pickups</p>
             </div>
             <i class="fas fa-chevron-right card-arrow"></i>
           </a>
 
+          <!-- 2. My Deliveries & Requests -->
           <a href="my-volunteering.html" class="volunteer-action-card">
             <div class="volunteer-action-icon icon-peach">
               <i class="fas fa-truck-loading"></i>
             </div>
             <div class="volunteer-action-content">
-              <h3>My Volunteering</h3>
-              <p>Track your active pickup assignments and delivery history</p>
+              <h3>My Deliveries & Requests</h3>
+              <p>Track active food claims, pickup intervals, and completed drops</p>
             </div>
             <i class="fas fa-chevron-right card-arrow"></i>
           </a>
 
-          <a href="dummy.html" class="volunteer-action-card">
+          <!-- 3. Deliveries & Feedback (NGO Feature) -->
+          <a href="delivery-feedback.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-lavender">
+              <i class="fas fa-comment-dots"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>Deliveries & Feedback</h3>
+              <p>Record verified people served, upload delivery proof, and rate donors</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 4. Impact & Statistics (NGO Feature) -->
+          <a href="statistics.html" class="volunteer-action-card">
             <div class="volunteer-action-icon icon-sky">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="volunteer-action-content">
+              <h3>Impact & Analytics</h3>
+              <p>View distribution analytics, volume breakdowns, and outreach graphs</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+          </a>
+
+          <!-- 5. Green Rewards Store -->
+          <a href="dummy.html" class="volunteer-action-card">
+            <div class="volunteer-action-icon icon-emerald">
               <i class="fas fa-gift"></i>
             </div>
             <div class="volunteer-action-content">
               <h3>Green Rewards Store</h3>
-              <p>Redeem your credits for Metro and MTC transit passes</p>
+              <p>Redeem volunteer transit credits for Metro and MTC bus passes</p>
             </div>
             <i class="fas fa-chevron-right card-arrow"></i>
           </a>
 
+          <!-- 6. Guide & Walkthrough -->
           <a href="javascript:void(0)" onclick="if(window.AnnadaanGuide)window.AnnadaanGuide.launchTour('volunteer_dashboard',true)" class="volunteer-action-card">
-            <div class="volunteer-action-icon icon-lavender">
+            <div class="volunteer-action-icon icon-peach">
               <i class="fas fa-compass"></i>
             </div>
             <div class="volunteer-action-content">
-              <h3>Volunteer Guide</h3>
-              <p>Explore step-by-step guidance for pickups & deliveries</p>
+              <h3>Feature Guide</h3>
+              <p>Explore full walkthrough for claiming, picking up, and safe transit</p>
             </div>
             <i class="fas fa-chevron-right card-arrow"></i>
           </a>
@@ -448,7 +528,7 @@
           <div class="rec-card-header">
             <div class="rec-title-wrap">
               <h3><i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> Recommended Drop-off Areas</h3>
-              <p>Recent NGO confirmed distribution points and community shelters in need of surplus food.</p>
+              <p>Confirmed distribution points and shelter clusters in need of surplus food.</p>
             </div>
           </div>
           <div id="recommendationsList">
@@ -456,28 +536,28 @@
           </div>
         </div>
 
-        <!-- VOLUNTEER GUIDELINES -->
+        <!-- VOLUNTEER & NGO GUIDELINES -->
         <div class="guidelines-card">
           <div class="guidelines-title">
             <i class="fas fa-shield-alt"></i>
-            <span>Essential Volunteer Guidelines</span>
+            <span>Unified Distribution & Safety Guidelines</span>
           </div>
           <ul class="guidelines-list">
             <li class="guidelines-item">
               <i class="fas fa-check-circle"></i>
-              <span>Only registered NGOs make formal requests; volunteers assist with pickup, inspection and transit.</span>
+              <span>Both NGOs and Volunteers can request or claim surplus food for community kitchens and verified shelters.</span>
             </li>
             <li class="guidelines-item">
               <i class="fas fa-check-circle"></i>
-              <span>Always verify food condition, packing, and temperature before signing off on pickup.</span>
+              <span>Always verify food condition, hygienic packing, and temperature before signing off on pickup.</span>
             </li>
             <li class="guidelines-item">
               <i class="fas fa-check-circle"></i>
-              <span>Maintain direct communication with donor and NGO coordinators via the contact details provided.</span>
+              <span>Maintain direct contact with food donors using the phone number listed on the tracking page.</span>
             </li>
             <li class="guidelines-item">
               <i class="fas fa-check-circle"></i>
-              <span>Confirm delivery promptly upon arrival to update the live chain of custody and earn Green Credits.</span>
+              <span>Submit delivery feedback and people served to earn Green Credits and update city recommendations.</span>
             </li>
           </ul>
         </div>
@@ -491,7 +571,11 @@
 
     async function initAuth() {
       if (window.AnnadaanAuth) {
-        currentUser = await window.AnnadaanAuth.protectRoute('volunteer', 'ngo-volunteer-auth.html');
+        currentUser = await window.AnnadaanAuth.validateSession();
+        if (!currentUser) {
+          window.location.href = 'ngo-volunteer-auth.html';
+          return;
+        }
       } else {
         currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {
@@ -503,21 +587,31 @@
       loadUserInfo();
       loadVolunteerStats();
       loadRecommendations();
+      checkPendingFeedback();
     }
 
     function loadUserInfo() {
       if (!currentUser) return;
-      const firstName = currentUser.name ? currentUser.name.split(' ')[0] : 'Volunteer';
+      const firstName = currentUser.name ? currentUser.name.split(' ')[0] : 'Partner';
       const greeting = document.getElementById('welcomeGreeting');
       if (greeting) greeting.textContent = `Welcome back, ${firstName}`;
 
       const sideName = document.getElementById('sideName');
-      if (sideName) sideName.textContent = currentUser.name || 'Volunteer';
+      if (sideName) sideName.textContent = currentUser.name || 'Partner';
+
+      const isNgo = currentUser.type === 'ngo';
+      const roleText = isNgo ? 'NGO Shelter Partner' : 'Field Volunteer Partner';
 
       const sideLocation = document.getElementById('sideLocation');
-      if (sideLocation) sideLocation.textContent = currentUser.location || 'Field Partner';
+      if (sideLocation) sideLocation.textContent = currentUser.location || roleText;
 
-      const initial = (currentUser.name && currentUser.name.charAt(0)) ? currentUser.name.charAt(0).toUpperCase() : 'V';
+      const pageTitle = document.getElementById('pageTitle');
+      if (pageTitle) pageTitle.textContent = isNgo ? 'NGO Partner Overview' : 'Volunteer Overview';
+
+      const sidePortalLabel = document.getElementById('sidePortalLabel');
+      if (sidePortalLabel) sidePortalLabel.textContent = isNgo ? 'NGO Portal' : 'Volunteer Portal';
+
+      const initial = (currentUser.name && currentUser.name.charAt(0)) ? currentUser.name.charAt(0).toUpperCase() : (isNgo ? 'N' : 'V');
       const sideAvatar = document.getElementById('sideAvatar');
       const topAvatar = document.getElementById('topAvatar');
 
@@ -542,7 +636,7 @@
         let query = window.sb.from('food_table').select('*');
 
         if (phone) {
-          query = query.or(`volunteer_phone.eq.${phone},delivered_by.eq.${phone}`);
+          query = query.or(`volunteer_phone.eq.${phone},ngo_phone.eq.${phone},delivered_by.eq.${phone}`);
         }
 
         const { data, error } = await query;
@@ -573,6 +667,29 @@
       if (peopleEl && peopleEl.textContent === '0') peopleEl.textContent = '0';
     }
 
+    async function checkPendingFeedback() {
+      if (!window.sb || !currentUser) return;
+      try {
+        const phone = currentUser.phone || '';
+        if (!phone) return;
+
+        const { data, error } = await window.sb.from('food_table')
+          .select('*')
+          .or(`volunteer_phone.eq.${phone},ngo_phone.eq.${phone},delivered_by.eq.${phone}`)
+          .eq('status', 'Delivered')
+          .is('delivery_feedback', null);
+
+        if (!error && Array.isArray(data) && data.length > 0) {
+          const banner = document.getElementById('pendingFeedbackBanner');
+          const countEl = document.getElementById('pendingFeedbackCount');
+          if (banner) banner.style.display = 'block';
+          if (countEl) countEl.textContent = data.length;
+        }
+      } catch (e) {
+        console.warn('Pending feedback check warn:', e);
+      }
+    }
+
     async function loadRecommendations() {
       const listEl = document.getElementById('recommendationsList');
       if (!listEl) return;
@@ -589,7 +706,6 @@
           if (!error && Array.isArray(data)) {
             rows = data.filter(r => r && (r.delivery_lat || r.address) && r.status === 'Delivered');
             if (rows.length === 0) {
-              // Also show pending or available locations if no deliveries exist yet
               rows = data.filter(r => r && r.address);
             }
           }

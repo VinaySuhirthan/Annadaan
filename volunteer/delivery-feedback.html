@@ -77,12 +77,12 @@
         <!-- Navigation Bar -->
         <div class="nav-bar">
             <div>
-                <a href="my-requests.html" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back to Requests
+                <a href="volunteer-dashboard.html" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Dashboard
                 </a>
             </div>
             <div class="user-info">
-                <i class="fas fa-star"></i>
+                <i class="fas fa-comment-dots"></i>
                 <span>Delivery Feedback</span>
             </div>
         </div>
@@ -145,8 +145,8 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             const user = checkAuth();
-            if (!user || user.type !== 'ngo') {
-                window.location.href = '../index.html';
+            if (!user || (user.type !== 'ngo' && user.type !== 'volunteer')) {
+                window.location.href = 'ngo-volunteer-auth.html';
                 return;
             }
 

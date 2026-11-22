@@ -187,8 +187,16 @@
             <span>Available Food</span>
           </a>
           <a class="nav-link active" href="my-volunteering.html">
-            <i class="fas fa-calendar-check"></i>
-            <span>My Volunteering</span>
+            <i class="fas fa-tasks"></i>
+            <span>Deliveries & Requests</span>
+          </a>
+          <a class="nav-link" href="delivery-feedback.html">
+            <i class="fas fa-comment-dots"></i>
+            <span>Deliveries & Feedback</span>
+          </a>
+          <a class="nav-link" href="statistics.html">
+            <i class="fas fa-chart-line"></i>
+            <span>Impact & Stats</span>
           </a>
           <a class="nav-link" href="dummy.html">
             <i class="fas fa-gift"></i>
@@ -297,7 +305,11 @@
 
     async function initAuth() {
       if (window.AnnadaanAuth) {
-        currentUser = await window.AnnadaanAuth.protectRoute('volunteer', 'ngo-volunteer-auth.html');
+        currentUser = await window.AnnadaanAuth.validateSession();
+        if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {
+          window.location.href = 'ngo-volunteer-auth.html';
+          return;
+        }
       } else {
         currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {

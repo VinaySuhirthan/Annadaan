@@ -550,8 +550,8 @@
             setCurrentUser(userData);
             showAlert(`Welcome, ${name}! Redirecting to dashboard...`, 'success');
             setTimeout(() => {
-                window.location.href = role === 'ngo' ? 'ngo-dashboard.html' : 'volunteer-dashboard.html';
-            }, 1000);
+                window.location.href = 'volunteer-dashboard.html';
+            }, 800);
         }
 
         function toggleLoginMethod() {

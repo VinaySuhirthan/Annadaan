@@ -386,8 +386,16 @@
             <span>Available Food</span>
           </a>
           <a class="nav-link" href="my-volunteering.html">
-            <i class="fas fa-calendar-check"></i>
-            <span>My Volunteering</span>
+            <i class="fas fa-tasks"></i>
+            <span>Deliveries & Requests</span>
+          </a>
+          <a class="nav-link" href="delivery-feedback.html">
+            <i class="fas fa-comment-dots"></i>
+            <span>Deliveries & Feedback</span>
+          </a>
+          <a class="nav-link" href="statistics.html">
+            <i class="fas fa-chart-line"></i>
+            <span>Impact & Stats</span>
           </a>
           <a class="nav-link" href="dummy.html">
             <i class="fas fa-gift"></i>
@@ -547,7 +555,11 @@
 
     async function initAuth() {
       if (window.AnnadaanAuth) {
-        currentUser = await window.AnnadaanAuth.protectRoute('volunteer', 'ngo-volunteer-auth.html');
+        currentUser = await window.AnnadaanAuth.validateSession();
+        if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {
+          window.location.href = 'ngo-volunteer-auth.html';
+          return;
+        }
       } else {
         currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {
@@ -839,10 +851,10 @@
               </div>
 
               <div class="food-card-actions">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="showOnMap('${(food.address || '').replace(/'/g, "\\'")}', '${food.delivery_lat || ''}', '${food.delivery_lng || ''}')">
-                  <i class="fas fa-map-pin"></i> View Map
+                <button type="button" class="btn btn-primary btn-sm" onclick="requestFood('${food.id}')" style="display: inline-flex; align-items: center; justify-content: center; gap: 5px;">
+                  <i class="fas fa-hand-holding-heart"></i> Request Food
                 </button>
-                <a href="../food-status.html?id=${food.id}" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none;">
+                <a href="../food-status.html?id=${food.id}" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; justify-content: center; gap: 5px; text-decoration: none;">
                   <i class="fas fa-truck-pickup"></i> Assist Drop
                 </a>
               </div>
@@ -850,6 +862,32 @@
           </div>
         `;
       }).join('');
+    }
+
+    async function requestFood(foodId) {
+      const food = allFood.find(f => f.id === foodId);
+      if (!food) return;
+
+      if (!confirm(`Claim & request this surplus food batch for your community shelter distribution?\n\nFood: ${food.food_type}\nServes: ${food.serves} people\nLocation: ${food.address}`)) return;
+
+      try {
+        const phone = currentUser ? currentUser.phone : '9999999999';
+        const updateData = {
+          status: 'NGO Requested',
+          accepted_at: new Date().toISOString(),
+          ngo_phone: phone,
+          volunteer_phone: phone
+        };
+
+        const { error } = await window.sb.from('food_table').update(updateData).eq('id', foodId);
+        if (error) throw error;
+
+        alert('Food request successfully placed! The donor has been notified to prepare the pickup.');
+        window.location.href = `../food-status.html?id=${foodId}`;
+      } catch (err) {
+        console.error('Request error:', err);
+        alert('Could not submit request: ' + (err.message || 'Database error'));
+      }
     }
 
     function resetFilters() {
