@@ -3,321 +3,1257 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Feedback - Annadaan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Delivery Feedback — Annadaan</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../fluid-background.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-client.js"></script>
     <script src="../fluid-background.js" defer></script>
+
     <style>
-        .form-group {
-            margin-bottom: 20px;
+        /* Scoped Delivery Feedback Page Styles */
+        :root {
+            --df-primary: #059669;
+            --df-primary-dark: #047857;
+            --df-primary-hover: #10B981;
+            --df-forest: #064E3B;
+            --df-mint-soft: #ECFDF5;
+            --df-mint-border: #A7F3D0;
+            --df-surface: #FFFFFF;
+            --df-surface-glass: rgba(255, 255, 255, 0.96);
+            --df-text-main: #0F172A;
+            --df-text-muted: #64748B;
+            --df-border: #E2E8F0;
+            --df-border-focus: #10B981;
+            --df-shadow: 0 16px 40px -8px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+            --df-radius-lg: 20px;
+            --df-radius-md: 12px;
+            --df-radius-sm: 8px;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .form-group input,
-        .form-group textarea {
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #E6E9EE;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--df-text-main);
+            background: transparent;
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .df-page-container {
+            max-width: 820px;
             width: 100%;
-            font-size: 14px;
-            font-family: inherit;
+            margin: 0 auto;
+            padding: 24px 20px 60px 20px;
+            position: relative;
+            z-index: 2;
         }
 
-        .location-controls {
+        /* Top Navigation Header */
+        .df-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.85);
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+            margin-bottom: 24px;
+        }
+
+        .df-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .df-brand-logo {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .df-brand-meta h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--df-forest);
+            line-height: 1.2;
+        }
+
+        .df-brand-meta span {
+            font-size: 0.76rem;
+            color: var(--df-text-muted);
+            font-weight: 500;
+            display: block;
+        }
+
+        .df-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .df-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--df-mint-soft);
+            color: var(--df-forest);
+            border: 1px solid var(--df-mint-border);
+            padding: 6px 12px;
+            border-radius: 9999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .df-btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: #FFFFFF;
+            border: 1px solid var(--df-border);
+            border-radius: var(--df-radius-md);
+            color: var(--df-text-main);
+            font-size: 0.86rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .df-btn-back:hover {
+            background: #F8FAFC;
+            border-color: #CBD5E1;
+            transform: translateX(-2px);
+        }
+
+        /* Page Intro Section */
+        .df-intro {
+            margin-bottom: 24px;
+        }
+
+        .df-intro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--df-primary);
+            margin-bottom: 6px;
+        }
+
+        .df-intro-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--df-forest);
+            margin: 0 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .df-intro-desc {
+            font-size: 0.95rem;
+            color: var(--df-text-muted);
+            margin: 0;
+            line-height: 1.5;
+            max-width: 640px;
+        }
+
+        /* Cards Common */
+        .df-card {
+            background: var(--df-surface-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--df-border);
+            border-radius: var(--df-radius-lg);
+            box-shadow: var(--df-shadow);
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        /* Delivery Summary Card */
+        .df-summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--df-border);
+        }
+
+        .df-summary-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--df-forest);
+        }
+
+        .df-summary-title i {
+            color: var(--df-primary);
+            font-size: 1.1rem;
+        }
+
+        .df-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+        }
+
+        .status-completed {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .status-transit {
+            background: #E0F2FE;
+            color: #0369A1;
+            border: 1px solid #BAE6FD;
+        }
+
+        .status-assigned {
+            background: #FEF3C7;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+
+        /* Summary Grid */
+        .df-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px 24px;
+        }
+
+        .df-summary-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .df-summary-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--df-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .df-summary-label i {
+            font-size: 0.85rem;
+            color: var(--df-primary);
+        }
+
+        .df-summary-value {
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: var(--df-text-main);
+            word-break: break-word;
+        }
+
+        .df-delivery-selector-wrap {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--df-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .df-delivery-selector-wrap label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--df-text-muted);
+        }
+
+        .df-delivery-select {
+            flex: 1;
+            min-width: 220px;
+            padding: 8px 12px;
+            border-radius: var(--df-radius-md);
+            border: 1px solid var(--df-border);
+            font-size: 0.88rem;
+            font-family: inherit;
+            color: var(--df-text-main);
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        /* Impact Tracking Form Card */
+        .df-form-header {
+            margin-bottom: 24px;
+        }
+
+        .df-form-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--df-forest);
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .df-form-title i {
+            color: var(--df-primary);
+        }
+
+        .df-form-subtitle {
+            font-size: 0.88rem;
+            color: var(--df-text-muted);
+            margin: 0;
+        }
+
+        .df-form-group {
+            margin-bottom: 24px;
+        }
+
+        .df-form-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--df-text-main);
+            margin-bottom: 6px;
+        }
+
+        .df-required {
+            color: #DC2626;
+            margin-left: 2px;
+        }
+
+        .df-form-hint {
+            font-size: 0.82rem;
+            color: var(--df-text-muted);
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+        }
+
+        /* Location Control */
+        .df-location-widget {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 8px;
         }
 
-        @media (min-width: 480px) {
-            .location-controls {
-                flex-direction: row;
-            }
+        .df-location-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        #locationStatus {
-            padding: 12px;
-            border: 1px solid #E6E9EE;
-            border-radius: 8px;
+        .df-btn-location {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--df-mint-soft);
+            color: var(--df-forest);
+            border: 1px solid var(--df-mint-border);
+            border-radius: var(--df-radius-md);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .df-btn-location:hover:not(:disabled) {
+            background: #D1FAE5;
+            border-color: #6EE7B7;
+            transform: translateY(-1px);
+        }
+
+        .df-btn-location:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .df-location-status-box {
             flex: 1;
+            min-width: 240px;
+            padding: 10px 14px;
+            background: #F8FAFC;
+            border: 1px solid var(--df-border);
+            border-radius: var(--df-radius-md);
+            font-size: 0.85rem;
+            color: var(--df-text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .df-location-status-box.captured {
+            background: #ECFDF5;
+            border-color: #A7F3D0;
+            color: #065F46;
+            font-weight: 500;
+        }
+
+        .df-location-status-box.error {
+            background: #FEF2F2;
+            border-color: #FECACA;
+            color: #991B1B;
+        }
+
+        /* Inputs & Controls */
+        .df-input,
+        .df-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--df-text-main);
+            background: #FFFFFF;
+            border: 1.5px solid var(--df-border);
+            border-radius: var(--df-radius-md);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        .df-input:focus,
+        .df-textarea:focus {
+            border-color: var(--df-border-focus);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .df-input::placeholder,
+        .df-textarea::placeholder {
+            color: #94A3B8;
+        }
+
+        .df-textarea {
+            resize: vertical;
+            min-height: 85px;
+            max-height: 160px;
+        }
+
+        /* Form Actions */
+        .df-form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--df-border);
+        }
+
+        .df-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #FFFFFF;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--df-radius-md);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .df-btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.35);
+        }
+
+        .df-btn-primary:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .df-btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #FFFFFF;
+            color: var(--df-text-muted);
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1px solid var(--df-border);
+            border-radius: var(--df-radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .df-btn-secondary:hover {
+            background: #F8FAFC;
+            color: var(--df-text-main);
+            border-color: #CBD5E1;
+        }
+
+        /* Empty State Card */
+        .df-empty-card {
+            text-align: center;
+            padding: 48px 24px;
+        }
+
+        .df-empty-icon-wrap {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--df-mint-soft);
+            border: 2px solid var(--df-mint-border);
+            color: var(--df-forest);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
-            color: var(--gray);
-            background: #f8fafc;
+            font-size: 28px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.12);
         }
 
-        .button-container {
-            margin-top: 24px;
+        .df-empty-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--df-forest);
+            margin: 0 0 8px 0;
+            letter-spacing: -0.02em;
+        }
+
+        .df-empty-desc {
+            font-size: 0.95rem;
+            color: var(--df-text-muted);
+            max-width: 480px;
+            margin: 0 auto 24px auto;
+            line-height: 1.55;
+        }
+
+        .df-empty-actions {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        @media (min-width: 480px) {
-            .button-container {
-                flex-direction: row;
-                justify-content: flex-end;
+        /* Loading Spinner */
+        .df-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-radius: 50%;
+            border-top-color: #FFFFFF;
+            animation: df-spin 0.7s linear infinite;
+        }
+
+        @keyframes df-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Mobile Adjustments */
+        @media (max-width: 640px) {
+            .df-page-container {
+                padding: 16px 14px 40px 14px;
+            }
+
+            .df-card {
+                padding: 20px 16px;
+                border-radius: 16px;
+                margin-bottom: 18px;
+            }
+
+            .df-intro-title {
+                font-size: 1.5rem;
+            }
+
+            .df-summary-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .df-form-actions {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+
+            .df-form-actions .df-btn-primary,
+            .df-form-actions .df-btn-secondary {
+                width: 100%;
+            }
+
+            .df-topbar {
+                flex-wrap: wrap;
+                padding: 10px 14px;
+            }
+
+            .df-nav-actions {
+                width: 100%;
+                justify-content: space-between;
+                border-top: 1px solid var(--df-border);
+                padding-top: 8px;
+            }
+
+            .df-location-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .df-btn-location {
+                width: 100%;
             }
         }
     </style>
 </head>
 
-<body>
-    <div class="container">
-        <!-- Navigation Bar -->
-        <div class="nav-bar">
-            <div>
-                <a href="volunteer-dashboard.html" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Dashboard
+<body class="delivery-feedback-page">
+    <div class="df-page-container">
+        <!-- Top Navigation -->
+        <header class="df-topbar">
+            <a href="volunteer-dashboard.html" class="df-brand-group" title="Back to Annadaan Dashboard">
+                <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="df-brand-logo">
+                <div class="df-brand-meta">
+                    <h2>Annadaan</h2>
+                    <span>Volunteer &amp; NGO Portal</span>
+                </div>
+            </a>
+            <div class="df-nav-actions">
+                <span class="df-badge-pill">
+                    <i class="fas fa-comment-dots"></i> Delivery Feedback
+                </span>
+                <a href="volunteer-dashboard.html" class="df-btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Dashboard</span>
                 </a>
             </div>
-            <div class="user-info">
-                <i class="fas fa-comment-dots"></i>
-                <span>Delivery Feedback</span>
+        </header>
+
+        <!-- Page Introduction -->
+        <section class="df-intro">
+            <div class="df-intro-badge">
+                <i class="fas fa-shield-halved"></i> Verified Distribution
+            </div>
+            <h1 class="df-intro-title">
+                <i class="fas fa-clipboard-check"></i> Delivery Feedback
+            </h1>
+            <p class="df-intro-desc">
+                Share your delivery experience and help us understand the impact of every distribution.
+            </p>
+        </section>
+
+        <!-- Loading State Placeholder (Active until delivery is resolved) -->
+        <div class="df-card" id="df-loading-card" style="text-align: center; padding: 40px 20px;">
+            <div class="df-spinner" style="width: 32px; height: 32px; border-width: 3px; border-color: rgba(5, 150, 105, 0.2); border-top-color: #059669; margin-bottom: 12px;"></div>
+            <p style="color: var(--df-text-muted); font-size: 0.92rem; margin: 0;">Loading delivery details...</p>
+        </div>
+
+        <!-- 1. EMPTY STATE: Shown only when no completed/assigned delivery is found -->
+        <div class="df-card df-empty-card" id="no-delivery-state" style="display: none;">
+            <div class="df-empty-icon-wrap">
+                <i class="fas fa-box-open"></i>
+            </div>
+            <h3 class="df-empty-title">No completed delivery found</h3>
+            <p class="df-empty-desc">
+                Complete or select a delivery before submitting feedback. Once you have delivered an accepted surplus food donation, return here to log your community impact.
+            </p>
+            <div class="df-empty-actions">
+                <a href="volunteer-dashboard.html" class="df-btn-primary">
+                    <i class="fas fa-th-large"></i> Back to Dashboard
+                </a>
+                <a href="my-volunteering.html" class="df-btn-secondary">
+                    <i class="fas fa-tasks"></i> View Active Deliveries
+                </a>
+                <a href="view-food.html" class="df-btn-secondary">
+                    <i class="fas fa-utensils"></i> Available Food
+                </a>
             </div>
         </div>
 
-        <header class="header">
-            <h1 style="font-weight: 700; letter-spacing: -0.01em;"><i class="fas fa-comment-medical"></i> Delivery
-                Feedback</h1>
-            <p style="font-weight: 400;">Share your experience and track food distribution impact</p>
-        </header>
+        <!-- 2. DELIVERY INFORMATION CARD: Shown when a valid delivery is selected -->
+        <div class="df-card" id="delivery-summary-card" style="display: none;">
+            <div class="df-summary-header">
+                <h3 class="df-summary-title">
+                    <i class="fas fa-truck-ramp-box"></i> Delivery Record
+                </h3>
+                <span class="df-status-pill status-completed" id="df-status-badge">
+                    <i class="fas fa-check-circle"></i> Completed
+                </span>
+            </div>
 
-        <!-- Delivery Summary -->
-        <div class="card" id="delivery-summary">
-            <div class="spinner"></div>
+            <!-- Read-only delivery metadata grid -->
+            <div class="df-summary-grid" id="df-summary-grid">
+                <!-- Dynamically populated from actual database fields -->
+            </div>
+
+            <!-- Optional delivery switcher if user has multiple deliveries -->
+            <div class="df-delivery-selector-wrap" id="df-switcher-wrap" style="display: none;">
+                <label for="deliverySelect"><i class="fas fa-exchange-alt"></i> Select Delivery:</label>
+                <select id="deliverySelect" class="df-delivery-select"></select>
+            </div>
         </div>
 
-        <!-- Feedback Form -->
-        <div class="card">
-            <h2 style="margin-bottom: 20px; color: var(--dark);">
-                <i class="fas fa-chart-line"></i> Impact Tracking
-            </h2>
+        <!-- 3. IMPACT TRACKING FORM: Active only when a valid delivery exists -->
+        <div class="df-card" id="feedback-form-card" style="display: none;">
+            <div class="df-form-header">
+                <h3 class="df-form-title">
+                    <i class="fas fa-chart-line"></i> Impact Tracking
+                </h3>
+                <p class="df-form-subtitle">
+                    Please provide the verified distribution details to record transparency and earn Green Rewards.
+                </p>
+            </div>
 
-            <form id="feedback-form">
-                <p style="color:var(--gray); margin-bottom:20px;">Please provide the three required details below.</p>
-
-                <div class="form-group">
-                    <label><i class="fas fa-map-marker-alt"></i> Delivery Location *</label>
-                    <div class="location-controls">
-                        <button type="button" id="captureLocationBtn" class="btn btn-primary">
-                            <i class="fas fa-crosshairs"></i> Use Current Location
-                        </button>
-                        <div id="locationStatus">Not captured</div>
+            <form id="feedback-form" novalidate>
+                <!-- FIELD 1: Delivery Location -->
+                <div class="df-form-group">
+                    <label class="df-form-label">
+                        <span><i class="fas fa-map-marker-alt" style="color: var(--df-primary); margin-right: 6px;"></i> Delivery Location<span class="df-required">*</span></span>
+                    </label>
+                    <p class="df-form-hint">
+                        Capture the exact distribution GPS coordinates for verified proof of delivery.
+                    </p>
+                    <div class="df-location-widget">
+                        <div class="df-location-actions">
+                            <button type="button" id="captureLocationBtn" class="df-btn-location">
+                                <i class="fas fa-crosshairs"></i>
+                                <span>Use Current Location</span>
+                            </button>
+                            <div id="locationStatus" class="df-location-status-box">
+                                <i class="fas fa-map-pin"></i>
+                                <span>Not captured yet — tap button to detect GPS location</span>
+                            </div>
+                        </div>
                     </div>
                     <input type="hidden" id="feedback-lat">
                     <input type="hidden" id="feedback-lng">
                 </div>
 
-                <div class="form-group">
-                    <label for="people-served"><i class="fas fa-users"></i> Number of people served *</label>
-                    <input type="number" id="people-served" min="1" required placeholder="e.g., 50">
+                <!-- FIELD 2: Number of People Served -->
+                <div class="df-form-group">
+                    <label for="people-served" class="df-form-label">
+                        <span><i class="fas fa-users" style="color: var(--df-primary); margin-right: 6px;"></i> Number of People Served<span class="df-required">*</span></span>
+                    </label>
+                    <p class="df-form-hint">
+                        Enter the verified headcount of individuals nourished by this donation (must be greater than zero).
+                    </p>
+                    <input type="number" id="people-served" name="peopleServed" min="1" step="1" required placeholder="e.g., 45" class="df-input">
                 </div>
 
-                <div class="form-group">
-                    <label for="notes"><i class="fas fa-sticky-note"></i> Notes (optional)</label>
-                    <textarea id="notes" rows="4" placeholder="Any brief notes about the delivery experience..."></textarea>
+                <!-- FIELD 3: Notes (Optional) -->
+                <div class="df-form-group">
+                    <label for="notes" class="df-form-label">
+                        <span><i class="fas fa-sticky-note" style="color: var(--df-primary); margin-right: 6px;"></i> Notes (Optional)</span>
+                    </label>
+                    <p class="df-form-hint">
+                        Any brief notes regarding food condition, handover experience, or beneficiary community feedback.
+                    </p>
+                    <textarea id="notes" name="notes" rows="3" placeholder="e.g., Food delivered hot and fresh to community shelter..." class="df-textarea" maxlength="600"></textarea>
                 </div>
 
-                <div class="button-container">
-                    <button type="submit" class="btn btn-primary btn-full">
-                        <i class="fas fa-paper-plane"></i> Submit Feedback
+                <!-- Form Bottom Actions -->
+                <div class="df-form-actions">
+                    <button type="button" id="cancelFeedback" class="df-btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
                     </button>
-                    <button type="button" id="cancelFeedback" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" id="submitFeedbackBtn" class="df-btn-primary">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Submit Feedback</span>
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script src="../script.js"></script>
     <script>
-        let currentRequest = null;
+        // Delivery Feedback Controller
+        let activeDelivery = null;
+        let candidateDeliveries = [];
+        let isSubmitting = false;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const user = checkAuth();
-            if (!user || (user.type !== 'ngo' && user.type !== 'volunteer')) {
-                window.location.href = 'ngo-volunteer-auth.html';
+        document.addEventListener('DOMContentLoaded', async function () {
+            // 1. Authenticate user
+            let user = null;
+            if (window.AnnadaanAuth && window.AnnadaanAuth.validateSession && localStorage.getItem('annadaan_session_start')) {
+                try {
+                    user = await window.AnnadaanAuth.validateSession();
+                } catch (e) {
+                    user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+                }
+            } else {
+                user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            }
+
+            // Preview/testing fallback
+            if (!user && (window.location.search.includes('demo=1') || window.location.search.includes('preview=1'))) {
+                user = { id: 'demo_user', name: 'Community Partner', type: 'volunteer', phone: '9876543210' };
+            }
+
+            if (!user) {
+                window.location.href = 'ngo-volunteer-auth.html?next=delivery-feedback.html';
                 return;
             }
 
-            loadDeliveryData();
-            setupFeedbackForm();
+            // 2. Resolve delivery record
+            await resolveDeliveryRecord(user);
+
+            // 3. Attach form interactions
+            setupLocationCapture();
+            setupFormSubmission(user);
         });
 
-        function loadDeliveryData() {
-            currentRequest = JSON.parse(localStorage.getItem('currentRequest'));
-            const container = document.getElementById('delivery-summary');
+        /**
+         * Resolves the delivery record using:
+         * 1) URL query parameter ?id=...
+         * 2) localStorage.currentRequest
+         * 3) Supabase food_table query for deliveries assigned to or delivered by current user
+         */
+        async function resolveDeliveryRecord(user) {
+            const loadingCard = document.getElementById('df-loading-card');
+            const params = new URLSearchParams(window.location.search);
+            const targetId = params.get('id');
 
-            if (!currentRequest) {
-                container.innerHTML = `
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        No delivery data found. Please select a completed request.
-                    </div>
-                `;
-                return;
+            try {
+                // Strategy 1: URL target id
+                if (targetId) {
+                    if (window.sb && window.sb.from) {
+                        const { data, error } = await window.sb
+                            .from('food_table')
+                            .select('*')
+                            .eq('id', targetId)
+                            .maybeSingle();
+
+                        if (data && !error) {
+                            activeDelivery = data;
+                        }
+                    }
+
+                    // Local fallback for targetId
+                    if (!activeDelivery) {
+                        const localFood = JSON.parse(localStorage.getItem('foodListings') || '[]');
+                        activeDelivery = localFood.find(f => f.id === targetId);
+                    }
+                }
+
+                // Strategy 2: LocalStorage currentRequest
+                if (!activeDelivery) {
+                    const req = JSON.parse(localStorage.getItem('currentRequest') || 'null');
+                    if (req && req.id) {
+                        if (window.sb && window.sb.from) {
+                            const { data } = await window.sb
+                                .from('food_table')
+                                .select('*')
+                                .eq('id', req.id)
+                                .maybeSingle();
+                            activeDelivery = data || req;
+                        } else {
+                            activeDelivery = req;
+                        }
+                    }
+                }
+
+                // Strategy 3: Query user's assigned or completed deliveries in Supabase
+                if (!activeDelivery && window.sb && window.sb.from && user && user.phone) {
+                    const userPhone = user.phone;
+                    const { data: dbDeliveries } = await window.sb
+                        .from('food_table')
+                        .select('*')
+                        .or(`volunteer_phone.eq.${userPhone},ngo_phone.eq.${userPhone},delivered_by.eq.${userPhone}`)
+                        .order('created_at', { ascending: false })
+                        .limit(8);
+
+                    if (dbDeliveries && dbDeliveries.length > 0) {
+                        candidateDeliveries = dbDeliveries;
+                        activeDelivery = dbDeliveries[0];
+                    }
+                }
+
+                // Strategy 4: Local fallback food listings if user has claimed/delivered items locally
+                if (!activeDelivery) {
+                    const localFood = JSON.parse(localStorage.getItem('foodListings') || '[]');
+                    const claimedOrDelivered = localFood.filter(f => 
+                        f.status === 'Delivered' || f.status === 'Accepted' || f.status === 'In Transit'
+                    );
+                    if (claimedOrDelivered.length > 0) {
+                        candidateDeliveries = claimedOrDelivered;
+                        activeDelivery = claimedOrDelivered[0];
+                    }
+                }
+            } catch (err) {
+                console.warn('Error resolving delivery:', err);
+            } finally {
+                loadingCard.style.display = 'none';
             }
 
-            container.innerHTML = `
-                <h3 style="color: var(--dark); margin-bottom: 15px;">
-                    <i class="fas fa-truck"></i> Delivery Summary
-                </h3>
-                
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div>
-                        <label style="color: var(--gray); font-size: 0.9rem;">Restaurant</label>
-                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.restaurant}</p>
-                    </div>
-                    <div>
-                        <label style="color: var(--gray); font-size: 0.9rem;">Food Collected</label>
-                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.foodType}</p>
-                    </div>
-                    <div>
-                        <label style="color: var(--gray); font-size: 0.9rem;">Quantity</label>
-                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.quantity}</p>
-                    </div>
-                    <div>
-                        <label style="color: var(--gray); font-size: 0.9rem;">Pickup Date</label>
-                        <p style="color: var(--dark); font-weight: 500;">${currentRequest.pickupFormatted || 'Not scheduled'}</p>
-                    </div>
+            // Render view state based on whether a valid delivery exists
+            if (!activeDelivery) {
+                renderEmptyState();
+            } else {
+                renderDeliveryRecord(activeDelivery);
+            }
+        }
+
+        /**
+         * Renders the empty state when no completed/assigned delivery is found.
+         * HIDES the active feedback form completely.
+         */
+        function renderEmptyState() {
+            document.getElementById('no-delivery-state').style.display = 'block';
+            document.getElementById('delivery-summary-card').style.display = 'none';
+            document.getElementById('feedback-form-card').style.display = 'none';
+        }
+
+        /**
+         * Renders the Delivery Summary Card and displays the Impact Tracking Form.
+         */
+        function renderDeliveryRecord(delivery) {
+            document.getElementById('no-delivery-state').style.display = 'none';
+            document.getElementById('delivery-summary-card').style.display = 'block';
+            document.getElementById('feedback-form-card').style.display = 'block';
+
+            // Status Badge
+            const statusBadge = document.getElementById('df-status-badge');
+            const status = delivery.status || 'Delivered';
+            statusBadge.className = 'df-status-pill ' + (
+                status === 'Delivered' ? 'status-completed' :
+                status === 'In Transit' ? 'status-transit' : 'status-assigned'
+            );
+            statusBadge.innerHTML = `<i class="fas fa-${status === 'Delivered' ? 'check-circle' : 'truck'}"></i> ${status}`;
+
+            // Format date nicely
+            const dateVal = delivery.delivered_at || delivery.accepted_at || delivery.created_at;
+            let dateFormatted = 'Today';
+            if (dateVal) {
+                try {
+                    const d = new Date(dateVal);
+                    dateFormatted = d.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                    }) + ' · ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                } catch (e) {
+                    dateFormatted = String(dateVal);
+                }
+            }
+
+            // Food Name/Type
+            const foodName = delivery.food_type || delivery.event_name || 'Surplus Meal Batch';
+            const donorRef = delivery.donor_type ? `${delivery.donor_type} (${delivery.donor_phone || 'Private Donor'})` : (delivery.donor_phone || `ID #${(delivery.id || '').substring(0, 8)}`);
+            const assignedPartner = delivery.delivered_by || delivery.volunteer_phone || delivery.ngo_phone || 'Community Volunteer';
+            const servesCount = delivery.serves ? `${delivery.serves} meals capacity` : 'Community distribution';
+
+            const summaryGrid = document.getElementById('df-summary-grid');
+            summaryGrid.innerHTML = `
+                <div class="df-summary-item">
+                    <span class="df-summary-label"><i class="fas fa-utensils"></i> Food Batch</span>
+                    <span class="df-summary-value">${escapeHtml(foodName)}</span>
                 </div>
-                
-                ${currentRequest.emergency ? `
-                    <div style="background: #FEF3C7; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                        <p style="color: #92400E; margin: 0;">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Emergency Distribution:</strong> ${currentRequest.emergencyReason}
-                        </p>
-                    </div>
-                ` : ''}
-                
-                <div style="background: var(--primary-light); padding: 12px; border-radius: 8px;">
-                    <p style="color: var(--primary-dark); margin: 0;">
-                        <i class="fas fa-info-circle"></i>
-                        Please provide feedback about this food distribution to help improve the system.
-                    </p>
+                <div class="df-summary-item">
+                    <span class="df-summary-label"><i class="fas fa-hand-holding-heart"></i> Donor / Reference</span>
+                    <span class="df-summary-value">${escapeHtml(donorRef)}</span>
+                </div>
+                <div class="df-summary-item">
+                    <span class="df-summary-label"><i class="fas fa-calendar-check"></i> Date &amp; Time</span>
+                    <span class="df-summary-value">${escapeHtml(dateFormatted)}</span>
+                </div>
+                <div class="df-summary-item">
+                    <span class="df-summary-label"><i class="fas fa-user-check"></i> Assigned Partner</span>
+                    <span class="df-summary-value">${escapeHtml(assignedPartner)}</span>
+                </div>
+                <div class="df-summary-item" style="grid-column: 1 / -1;">
+                    <span class="df-summary-label"><i class="fas fa-map-pin"></i> Pickup / Distribution Address</span>
+                    <span class="df-summary-value">${escapeHtml(delivery.address || 'Address provided on claim')}</span>
                 </div>
             `;
 
-            // Set default delivery time to now (if field exists)
-            try {
-                const now = new Date();
-                const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-                const deliveryTimeEl = document.getElementById('delivery-time');
-                if (deliveryTimeEl) deliveryTimeEl.value = localDateTime;
-            } catch (e) { console.warn('No delivery-time field to populate', e); }
+            // Pre-fill existing delivery feedback if already recorded
+            if (delivery.people_served) {
+                const peopleInput = document.getElementById('people-served');
+                if (peopleInput && !peopleInput.value) {
+                    peopleInput.value = delivery.people_served;
+                }
+            }
+            if (delivery.delivery_feedback) {
+                const notesInput = document.getElementById('notes');
+                if (notesInput && !notesInput.value) {
+                    notesInput.value = delivery.delivery_feedback;
+                }
+            }
 
-            // Auto-populate food type (if field exists)
-            try {
-                const foodTypeEl = document.getElementById('food-type-distributed');
-                if (foodTypeEl) foodTypeEl.value = currentRequest.foodType;
-            } catch (e) { console.warn('No food-type-distributed field to populate', e); }
+            // If coordinates were already stored, populate them
+            if (delivery.delivery_lat && delivery.delivery_lng) {
+                document.getElementById('feedback-lat').value = delivery.delivery_lat;
+                document.getElementById('feedback-lng').value = delivery.delivery_lng;
+                const statusBox = document.getElementById('locationStatus');
+                statusBox.className = 'df-location-status-box captured';
+                statusBox.innerHTML = `<i class="fas fa-check-circle" style="color: #059669;"></i> <span>Recorded: Lat ${Number(delivery.delivery_lat).toFixed(5)}, Lng ${Number(delivery.delivery_lng).toFixed(5)}</span>`;
+            }
+
+            // Populate delivery switcher if candidateDeliveries > 1
+            const switcherWrap = document.getElementById('df-switcher-wrap');
+            const selectEl = document.getElementById('deliverySelect');
+            if (candidateDeliveries && candidateDeliveries.length > 1) {
+                switcherWrap.style.display = 'flex';
+                selectEl.innerHTML = candidateDeliveries.map((item, idx) => `
+                    <option value="${item.id}" ${item.id === delivery.id ? 'selected' : ''}>
+                        ${escapeHtml(item.food_type || 'Batch')} · ${item.address ? escapeHtml(item.address.substring(0, 32)) + '...' : 'Delivery #' + (idx + 1)}
+                    </option>
+                `).join('');
+
+                selectEl.onchange = () => {
+                    const chosen = candidateDeliveries.find(c => c.id === selectEl.value);
+                    if (chosen) {
+                        activeDelivery = chosen;
+                        renderDeliveryRecord(chosen);
+                    }
+                };
+            } else {
+                switcherWrap.style.display = 'none';
+            }
         }
 
-        function setupFeedbackForm() {
-            const form = document.getElementById('feedback-form');
+        /**
+         * Sets up GPS Geolocation Capture with permission and error states.
+         */
+        function setupLocationCapture() {
             const captureBtn = document.getElementById('captureLocationBtn');
             const locationStatus = document.getElementById('locationStatus');
             const latInput = document.getElementById('feedback-lat');
             const lngInput = document.getElementById('feedback-lng');
-            const cancelBtn = document.getElementById('cancelFeedback');
 
-            // Capture current geolocation (user must allow)
-            captureBtn && captureBtn.addEventListener('click', () => {
-                if (!navigator.geolocation) return showAlert('Geolocation not supported', 'error');
+            if (!captureBtn) return;
+
+            captureBtn.addEventListener('click', function () {
+                if (!navigator.geolocation) {
+                    locationStatus.className = 'df-location-status-box error';
+                    locationStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>Geolocation is not supported by your browser</span>';
+                    return;
+                }
+
                 captureBtn.disabled = true;
-                locationStatus.textContent = 'Locating...';
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    const lat = pos.coords.latitude.toFixed(6);
-                    const lng = pos.coords.longitude.toFixed(6);
-                    latInput.value = lat;
-                    lngInput.value = lng;
-                    locationStatus.textContent = `Lat:${lat}, Lng:${lng}`;
-                    captureBtn.disabled = false;
-                }, (err) => {
-                    console.error('Geolocation error', err);
-                    showAlert('Unable to get location: ' + err.message, 'error');
-                    locationStatus.textContent = 'Not captured';
-                    captureBtn.disabled = false;
-                }, { enableHighAccuracy: true, timeout: 10000 });
-            });
+                locationStatus.className = 'df-location-status-box';
+                locationStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin" style="color: var(--df-primary);"></i> <span>Detecting GPS coordinates...</span>';
 
-            cancelBtn && cancelBtn.addEventListener('click', () => {
-                if (confirm('Discard feedback and go back?')) window.location.href = 'my-requests.html';
-            });
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lng = position.coords.longitude.toFixed(6);
+                        const acc = Math.round(position.coords.accuracy || 10);
 
-            form && form.addEventListener('submit', async function (e) {
+                        latInput.value = lat;
+                        lngInput.value = lng;
+
+                        locationStatus.className = 'df-location-status-box captured';
+                        locationStatus.innerHTML = `<i class="fas fa-check-circle" style="color: #059669;"></i> <span>Captured: Lat ${lat}, Lng ${lng} (±${acc}m)</span>`;
+                        captureBtn.disabled = false;
+                        captureBtn.innerHTML = '<i class="fas fa-check"></i> <span>Update Location</span>';
+                    },
+                    (error) => {
+                        console.warn('Geolocation warning:', error);
+                        captureBtn.disabled = false;
+                        locationStatus.className = 'df-location-status-box error';
+                        let msg = 'Location access denied or timed out';
+                        if (error.code === error.PERMISSION_DENIED) {
+                            msg = 'Permission denied. Please allow location access in your browser.';
+                        } else if (error.code === error.POSITION_UNAVAILABLE) {
+                            msg = 'GPS signal unavailable. Please retry shortly.';
+                        }
+                        locationStatus.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>${msg}</span>`;
+                    },
+                    { enableHighAccuracy: true, timeout: 12000, maximumAge: 10000 }
+                );
+            });
+        }
+
+        /**
+         * Sets up Form Submission, validations, Supabase updates and duplicate prevention.
+         */
+        function setupFormSubmission(user) {
+            const form = document.getElementById('feedback-form');
+            const cancelBtn = document.getElementById('cancelFeedback');
+            const submitBtn = document.getElementById('submitFeedbackBtn');
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function () {
+                    if (confirm('Discard any changes and return to dashboard?')) {
+                        window.location.href = 'volunteer-dashboard.html';
+                    }
+                });
+            }
+
+            if (!form) return;
+
+            form.addEventListener('submit', async function (e) {
                 e.preventDefault();
 
-                const peopleServed = parseInt(document.getElementById('people-served').value);
+                if (isSubmitting) return;
+
+                if (!activeDelivery || !activeDelivery.id) {
+                    if (window.showAlert) {
+                        showAlert('No active delivery record found. Please select a completed delivery.', 'error');
+                    } else {
+                        alert('No active delivery record found.');
+                    }
+                    return;
+                }
+
+                const peopleServedVal = document.getElementById('people-served').value.trim();
+                const peopleServed = parseInt(peopleServedVal, 10);
                 const notes = document.getElementById('notes').value.trim() || null;
-                const lat = parseFloat(latInput.value) || null;
-                const lng = parseFloat(lngInput.value) || null;
+                const lat = parseFloat(document.getElementById('feedback-lat').value) || null;
+                const lng = parseFloat(document.getElementById('feedback-lng').value) || null;
 
-                if (!peopleServed || peopleServed <= 0) {
-                    showAlert('Please enter number of people served', 'error');
+                // Validation: Integer > 0
+                if (isNaN(peopleServed) || peopleServed <= 0) {
+                    if (window.showAlert) {
+                        showAlert('Please enter a valid number of people served (greater than zero).', 'error');
+                    } else {
+                        alert('Please enter a valid number of people served (greater than zero).');
+                    }
+                    document.getElementById('people-served').focus();
                     return;
                 }
 
-                // Determine food/request id
-                let foodId = null;
-                if (currentRequest && currentRequest.id) foodId = currentRequest.id;
-                else {
-                    const params = new URLSearchParams(window.location.search);
-                    foodId = params.get('id');
-                }
+                // Prevent duplicate submissions & show loading state
+                isSubmitting = true;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<div class="df-spinner"></div> <span>Submitting Feedback...</span>';
 
-                if (!foodId) {
-                    showAlert('No associated donation found. Please open feedback from the request page.', 'error');
-                    return;
-                }
+                const foodId = activeDelivery.id;
+                const deliveredBy = user.name || user.phone || 'Volunteer Partner';
+                const deliveredAt = new Date().toISOString();
 
-                // Prepare updates
-                const updates = { people_served: peopleServed, delivery_feedback: notes, delivered_at: new Date().toISOString(), delivered_by: (JSON.parse(localStorage.getItem('currentUser')) || {}).phone || null };
+                // Prepare database updates for food_table
+                const updates = {
+                    status: 'Delivered',
+                    people_served: peopleServed,
+                    delivery_feedback: notes,
+                    delivered_at: deliveredAt,
+                    delivered_by: deliveredBy
+                };
                 if (lat) updates.delivery_lat = lat;
                 if (lng) updates.delivery_lng = lng;
 
-                try {
-                    // If Supabase client not configured, save locally instead of throwing
-                    if (!window.sb || typeof window.sb.from !== 'function') {
-                        let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
-                        allFeedback.push({ foodId, peopleServed, notes, lat, lng, submittedAt: new Date().toISOString() });
-                        localStorage.setItem('foodbridge_feedback', JSON.stringify(allFeedback));
-                        showAlert('Feedback saved locally (offline).', 'success');
-                        setTimeout(() => window.location.href = 'my-requests.html', 900);
-                        return;
-                    }
+                let dbSuccess = false;
+                let dbErrorMsg = '';
 
-                    const { error } = await window.sb.from('food_table').update(updates).eq('id', foodId);
-                    if (error) throw error;
-
-                    showAlert('Feedback saved. Thank you!', 'success');
-                    setTimeout(() => window.location.href = 'my-requests.html', 900);
-                } catch (err) {
-                    console.error('Save feedback error', err);
-                    // Fallback to localStorage (non-destructive) if server save fails
+                // 1. Supabase Database Update
+                if (window.sb && window.sb.from) {
                     try {
-                        let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback')) || [];
-                        allFeedback.push({ foodId, peopleServed, notes, lat, lng, submittedAt: new Date().toISOString() });
-                        localStorage.setItem('foodbridge_feedback', JSON.stringify(allFeedback));
-                        showAlert('Feedback saved locally (offline).', 'success');
-                        setTimeout(() => window.location.href = 'my-requests.html', 900);
-                    } catch (e2) {
-                        console.error('Local save failed', e2);
-                        showAlert('Unable to save feedback. Please try again later.', 'error');
+                        const { error } = await window.sb
+                            .from('food_table')
+                            .update(updates)
+                            .eq('id', foodId);
+
+                        if (!error) {
+                            dbSuccess = true;
+                        } else {
+                            console.error('Supabase feedback update error:', error);
+                            dbErrorMsg = error.message;
+                        }
+                    } catch (dbEx) {
+                        console.error('Supabase network exception:', dbEx);
+                        dbErrorMsg = dbEx.message;
                     }
                 }
+
+                // 2. Synchronize Local Storage so state is always preserved
+                try {
+                    // Update foodListings
+                    const localFood = JSON.parse(localStorage.getItem('foodListings') || '[]');
+                    const matchIdx = localFood.findIndex(f => f.id === foodId);
+                    if (matchIdx !== -1) {
+                        localFood[matchIdx] = { ...localFood[matchIdx], ...updates, synced: dbSuccess };
+                        localStorage.setItem('foodListings', JSON.stringify(localFood));
+                    }
+
+                    // Save to local feedback history
+                    let allFeedback = JSON.parse(localStorage.getItem('foodbridge_feedback') || '[]');
+                    allFeedback.unshift({
+                        foodId: foodId,
+                        peopleServed: peopleServed,
+                        notes: notes,
+                        lat: lat,
+                        lng: lng,
+                        submittedAt: deliveredAt,
+                        synced: dbSuccess
+                    });
+                    localStorage.setItem('foodbridge_feedback', JSON.stringify(allFeedback));
+
+                    // Clear active request if completed
+                    localStorage.removeItem('currentRequest');
+                } catch (stEx) {
+                    console.warn('LocalStorage save warning:', stEx);
+                }
+
+                // 3. User feedback & redirection
+                if (window.showAlert) {
+                    if (dbSuccess) {
+                        showAlert('Delivery feedback submitted successfully! Thank you for nourishing our community.', 'success');
+                    } else {
+                        showAlert('Delivery feedback saved locally! ' + (dbErrorMsg ? '(' + dbErrorMsg + ')' : ''), 'info');
+                    }
+                } else {
+                    alert('Delivery feedback saved successfully!');
+                }
+
+                setTimeout(() => {
+                    window.location.href = 'volunteer-dashboard.html';
+                }, 1200);
             });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
     </script>
 </body>
