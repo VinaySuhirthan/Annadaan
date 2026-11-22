@@ -1,590 +1,583 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green Rewards Store</title>
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>Green Rewards Store — Annadaan</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
 
-    <style>
-        :root {
-            --primary: #00C853;
-            --primary-dark: #009624;
-            --accent: #B9F6CA;
-            --bg-dark: #0D1117;
-            --card-bg: rgba(22, 27, 34, 0.7);
-            --card-border: rgba(48, 54, 61, 0.8);
-            --text-main: #FFFFFF;
-            --text-muted: #8B949E;
-            --app-width: 480px;
-        }
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../discovery.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../supabase-client.js"></script>
+  <script src="../fluid-background.js" defer></script>
+  <script src="../discovery.js" defer></script>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Outfit', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+  <style>
+    /* Green Rewards Store Enhancements */
+    .rewards-balance-card {
+      background: linear-gradient(135deg, rgba(209, 250, 229, 0.7) 0%, rgba(240, 253, 244, 0.9) 100%);
+      border: 1px solid rgba(167, 243, 208, 0.9);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.08);
+      backdrop-filter: blur(14px);
+    }
 
-        body {
-            background-color: #000;
-            color: var(--text-main);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            overflow-x: hidden;
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(0, 200, 83, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 150, 255, 0.1) 0%, transparent 40%);
-        }
+    .balance-info-left h2 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #065F46;
+      margin-bottom: 8px;
+    }
 
-        /* Container imitating a mobile app */
-        .app-container {
-            width: 100%;
-            max-width: var(--app-width);
-            background: rgba(13, 17, 23, 0.6);
-            backdrop-filter: blur(20px);
-            min-height: 100vh;
-            position: relative;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-        }
+    .balance-display {
+      font-size: clamp(2.4rem, 5vw, 3.2rem);
+      font-weight: 800;
+      color: #064E3B;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
 
-        /* Header */
-        header {
-            padding: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 40px;
-        }
+    .balance-display i {
+      color: #10B981;
+      font-size: 0.8em;
+    }
 
-        .brand h1 {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff 0%, #B9F6CA 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+    .balance-subtext {
+      font-size: 0.88rem;
+      color: #047857;
+      margin: 0;
+    }
 
-        .user-pill {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+    .balance-rules-pills {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-        /* Balance Card */
-        .balance-card {
-            margin: 0 20px 30px;
-            background: linear-gradient(135deg, rgba(0, 200, 83, 0.2) 0%, rgba(0, 100, 50, 0.2) 100%);
-            border: 1px solid rgba(0, 200, 83, 0.3);
-            border-radius: 24px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            box-shadow: 0 10px 40px -10px rgba(0, 200, 83, 0.3);
-            animation: float 6s ease-in-out infinite;
-        }
+    .rule-pill {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(167, 243, 208, 0.8);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      color: #065F46;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        @keyframes float {
+    /* Catalog Section */
+    .catalog-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-            0%,
-            100% {
-                transform: translateY(0);
-            }
+    .rewards-catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+      margin-bottom: 32px;
+    }
 
-            50% {
-                transform: translateY(-5px);
-            }
-        }
+    .reward-item-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(14px);
+      position: relative;
+    }
 
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
-            animation: rotate 10s linear infinite;
-        }
+    .reward-item-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+      border-color: var(--primary);
+    }
 
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
+    .reward-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
 
-            to {
-                transform: rotate(360deg);
-            }
-        }
+    .reward-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
 
-        .balance-label {
-            font-size: 14px;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            position: relative;
-            z-index: 1;
-        }
+    .icon-metro { background: #E0F2FE; color: #0284C7; }
+    .icon-bus { background: #FEF3C7; color: #D97706; }
+    .icon-movie { background: #EDE9FE; color: #7C3AED; }
 
-        .balance-amount {
-            font-size: 56px;
-            font-weight: 800;
-            margin: 10px 0;
-            color: #fff;
-            text-shadow: 0 4px 20px rgba(0, 200, 83, 0.5);
-            position: relative;
-            z-index: 1;
-        }
+    .reward-badge-demo {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      background: #F1F5F9;
+      color: #64748B;
+      border: 1px solid #E2E8F0;
+    }
 
-        .leaf-icon {
-            font-size: 0.6em;
-            color: var(--primary);
-            vertical-align: super;
-        }
+    .reward-item-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
 
-        /* Section Title */
-        .section-title {
-            margin: 0 24px 16px;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .reward-item-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+      flex: 1;
+    }
 
-        .section-title::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-        }
+    .reward-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid #F1F5F9;
+    }
 
-        /* Rewards Grid */
-        .rewards-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            padding: 0 20px 40px;
-            overflow-y: auto;
-        }
+    .reward-price-tag {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        .reward-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
+    .reward-price-tag i {
+      color: #10B981;
+      font-size: 14px;
+    }
 
-        .reward-card:active {
-            transform: scale(0.98);
-        }
+    /* Redemption Confirmation Modal */
+    .reward-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 9999;
+    }
 
-        /* Hover Effect for Desktop (simulated on tap) */
-        .reward-card:hover {
-            border-color: rgba(0, 200, 83, 0.5);
-            background: rgba(22, 27, 34, 0.9);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
+    .reward-modal-backdrop.active {
+      display: flex;
+    }
 
-        .reward-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: var(--text-main);
-            flex-shrink: 0;
-            transition: all 0.3s;
-        }
+    .reward-modal-card {
+      background: white;
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 32px 28px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+      border: 1px solid var(--border);
+    }
 
-        .reward-card:hover .reward-icon {
-            background: var(--primary);
-            color: #000;
-        }
+    .modal-success-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #D1FAE5;
+      color: #059669;
+      font-size: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+    }
 
-        .reward-details {
-            flex: 1;
-        }
-
-        .reward-name {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .reward-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .reward-cost {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--primary);
-            background: rgba(0, 200, 83, 0.1);
-            padding: 4px 10px;
-            border-radius: 10px;
-        }
-
-        /* Redeem Button (Hidden initially, appears on click logic) */
-        .redeem-btn {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        /* Pulse Animation for Success */
-        @keyframes pulse-green {
-            0% {
-                box-shadow: 0 0 0 0 rgba(0, 200, 83, 0.7);
-            }
-
-            70% {
-                box-shadow: 0 0 0 20px rgba(0, 200, 83, 0);
-            }
-
-            100% {
-                box-shadow: 0 0 0 0 rgba(0, 200, 83, 0);
-            }
-        }
-
-        .redeem-success {
-            animation: pulse-green 1s;
-            border-color: var(--primary);
-            background: rgba(0, 200, 83, 0.1);
-        }
-
-        /* Modal */
-        #successModal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 100;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: #161B22;
-            border: 1px solid var(--primary);
-            padding: 40px 30px;
-            border-radius: 30px;
-            text-align: center;
-            max-width: 350px;
-            width: 100%;
-            box-shadow: 0 0 50px rgba(0, 200, 83, 0.3);
-            transform: scale(0.8);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #successModal.show .modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .modal-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--primary);
-            color: black;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 30px var(--primary);
-        }
-
-        .modal-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 14px 0;
-            width: 100%;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s;
-        }
-
-        .modal-btn:active {
-            transform: scale(0.95);
-        }
-    </style>
+    .voucher-code-box {
+      background: #F8FAFC;
+      border: 1.5px dashed #CBD5E1;
+      border-radius: 12px;
+      padding: 14px;
+      margin: 18px 0;
+      font-family: monospace;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #0F172A;
+      letter-spacing: 0.1em;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="app-shell">
+    <!-- MOBILE BACKDROP -->
+    <div class="app-sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
-    <div class="app-container">
-        <!-- Header -->
-        <header>
-            <div class="brand">
-                <h1>Rewards</h1>
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar" id="appSidebar">
+      <div>
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-wrap">
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="sidebar-brand-img">
+            <div class="brand-text">
+              <h2>Annadaan</h2>
+              <span>Volunteer Portal</span>
             </div>
-            <div class="user-pill">
-                <i class="fas fa-user-astronaut"></i>
-                <span id="userName">Volunteer</span>
-            </div>
-        </header>
-
-        <!-- Balance Section -->
-        <div class="balance-card">
-            <div class="balance-label">Current Balance</div>
-            <div class="balance-amount">
-                <span id="currentBalance">850</span><span class="leaf-icon"><i class="fas fa-leaf"></i></span>
-            </div>
-            <div style="font-size: 12px; color: rgba(255,255,255,0.7);">Keep volunteering to earn more!</div>
+          </div>
         </div>
 
-        <!-- Redemption Section -->
-        <div class="section-title">
-            <i class="fas fa-ticket-alt" style="color: var(--primary);"></i> Travel Rewards
+        <nav class="sidebar-nav">
+          <a class="nav-link" href="volunteer-dashboard.html">
+            <i class="fas fa-chart-pie"></i>
+            <span>Dashboard</span>
+          </a>
+          <a class="nav-link" href="view-food.html">
+            <i class="fas fa-utensils"></i>
+            <span>Available Food</span>
+          </a>
+          <a class="nav-link" href="my-volunteering.html">
+            <i class="fas fa-calendar-check"></i>
+            <span>My Volunteering</span>
+          </a>
+          <a class="nav-link active" href="dummy.html">
+            <i class="fas fa-gift"></i>
+            <span>Rewards Store</span>
+          </a>
+          <a class="nav-link" onclick="if(window.AnnadaanGuide)window.AnnadaanGuide.launchTour('volunteer_dashboard',true)" style="margin-top: 10px; cursor: pointer;">
+            <i class="fas fa-compass"></i>
+            <span>Feature Guide</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-snippet">
+          <div class="user-avatar" id="sideAvatar">V</div>
+          <div class="user-meta">
+            <div class="user-meta-name" id="sideName">Volunteer</div>
+            <div class="user-meta-role" id="sideLocation">Field Partner</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="volunteerLogout()" title="Sign Out of Volunteer Portal">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW -->
+    <main class="app-main">
+      <!-- TOPBAR -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-trigger" onclick="toggleSidebar()" aria-label="Open navigation menu">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="mobile-topbar-brand">
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="mobile-topbar-logo">
+          </div>
+          <div class="topbar-title" id="pageTitle">Green Rewards Store</div>
         </div>
 
-        <div class="rewards-grid">
-            <!-- Metro Card -->
-            <div class="reward-card" onclick="redeemReward('Metro Pass', 200, this)">
-                <div class="reward-icon">
-                    <i class="fas fa-subway"></i>
-                </div>
-                <div class="reward-details">
-                    <div class="reward-name">Metro Day Pass</div>
-                    <div class="reward-desc">Unlimited travel for 24 hours on all lines.</div>
-                    <div class="reward-cost">
-                        200 <i class="fas fa-leaf" style="font-size: 10px;"></i>
-                    </div>
-                </div>
-                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
-            </div>
-
-            <!-- MTC Bus Card -->
-            <div class="reward-card" onclick="redeemReward('Bus Ticket', 100, this)">
-                <div class="reward-icon">
-                    <i class="fas fa-bus"></i>
-                </div>
-                <div class="reward-details">
-                    <div class="reward-name">MTC Bus Ticket</div>
-                    <div class="reward-desc">Single trip ticket valid for any AC/Non-AC bus.</div>
-                    <div class="reward-cost">
-                        100 <i class="fas fa-leaf" style="font-size: 10px;"></i>
-                    </div>
-                </div>
-                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
-            </div>
-
-            <!-- Coming Soon -->
-            <div class="reward-card" style="opacity: 0.5; cursor: not-allowed;">
-                <div class="reward-icon">
-                    <i class="fas fa-gift"></i>
-                </div>
-                <div class="reward-details">
-                    <div class="reward-name">Movie Vouchers</div>
-                    <div class="reward-desc">Coming soon to the store.</div>
-                    <div class="reward-cost">
-                        500 <i class="fas fa-leaf" style="font-size: 10px;"></i>
-                    </div>
-                </div>
-                <i class="fas fa-lock" style="color: var(--text-muted);"></i>
-            </div>
+        <div class="topbar-right">
+          <a href="volunteer-dashboard.html" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="view-food.html" class="btn btn-primary btn-sm">
+            <i class="fas fa-search"></i>
+            <span>Find Food</span>
+          </a>
         </div>
+      </header>
+
+      <!-- CONTENT WRAPPER -->
+      <div class="app-content">
+        <!-- INTRO -->
+        <div class="page-intro">
+          <div>
+            <h1>Green Rewards Store</h1>
+            <p>Redeem your earned volunteer credits for public transit subsidies, bus tickets, and community appreciation passes.</p>
+          </div>
+          <div class="quick-impact-bar">
+            <i class="fas fa-leaf" style="color: var(--emerald); font-size: 18px;"></i>
+            <span>Eco-Friendly Transit Rewards</span>
+          </div>
+        </div>
+
+        <!-- BALANCE CARD (Full-Width Responsive) -->
+        <div class="rewards-balance-card">
+          <div class="balance-info-left">
+            <h2>Current Rewards Balance</h2>
+            <div class="balance-display">
+              <span id="currentBalance">850</span>
+              <i class="fas fa-leaf"></i>
+            </div>
+            <p class="balance-subtext">Credits are awarded upon verified completion of surplus food pickups and drop-offs.</p>
+          </div>
+
+          <div class="balance-rules-pills">
+            <div class="rule-pill">
+              <i class="fas fa-check-circle" style="color: #10B981;"></i>
+              <span>+50 Credits per Verified Delivery</span>
+            </div>
+            <div class="rule-pill">
+              <i class="fas fa-stopwatch" style="color: #10B981;"></i>
+              <span>+20 Credits for On-Time Arrival</span>
+            </div>
+            <div class="rule-pill">
+              <i class="fas fa-shield-alt" style="color: #10B981;"></i>
+              <span>+100 First Distribution Bonus</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CATALOG SECTION -->
+        <div class="catalog-title">
+          <i class="fas fa-ticket-alt" style="color: var(--primary);"></i>
+          <span>Available Travel & Appreciation Passes</span>
+        </div>
+
+        <div class="rewards-catalog-grid">
+          <!-- METRO PASS -->
+          <div class="reward-item-card">
+            <div class="reward-top-row">
+              <div class="reward-icon-box icon-metro">
+                <i class="fas fa-subway"></i>
+              </div>
+              <span class="reward-badge-demo">Demo Simulation</span>
+            </div>
+            <div class="reward-item-name">Metro Day Pass</div>
+            <div class="reward-item-desc">Unlimited 24-hour travel across all city metro lines to assist volunteer pickups across key distribution routes.</div>
+            <div class="reward-footer-row">
+              <div class="reward-price-tag">
+                <span>200</span>
+                <i class="fas fa-leaf"></i>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="redeemReward('Metro Day Pass', 200)">
+                <i class="fas fa-ticket-alt"></i> Redeem Pass
+              </button>
+            </div>
+          </div>
+
+          <!-- MTC BUS TICKET -->
+          <div class="reward-item-card">
+            <div class="reward-top-row">
+              <div class="reward-icon-box icon-bus">
+                <i class="fas fa-bus"></i>
+              </div>
+              <span class="reward-badge-demo">Demo Simulation</span>
+            </div>
+            <div class="reward-item-name">MTC City Bus Ticket</div>
+            <div class="reward-item-desc">Single-day bus transit token valid on all municipal standard and deluxe transit routes in the metropolitan area.</div>
+            <div class="reward-footer-row">
+              <div class="reward-price-tag">
+                <span>100</span>
+                <i class="fas fa-leaf"></i>
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" onclick="redeemReward('MTC City Bus Ticket', 100)">
+                <i class="fas fa-ticket-alt"></i> Redeem Ticket
+              </button>
+            </div>
+          </div>
+
+          <!-- MOVIE VOUCHER (COMING SOON) -->
+          <div class="reward-item-card" style="opacity: 0.75;">
+            <div class="reward-top-row">
+              <div class="reward-icon-box icon-movie">
+                <i class="fas fa-film"></i>
+              </div>
+              <span class="reward-badge-demo">Unlocks at 500</span>
+            </div>
+            <div class="reward-item-name">Cinema & Cultural Pass</div>
+            <div class="reward-item-desc">Community partner appreciation vouchers for local cinemas and cultural exhibits. Coming in future reward updates.</div>
+            <div class="reward-footer-row">
+              <div class="reward-price-tag">
+                <span>500</span>
+                <i class="fas fa-leaf"></i>
+              </div>
+              <button type="button" class="btn btn-secondary btn-sm" disabled style="cursor: not-allowed;">
+                <i class="fas fa-lock"></i> Unlocks Soon
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- REDEMPTION CONFIRMATION MODAL -->
+  <div class="reward-modal-backdrop" id="rewardModal" onclick="closeRewardModal(event)">
+    <div class="reward-modal-card" onclick="event.stopPropagation()">
+      <div class="modal-success-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; color: #0F172A; margin-bottom: 6px;">Pass Successfully Redeemed!</h3>
+      <p style="font-size: 0.88rem; color: #64748B; margin-bottom: 12px;">You redeemed: <strong id="modalItemTitle" style="color: var(--primary);">Pass</strong></p>
+      
+      <div class="voucher-code-box" id="voucherCode">PASS-XXXX-XXXX</div>
+      
+      <p style="font-size: 0.78rem; color: #94A3B8; margin-bottom: 20px; line-height: 1.4;">
+        DEMO SIMULATION · FOR DEMONSTRATION PURPOSES ONLY<br>
+        In the live production release, tokens sync directly with transit authority API partners.
+      </p>
+
+      <button type="button" class="btn btn-primary btn-sm" style="width: 100%;" onclick="closeRewardModal()">
+        <span>Back to Store</span>
+      </button>
     </div>
+  </div>
 
-    <!-- Success Modal -->
-    <div id="successModal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="fas fa-check"></i>
-            </div>
-            <h2 style="margin-bottom: 10px;">Redeemed!</h2>
-            <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
-                You successfully redeemed <strong style="color: white;" id="redeemedItem">Item</strong>.<br>
-                The voucher code has been sent to your email.
-            </p>
-            <div
-                style="margin-top: 20px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 12px; font-family: monospace; letter-spacing: 2px; color: var(--primary);">
-                GRN-<span id="voucherCode">8X29</span>
-            </div>
-            <button class="modal-btn" onclick="closeModal()">Awesome!</button>
-        </div>
-    </div>
+  <script src="../script.js"></script>
+  <script>
+    let currentUser = null;
+    let balance = 850;
 
-    <script>
-        // Mock State
-        let balance = 850;
-
-        // Elements
-        const balanceEl = document.getElementById('currentBalance');
-        const modal = document.getElementById('successModal');
-        const redeemedItemEl = document.getElementById('redeemedItem');
-        const voucherCodeCodeEl = document.getElementById('voucherCode');
-
-        function updateBalanceDisplay() {
-            // Animate number count
-            const start = parseInt(balanceEl.innerText);
-            const end = balance;
-            const duration = 500;
-            const startTime = performance.now();
-
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-
-                // Ease out cubic
-                const ease = 1 - Math.pow(1 - progress, 3);
-
-                const current = Math.floor(start + (end - start) * ease);
-                balanceEl.innerText = current;
-
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
-            }
-
-            requestAnimationFrame(update);
+    async function initAuth() {
+      if (window.AnnadaanAuth) {
+        currentUser = await window.AnnadaanAuth.protectRoute('volunteer', 'ngo-volunteer-auth.html');
+      } else {
+        currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser || (currentUser.type !== 'volunteer' && currentUser.type !== 'ngo')) {
+          window.location.href = 'ngo-volunteer-auth.html';
+          return;
         }
+      }
 
-        function redeemReward(itemName, cost, cardElement) {
-            if (balance < cost) {
-                showAlert("Not enough Green Credits! Keep volunteering to earn more.", "error");
-                return;
-            }
+      loadUserInfo();
+      initBalance();
+    }
 
-            // Deduct balance
-            balance -= cost;
+    function loadUserInfo() {
+      if (!currentUser) return;
+      const sideName = document.getElementById('sideName');
+      if (sideName) sideName.textContent = currentUser.name || 'Volunteer';
 
-            // Visual feedback on card
-            cardElement.classList.add('redeem-success');
-            setTimeout(() => {
-                cardElement.classList.remove('redeem-success');
-            }, 1000);
+      const sideLocation = document.getElementById('sideLocation');
+      if (sideLocation) sideLocation.textContent = currentUser.location || 'Field Partner';
 
-            // Update balance
-            updateBalanceDisplay();
+      const initial = (currentUser.name && currentUser.name.charAt(0)) ? currentUser.name.charAt(0).toUpperCase() : 'V';
+      const sideAvatar = document.getElementById('sideAvatar');
+      if (sideAvatar) sideAvatar.textContent = initial;
+    }
 
-            // Prepare Modal
-            redeemedItemEl.innerText = itemName;
-            voucherCodeCodeEl.innerText = Math.random().toString(36).substring(2, 6).toUpperCase();
+    function initBalance() {
+      const stored = localStorage.getItem('volunteer_credits');
+      if (stored !== null) {
+        balance = parseInt(stored, 10) || 850;
+      } else {
+        balance = 850;
+        localStorage.setItem('volunteer_credits', '850');
+      }
+      renderBalance();
+    }
 
-            // Show Modal with delay for effect
-            setTimeout(() => {
-                modal.style.display = 'flex';
-                // Trigger reflow
-                void modal.offsetWidth;
-                modal.classList.add('show');
-            }, 600);
-        }
+    function renderBalance() {
+      const el = document.getElementById('currentBalance');
+      if (el) el.textContent = balance;
+    }
 
-        function closeModal() {
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        }
+    function redeemReward(name, cost) {
+      if (balance < cost) {
+        alert(`Insufficient Green Credits. You need ${cost} credits, but currently have ${balance}. Complete more deliveries to earn credits!`);
+        return;
+      }
 
-        // Custom Alert Modal Implementation
-        function showAlert(message, type = 'info') {
-            const existingModals = document.querySelectorAll('.custom-modal-overlay');
-            existingModals.forEach(modal => modal.remove());
+      balance -= cost;
+      localStorage.setItem('volunteer_credits', balance.toString());
+      renderBalance();
 
-            const overlay = document.createElement('div');
-            overlay.className = 'custom-modal-overlay';
+      // Show redemption modal
+      const modal = document.getElementById('rewardModal');
+      const itemTitle = document.getElementById('modalItemTitle');
+      const codeBox = document.getElementById('voucherCode');
 
-            const iconClass = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
-            const iconColor = type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6';
+      const randCode = 'AD-' + Math.random().toString(36).substring(2, 6).toUpperCase() + '-' + Date.now().toString().slice(-4);
 
-            overlay.innerHTML = `
-                <div class="custom-modal-card">
-                    <div class="modal-icon" style="color: ${iconColor}">
-                        <i class="fas fa-${iconClass}"></i>
-                    </div>
-                    <p class="modal-message">${message}</p>
-                    <button class="modal-btn" onclick="this.closest('.custom-modal-overlay').remove()">OK</button>
-                </div>
-            `;
+      if (itemTitle) itemTitle.textContent = `${name} (${cost} Credits)`;
+      if (codeBox) codeBox.textContent = randCode;
 
-            document.body.appendChild(overlay);
+      if (modal) modal.classList.add('active');
+    }
 
-            if (!document.getElementById('custom-modal-styles')) {
-                const style = document.createElement('style');
-                style.id = 'custom-modal-styles';
-                style.textContent = `
-                    .custom-modal-overlay {
-                        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                        background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);
-                        z-index: 9999; display: flex; justify-content: center; align-items: center;
-                        animation: fadeIn 0.2s ease-out;
-                    }
-                    .custom-modal-card {
-                        background: #161B22; border: 1px solid rgba(255,255,255,0.1);
-                        padding: 30px 40px; border-radius: 20px;
-                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
-                        text-align: center; max-width: 90%; width: 400px;
-                        animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-                    }
-                    .modal-icon { font-size: 48px; margin-bottom: 20px; }
-                    .modal-message { font-size: 16px; color: #E6EDF3; margin-bottom: 25px; line-height: 1.5; }
-                    .modal-btn {
-                        background: #238636; color: white; border: none; padding: 12px 30px;
-                        border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer;
-                        min-width: 120px;
-                    }
-                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-                    @keyframes popIn { from { transform: scale(0.9); } to { transform: scale(1); } }
-                `;
-                document.head.appendChild(style);
-            }
-        }
-    </script>
+    function closeRewardModal(e) {
+      if (e && e.target && e.target !== e.currentTarget && e.currentTarget.id === 'rewardModal') return;
+      const modal = document.getElementById('rewardModal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    // Responsive Sidebar Toggles
+    function toggleSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (sidebar) sidebar.classList.toggle('sidebar-open');
+      if (backdrop) backdrop.classList.toggle('show');
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      if (sidebar) sidebar.classList.remove('sidebar-open');
+      if (backdrop) backdrop.classList.remove('show');
+    }
+
+    async function volunteerLogout() {
+      if (!confirm('Are you sure you want to sign out?')) return;
+      if (window.AnnadaanAuth) {
+        await window.AnnadaanAuth.signOut(false, 'You have been safely signed out.');
+      } else {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('annadaan_session_start');
+      }
+      window.location.href = 'ngo-volunteer-auth.html';
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAuth);
+    } else {
+      initAuth();
+    }
+  </script>
 </body>
 
 </html>
