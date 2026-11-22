@@ -51,3 +51,4 @@ module.exports = {
   XSS_PAYLOADS,
   SQLI_PAYLOADS
 };
+

@@ -76,22 +76,21 @@
             box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
         }
 
-        .logo-circle {
-            width: 64px;
-            height: 64px;
-            background: var(--primary);
-            border-radius: 20px;
+        .brand-auth-logo {
+            width: 155px;
+            max-width: 165px;
+            height: auto;
+            object-fit: contain;
             margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 16px rgba(45, 106, 79, 0.2);
+            display: block;
         }
 
-        .logo-circle svg {
-            width: 32px;
-            height: 32px;
-            color: white;
+        @media (max-width: 640px) {
+            .brand-auth-logo {
+                width: 135px;
+                max-width: 145px;
+                margin: 0 auto 16px;
+            }
         }
 
         header {

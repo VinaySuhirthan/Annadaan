@@ -128,3 +128,4 @@ If `tests/database/realtime.test.js` times out:
 ### Interpreting Security Findings
 - **Secret Leaks (`SEC-SECRET-SCAN`)**: Scans git-tracked files for raw secrets. Note that `sb_publishable_...` is public and intended for browser client initialization when Row Level Security is enabled. Private service-role keys must NEVER be committed.
 - **Security Headers (`SEC-HEADER-...`)**: Checks production deployment (`annadaan.vinaysuhirthan.tech`). Security headers (HSTS, CSP, X-Frame-Options) can be configured via `vercel.json` headers configuration.
+

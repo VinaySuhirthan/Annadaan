@@ -930,12 +930,21 @@ img {
    BRAND LOGO STYLING & FLASH ALERTS
    -------------------------------------------------------------------------- */
 .brand-auth-logo {
-    max-height: 52px;
-    width: auto;
-    max-width: 220px;
+    width: 155px;
+    max-width: 165px;
+    height: auto;
     object-fit: contain;
-    margin: 0 auto 18px;
+    margin: 0 auto 20px;
     display: block;
+}
+
+@media (max-width: 640px) {
+    .brand-auth-logo {
+        width: 135px;
+        max-width: 145px;
+        height: auto;
+        margin: 0 auto 16px;
+    }
 }
 
 .sidebar-brand-wrap {
