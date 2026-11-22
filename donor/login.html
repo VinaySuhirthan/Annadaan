@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Donor Login — Annadaan</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
+  <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="../fluid-background.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../supabase-client.js"></script>
@@ -265,13 +267,7 @@
 <body>
 
   <div class="login-card">
-    <div class="logo-circle">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    </div>
+    <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="brand-auth-logo">
 
     <header>
       <h2>Welcome Back</h2>
@@ -448,10 +444,16 @@
       }
 
       if (!donorData) donorData = { phone, name, email: user.email, id: user.id };
-
       const donorSession = { ...donorData, type: "donor" };
       localStorage.setItem("donor", JSON.stringify(donorSession));
-      localStorage.setItem("currentUser", JSON.stringify(donorSession));
+      localStorage.setItem("donorPhone", donorData.phone);
+      localStorage.setItem("donorName", donorData.name || "Donor");
+
+      if (window.AnnadaanAuth) {
+        window.AnnadaanAuth.startSession(donorSession, 'donor');
+      } else {
+        localStorage.setItem("currentUser", JSON.stringify(donorSession));
+      }
 
       showAlert(`Welcome, ${name}! Redirecting...`, "success");
       setTimeout(() => {
@@ -506,9 +508,13 @@
           donorData = { phone: temp.phone, name: temp.name };
         }
 
-        const donorSession = { ...donorData, type: "donor" };
-        localStorage.setItem("donor", JSON.stringify(donorSession));
-        localStorage.setItem("currentUser", JSON.stringify(donorSession));
+        if (window.AnnadaanAuth) {
+          window.AnnadaanAuth.startSession(donorData, 'donor');
+        } else {
+          const donorSession = { ...donorData, type: "donor" };
+          localStorage.setItem("donor", JSON.stringify(donorSession));
+          localStorage.setItem("currentUser", JSON.stringify(donorSession));
+        }
         location.href = nextPage;
       } else {
         showAlert("Invalid OTP! Try 1234", "error");

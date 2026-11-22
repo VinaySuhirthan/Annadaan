@@ -906,6 +906,59 @@ img {
 }
 
 /* --------------------------------------------------------------------------
+   BRAND LOGO STYLING & FLASH ALERTS
+   -------------------------------------------------------------------------- */
+.brand-auth-logo {
+    max-height: 52px;
+    width: auto;
+    max-width: 220px;
+    object-fit: contain;
+    margin: 0 auto 18px;
+    display: block;
+}
+
+.sidebar-brand-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-brand-img {
+    height: 42px;
+    width: auto;
+    max-width: 130px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.mobile-topbar-brand {
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+
+.mobile-topbar-logo {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.auth-flash-alert {
+    background: #FEF3C7;
+    border: 1px solid #FCD34D;
+    color: #92400E;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease;
+}
+
+/* --------------------------------------------------------------------------
    RESPONSIVE BREAKPOINTS (Desktop, Tablet, Mobile)
    -------------------------------------------------------------------------- */
 @media (max-width: 1200px) {
@@ -949,19 +1002,98 @@ img {
     }
 }
 
+@media (max-width: 768px) {
+    .mobile-topbar-brand {
+        display: flex;
+    }
+
+    .app-topbar .topbar-right .status-badge-live {
+        display: none;
+    }
+
+    .app-topbar #btnTopDonate {
+        display: none;
+    }
+}
+
 @media (max-width: 640px) {
     .stats-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        padding: 14px;
+        border-radius: var(--radius-md);
+    }
+
+    .stat-card-top {
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.72rem;
+        letter-spacing: 0.02em;
+    }
+
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+        border-radius: var(--radius-xs);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .stat-subtext {
+        font-size: 0.68rem;
+        margin-top: 4px;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .page-intro {
+        margin-bottom: 20px;
+    }
+
+    .page-intro h1 {
+        font-size: 1.45rem;
+        line-height: 1.25;
+    }
+
+    .page-intro p {
+        font-size: 0.88rem;
+    }
+
+    .quick-impact-bar {
+        font-size: 0.78rem;
+        padding: 8px 12px;
+        width: 100%;
     }
 
     .listings-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .food-card-media {
+        height: 160px;
+    }
+
+    .food-card-body {
+        padding: 16px;
     }
 
     .controls-bar {
         flex-direction: column;
         align-items: stretch;
+        gap: 12px;
+        margin-bottom: 20px;
     }
 
     .segmented-tabs {
@@ -972,14 +1104,16 @@ img {
     .seg-tab {
         flex: 1;
         justify-content: center;
+        padding: 8px 12px;
+        font-size: 0.82rem;
     }
 
     .app-topbar {
         padding: 0 16px;
-        height: 64px;
+        height: 60px;
     }
 
     .app-content {
-        padding: 20px 16px 40px;
+        padding: 16px 14px 40px;
     }
 }

@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
     <title>My Requests — Annadaan</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
+    <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../fluid-background.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase-client.js"></script>
@@ -407,9 +409,12 @@
 <body>
 
     <div class="container">
-        <a href="ngo-dashboard.html" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Back to Dashboard
-        </a>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+            <a href="ngo-dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan" style="height: 38px; width: auto; object-fit: contain;">
+        </div>
 
         <div class="header">
             <h1>My <span>Requests</span></h1>

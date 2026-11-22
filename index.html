@@ -5,7 +5,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
   <title>Annadaan — Every Plate Counts</title>
+  <link rel="icon" type="image/png" href="images/favicon.png">
   <link rel="stylesheet" href="fluid-background.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
   <script src="fluid-background.js" defer></script>
 
   <style>
@@ -369,17 +372,19 @@
   </div>
 
   <script>
-    // Intelligent Redirect for Logged-in Users
-    (function () {
+    // Validate session with 6-hour limit for Returning Users
+    (async function () {
       try {
-        const user = JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(localStorage.getItem('donor'));
-        if (user) {
-          if (user.type === 'ngo') window.location.href = 'volunteer/ngo-dashboard.html';
-          else if (user.type === 'volunteer') window.location.href = 'volunteer/volunteer-dashboard.html';
-          else if (user.type === 'donor') window.location.href = 'donor/donor-home.html';
+        if (window.AnnadaanAuth) {
+          const user = await window.AnnadaanAuth.validateSession();
+          if (user) {
+            if (user.type === 'ngo') window.location.href = 'volunteer/ngo-dashboard.html';
+            else if (user.type === 'volunteer') window.location.href = 'volunteer/volunteer-dashboard.html';
+            else if (user.type === 'donor') window.location.href = 'donor/donor-home.html';
+          }
         }
       } catch (e) {
-        console.error('Redirect failed:', e);
+        console.error('Session validation note:', e);
       }
     })();
   </script>

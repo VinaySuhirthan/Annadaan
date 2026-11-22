@@ -603,10 +603,22 @@ function saveUser(user) {
 }
 
 function setCurrentUser(user) {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    if (window.AnnadaanAuth) {
+        window.AnnadaanAuth.startSession(user, user.type || 'volunteer');
+    } else {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('annadaan_session_start', Date.now().toString());
+    }
 }
 
 function getCurrentUser() {
+    if (window.AnnadaanAuth && window.AnnadaanAuth.isSessionExpired()) {
+        const user = localStorage.getItem('currentUser');
+        if (user) {
+            window.AnnadaanAuth.signOut(true, "Your session has expired. Please sign in again.");
+            return null;
+        }
+    }
     return JSON.parse(localStorage.getItem('currentUser'));
 }
 
@@ -617,15 +629,16 @@ function appPath(path) {
 }
 
 async function logout() {
-    if (typeof showConfirm !== 'undefined') {
-        if (await showConfirm('Are you sure you want to logout?')) {
+    const confirmed = typeof showConfirm !== 'undefined' 
+        ? await showConfirm('Are you sure you want to logout?') 
+        : confirm('Are you sure you want to logout?');
+    if (confirmed) {
+        if (window.AnnadaanAuth) {
+            await window.AnnadaanAuth.signOut(false, "You have been safely signed out.");
+        } else {
             localStorage.removeItem('currentUser');
-            window.location.href = appPath('index.html');
-        }
-    } else {
-        // Fallback if showConfirm missing
-        if (confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('currentUser');
+            localStorage.removeItem('donor');
+            localStorage.removeItem('annadaan_session_start');
             window.location.href = appPath('index.html');
         }
     }

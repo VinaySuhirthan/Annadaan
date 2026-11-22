@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>Donor Dashboard — Annadaan</title>
+  <link rel="icon" type="image/png" href="../images/favicon.png">
 
   <link rel="stylesheet" href="../style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -55,34 +56,45 @@
 
 <body>
   <script>
-    let donor = JSON.parse(localStorage.getItem("donor"));
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let donor = null;
 
-    if (!donor && currentUser && currentUser.type === "donor") {
-      donor = currentUser;
-      localStorage.setItem("donor", JSON.stringify(donor));
+    async function initAuth() {
+      if (window.AnnadaanAuth) {
+        donor = await window.AnnadaanAuth.protectRoute('donor', 'login.html');
+      } else {
+        donor = JSON.parse(localStorage.getItem("donor")) || JSON.parse(localStorage.getItem("currentUser"));
+        if (!donor) location.href = "login.html";
+      }
+
+      if (donor) {
+        populateDonorProfile();
+        loadDonations();
+        subscribeToDonationUpdates();
+      }
     }
 
     // Defensive async recovery for Google OAuth redirects
-    if (!donor && window.sb && window.sb.auth) {
+    if (window.sb && window.sb.auth) {
       window.sb.auth.getSession().then(({ data: { session } }) => {
-        if (session && session.user) {
+        if (session && session.user && !localStorage.getItem('currentUser')) {
           const user = session.user;
           const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
           const phone = user.phone || user.user_metadata?.phone || ('G-' + user.id.replace(/-/g, '').slice(0, 10));
-          donor = { id: user.id, name, phone, email: user.email, type: "donor" };
-          localStorage.setItem("donor", JSON.stringify(donor));
-          localStorage.setItem("currentUser", JSON.stringify(donor));
-          window.location.reload();
-        } else {
-          location.href = "login.html";
+          if (window.AnnadaanAuth) {
+            donor = window.AnnadaanAuth.startSession({ id: user.id, name, phone, email: user.email }, "donor");
+          } else {
+            donor = { id: user.id, name, phone, email: user.email, type: "donor" };
+            localStorage.setItem("donor", JSON.stringify(donor));
+            localStorage.setItem("currentUser", JSON.stringify(donor));
+          }
+          populateDonorProfile();
+          loadDonations();
+          subscribeToDonationUpdates();
         }
-      }).catch(() => {
-        location.href = "login.html";
       });
-    } else if (!donor) {
-      location.href = "login.html";
     }
+
+    initAuth();
   </script>
 
   <div class="app-shell">
@@ -93,12 +105,12 @@
     <aside class="app-sidebar" id="appSidebar">
       <div>
         <div class="sidebar-brand">
-          <div class="brand-icon">
-            <i class="fas fa-hand-holding-heart"></i>
-          </div>
-          <div class="brand-text">
-            <h2>Annadaan</h2>
-            <span>Donor Portal</span>
+          <div class="sidebar-brand-wrap">
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="sidebar-brand-img">
+            <div class="brand-text">
+              <h2>Annadaan</h2>
+              <span>Donor Portal</span>
+            </div>
           </div>
         </div>
 
@@ -149,6 +161,9 @@
           <button class="mobile-menu-trigger" onclick="toggleSidebar()" aria-label="Open menu">
             <i class="fas fa-bars"></i>
           </button>
+          <div class="mobile-topbar-brand">
+            <img src="../images/annadaan-logo-transparent.png" alt="Annadaan Logo" class="mobile-topbar-logo">
+          </div>
           <div class="topbar-title" id="pageTitle">Donor Overview</div>
         </div>
 
@@ -161,6 +176,7 @@
             <i class="fas fa-plus"></i>
             <span>Donate Food</span>
           </a>
+          <div class="user-avatar" style="width: 36px; height: 36px; font-size: 13px; cursor: pointer;" onclick="showProfile()" id="topAvatar" title="My Profile">D</div>
         </div>
       </header>
 
@@ -363,13 +379,15 @@
     let donorFoodChannel = null;
 
     // Sidebar & Profile Population
-    if (donor) {
+    function populateDonorProfile() {
+      if (!donor) return;
       document.getElementById('sideName').textContent = donor.name || 'Donor';
       document.getElementById('sidePhone').textContent = donor.phone || 'Verified Donor';
       document.getElementById('welcomeGreeting').textContent = `Welcome back, ${donor.name || 'Partner'}`;
       
       const firstInitial = (donor.name ? donor.name.charAt(0) : 'D').toUpperCase();
       document.getElementById('sideAvatar').textContent = firstInitial;
+      document.getElementById('topAvatar').textContent = firstInitial;
       document.getElementById('pAvatar').textContent = firstInitial;
       document.getElementById('pNameCard').textContent = donor.name || 'Donor Partner';
       document.getElementById('pFullName').textContent = donor.name || 'Not Provided';
@@ -395,10 +413,14 @@
     }
 
     function donorLogout() {
-      localStorage.removeItem("donor");
-      localStorage.removeItem("currentUser");
-      sessionStorage.removeItem("temp_donor");
-      location.href = "../index.html";
+      if (window.AnnadaanAuth) {
+        window.AnnadaanAuth.signOut(false, "You have been safely signed out.");
+      } else {
+        localStorage.removeItem("donor");
+        localStorage.removeItem("currentUser");
+        sessionStorage.removeItem("temp_donor");
+        location.href = "../index.html";
+      }
     }
 
     // Tab Switching

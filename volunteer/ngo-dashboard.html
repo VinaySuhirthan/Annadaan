@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NGO Dashboard - Annadaan</title>
+    <link rel="icon" type="image/png" href="../images/favicon.png">
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../discovery.css">
@@ -213,11 +214,16 @@
 
 <body>
     <div class="nav-bar">
-        <div class="user-info">
-            <div class="user-avatar" id="user-avatar">N</div>
-            <div class="user-details">
-                <h3 id="user-name">Organization Name</h3>
-                <p><i class="fas fa-map-marker-alt"></i> <span id="user-location">Location</span></p>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a href="#" style="display: flex; align-items: center;">
+                <img src="../images/annadaan-logo-transparent.png" alt="Annadaan" style="height: 38px; width: auto; object-fit: contain;">
+            </a>
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">N</div>
+                <div class="user-details">
+                    <h3 id="user-name">Organization Name</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span id="user-location">Location</span></p>
+                </div>
             </div>
         </div>
         <button onclick="logout()" class="btn btn-secondary" style="padding: 10px 20px; font-size: 14px;">
