@@ -733,9 +733,13 @@
             <option value="">Select duration</option>
             <option value="1">1 hour</option>
             <option value="2">2 hours</option>
+            <option value="3">3 hours</option>
             <option value="4">4 hours</option>
+            <option value="5">5 hours</option>
             <option value="6">6 hours</option>
+            <option value="8">8 hours</option>
             <option value="12">12 hours</option>
+            <option value="24">24 hours</option>
           </select>
         </div>
 
@@ -891,30 +895,26 @@
         });
       }
 
-      let processed = 0;
-      filesToAdd.forEach(async (file) => {
+      for (const file of filesToAdd) {
         try {
           const compressed = await compressImageFile(file, 1200, 0.82);
           selectedPhotos.push(compressed);
         } catch (e) {
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            selectedPhotos.push({
-              file: file,
-              dataUrl: event.target.result
-            });
-          };
-          reader.readAsDataURL(file);
+          console.warn("Compression fallback:", e);
+          const dataUrl = await new Promise((res) => {
+            const r = new FileReader();
+            r.onload = (ev) => res(ev.target.result);
+            r.readAsDataURL(file);
+          });
+          selectedPhotos.push({ file, dataUrl });
         }
-        processed++;
-        if (processed === filesToAdd.length) {
-          renderPhotoGrid();
-          // Automatically start simulated 7.5s verification on every new upload/change
-          if (window.PhotoVerification) {
-            window.PhotoVerification.start();
-          }
-        }
-      });
+      }
+
+      renderPhotoGrid();
+      // Automatically start simulated 7.5s verification on every new upload/change
+      if (window.PhotoVerification) {
+        window.PhotoVerification.start();
+      }
 
       media.value = "";
     };
@@ -1184,28 +1184,32 @@
         let uploaded = 0;
         const uploadPromises = selectedPhotos.map(async (item, idx) => {
           const file = item.file;
-          const fileExt = (file && file.name) ? file.name.split('.').pop() : 'jpg';
-          const fileName = `${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+          const fileName = `food_${Date.now()}_${idx}_${Math.random().toString(36).substring(2, 7)}.jpg`;
 
           if (window.sb && window.sb.storage) {
             try {
-              const { error: uploadError } = await window.sb.storage
+              const { data: upData, error: uploadError } = await window.sb.storage
                 .from('food_images')
-                .upload(fileName, file);
+                .upload(fileName, file, {
+                  contentType: 'image/jpeg',
+                  upsert: true
+                });
 
-              if (!uploadError) {
+              if (!uploadError && upData) {
                 const { data: { publicUrl } } = window.sb.storage
                   .from('food_images')
                   .getPublicUrl(fileName);
                 uploaded++;
                 postBtn.textContent = `Uploading photos (${uploaded}/${selectedPhotos.length})...`;
                 return publicUrl;
+              } else if (uploadError) {
+                console.warn("Storage upload warn, falling back to compressed dataUrl:", uploadError.message || uploadError);
               }
             } catch (storageErr) {
-              console.warn("Storage upload warn, falling back to dataUrl:", storageErr);
+              console.warn("Storage upload exception, falling back to dataUrl:", storageErr);
             }
           }
-          // Fallback to dataUrl so donor submission never fails
+          // Safe fallback to compressed dataUrl (only ~150KB, well within limits)
           uploaded++;
           postBtn.textContent = `Uploading photos (${uploaded}/${selectedPhotos.length})...`;
           return item.dataUrl;
@@ -1230,21 +1234,54 @@
         valid_hours: parseInt(document.getElementById("validHours").value) || null,
         address: address,
         photo_url: JSON.stringify(uploadedUrls),
-        status: "available"
+        status: "available",
+        latitude: window.currentLat || null,
+        longitude: window.currentLng || null
       };
 
-      const { error } = await window.sb.from('food_table').insert([newFood]);
+      let dbSuccess = false;
+      let dbErrorMsg = "";
 
-      if (error) {
-        console.error("Supabase insert error:", error);
-        showAlert("Error saving to database: " + (error.message || error.details || "Please check database connection"), "error");
-        postBtn.disabled = false;
-        postBtn.textContent = "Post Donation";
-        return;
+      if (window.sb) {
+        try {
+          const { error } = await window.sb.from('food_table').insert([newFood]);
+          if (!error) {
+            dbSuccess = true;
+          } else {
+            console.error("Supabase insert error:", error);
+            dbErrorMsg = error.message || error.details || "Check database connection";
+          }
+        } catch (dbEx) {
+          console.error("Supabase network exception:", dbEx);
+          dbErrorMsg = dbEx.message || "Network error";
+        }
       }
 
-      showAlert("Food posted successfully!", "success");
-      location.href = "donor-home.html";
+      // Always save to localStorage foodListings as a local record so the donor never loses data
+      try {
+        const localFood = JSON.parse(localStorage.getItem("foodListings") || "[]");
+        localFood.unshift({
+          ...newFood,
+          postedAt: Date.now(),
+          synced: dbSuccess
+        });
+        localStorage.setItem("foodListings", JSON.stringify(localFood));
+      } catch (storageErr) {
+        console.warn("LocalStorage save warn:", storageErr);
+      }
+
+      if (dbSuccess) {
+        showAlert("Food posted successfully!", "success");
+        setTimeout(() => {
+          location.href = "donor-home.html";
+        }, 800);
+      } else {
+        // If DB had a temporary error, donation is saved locally so donor work is preserved
+        showAlert("Donation saved to your dashboard! (Notice: " + (dbErrorMsg || "Saved locally, will sync when reconnected") + ")", "info");
+        setTimeout(() => {
+          location.href = "donor-home.html";
+        }, 1200);
+      }
     };
   </script>
 

@@ -62,11 +62,10 @@
     const path = window.location.pathname.toLowerCase();
     if (path.includes('donor-home')) return 'donor_home';
     if (path.includes('add-food')) return 'donor_add_food';
-    if (path.includes('ngo-dashboard')) return 'ngo_dashboard';
+    if (path.includes('volunteer-dashboard') || path.includes('ngo-dashboard')) return 'volunteer_dashboard';
     if (path.includes('view-food')) return 'view_food';
-    if (path.includes('volunteer-dashboard')) return 'volunteer_dashboard';
-    if (path.includes('my-volunteering')) return 'volunteer_my_deliveries';
-    if (path.includes('my-requests')) return 'ngo_my_requests';
+    if (path.includes('my-volunteering') || path.includes('my-requests')) return 'volunteer_my_deliveries';
+    if (path.includes('dummy') || path.includes('rewards')) return 'rewards_store';
     return null;
   }
 
@@ -141,42 +140,146 @@
       ]
     },
 
-    ngo_dashboard: {
-      title: 'NGO Dispatch & Claim Hub',
+    volunteer_dashboard: {
+      title: 'Volunteer Dispatch Center',
       steps: [
         {
-          element: '.dashboard-card:nth-child(1)',
-          fallbackElement: '.stat-card:nth-child(1)',
+          element: '#welcomeGreeting',
+          fallbackElement: '.page-intro',
           popover: {
-            title: 'Live Distance-Sorted Marketplace',
-            description: 'Browse incoming surplus food filtered by live GPS distance and claim portions for your community kitchen.',
+            title: 'Welcome to Annadaan Volunteer Portal',
+            description: 'Volunteers and community partners help collect and deliver surplus food from donors to local shelters, preventing waste and feeding those in need.',
             side: 'bottom',
             align: 'start'
           }
         },
         {
-          element: '.dashboard-card:nth-child(2)',
-          fallbackElement: '.stat-card:nth-child(2)',
+          element: '#statsGrid',
           popover: {
-            title: 'Real-Time Request Tracking',
-            description: 'Monitor claim progress from "Waiting for Donor Approval" to "Courier Dispatched" in real time.',
+            title: 'Your Live Statistics & Impact',
+            description: 'Track your total food batch distributions, people served, community reliability rating, and green credits earned from verified deliveries.',
             side: 'bottom',
+            align: 'center'
+          }
+        },
+        {
+          element: '#cardViewFood',
+          fallbackElement: '.volunteer-action-card:nth-child(1)',
+          popover: {
+            title: 'View Available Food',
+            description: 'Browse fresh surplus food listings ready for pickup. Filter by dietary preference and claim meals within your delivery radius.',
+            side: 'top',
+            align: 'start'
+          }
+        },
+        {
+          element: '#cardMyVolunteering',
+          fallbackElement: '.volunteer-action-card:nth-child(2)',
+          popover: {
+            title: 'My Volunteering & Deliveries',
+            description: 'Track your assigned pickup runs, donor contact numbers, delivery navigation, and review your completed distribution history.',
+            side: 'top',
+            align: 'center'
+          }
+        },
+        {
+          element: '#cardRewards',
+          fallbackElement: '.volunteer-action-card:nth-child(5)',
+          popover: {
+            title: 'Achievements & Rewards Store',
+            description: 'Track your volunteering milestones and redeem earned green credits for public transit subsidies like Metro Day Passes and MTC bus tickets.',
+            side: 'top',
+            align: 'end'
+          }
+        },
+        {
+          element: '#topAvatar',
+          fallbackElement: '.app-topbar',
+          popover: {
+            title: "You're Ready to Make a Difference!",
+            description: "Every delivery counts! You can restart this walkthrough anytime using the Guide button in the header. Have a great run!",
+            side: 'bottom',
+            align: 'end'
+          }
+        }
+      ]
+    },
+
+    view_food: {
+      title: 'Available Food Discovery',
+      steps: [
+        {
+          element: '#locBar',
+          popover: {
+            title: 'Live Location Detection',
+            description: 'Detect your GPS location or choose your neighborhood to calculate exact road distance to nearby surplus food listings.',
+            side: 'bottom',
+            align: 'start'
+          }
+        },
+        {
+          element: '.filter-bar',
+          popover: {
+            title: 'Dietary & Distance Filters',
+            description: 'Quickly filter by Vegetarian or Non-Veg, specify your travel radius (5km to 50km), and sort by closest or newest listings.',
+            side: 'bottom',
+            align: 'center'
+          }
+        },
+        {
+          element: '#food-container',
+          popover: {
+            title: 'Food Donation Cards',
+            description: 'Review food photos, serves capacity, and freshness window. Tap "Request Food" to claim or "Assist Drop" to coordinate pickup.',
+            side: 'top',
             align: 'start'
           }
         }
       ]
     },
 
-    volunteer_dashboard: {
-      title: 'Volunteer Dispatch Center',
+    volunteer_my_deliveries: {
+      title: 'My Deliveries & Requests',
       steps: [
         {
-          element: '.stat-card:nth-child(1)',
-          fallbackElement: '.container',
+          element: '#volunteerTabs',
           popover: {
-            title: 'Live Delivery Assignments',
-            description: 'Accept urgent pickup runs, view donor kitchen directions, and confirm food handoff.',
+            title: 'Task Pipeline Tabs',
+            description: 'Switch between Current Tasks in progress and your permanent Delivery History of verified meal distributions.',
             side: 'bottom',
+            align: 'start'
+          }
+        },
+        {
+          element: '#content-area',
+          popover: {
+            title: 'Pickup Tracking & Contact',
+            description: 'Access donor contact numbers, view kitchen address on maps, and update transit status directly from each task card.',
+            side: 'top',
+            align: 'center'
+          }
+        }
+      ]
+    },
+
+    rewards_store: {
+      title: 'Green Rewards Store',
+      steps: [
+        {
+          element: '.rewards-balance-card',
+          popover: {
+            title: 'Your Green Credits Balance',
+            description: 'Earn 50+ credits for each verified food distribution. Use them to unlock real eco-friendly public transit day passes.',
+            side: 'bottom',
+            align: 'start'
+          }
+        },
+        {
+          element: '.rewards-catalog-grid',
+          popover: {
+            title: 'Transit Subsidies & Vouchers',
+            description: 'Select a Metro Day Pass or MTC Bus Ticket to redeem instant digital voucher tokens for your volunteer travel.',
+            side: 'top',
             align: 'start'
           }
         }

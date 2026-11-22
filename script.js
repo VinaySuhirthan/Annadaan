@@ -251,26 +251,33 @@ function setupForms() {
                         return;
                     }
 
-                    // Look up profile by email or auth_id
-                    const { data: profile } = await window.sb.from(tableName)
+                    // Look up profile by email or auth_id in primary table
+                    let { data: profile } = await window.sb.from(tableName)
                         .select('*')
                         .or(`email.eq.${identifier},auth_id.eq.${authData.user.id}`)
-                        .single();
+                        .maybeSingle();
+
+                    // If not found in primary table, seamlessly check alternate table
+                    if (!profile) {
+                        const altTable = userType === 'ngo' ? 'volunteer_table' : 'ngo_table';
+                        const { data: altProfile } = await window.sb.from(altTable)
+                            .select('*')
+                            .or(`email.eq.${identifier},auth_id.eq.${authData.user.id}`)
+                            .maybeSingle();
+                        if (altProfile) profile = altProfile;
+                    }
 
                     const userSession = profile || {
                         id: authData.user.id,
                         name: authData.user.user_metadata?.full_name || identifier.split('@')[0],
                         email: identifier,
-                        type: userType,
+                        type: profile?.type || userType,
                         phone: authData.user.user_metadata?.phone || ''
                     };
 
                     setCurrentUser(userSession);
                     showAlert('Login successful!', 'success');
-                    const dashboard = userType === 'ngo'
-                        ? appPath('volunteer/ngo-dashboard.html')
-                        : appPath('volunteer/volunteer-dashboard.html');
-                    setTimeout(() => { window.location.href = dashboard; }, 800);
+                    setTimeout(() => { window.location.href = appPath('volunteer/volunteer-dashboard.html'); }, 800);
                     return;
                 } catch (err) {
                     console.error('Email login exception:', err);
@@ -288,21 +295,22 @@ function setupForms() {
             try {
                 console.log(`Authenticating ${userType} from Supabase ${tableName}...`);
 
-                const { data, error } = await window.sb.from(tableName)
+                // Check primary table first
+                let { data, error } = await window.sb.from(tableName)
                     .select('*')
                     .eq('phone', identifier)
-                    .eq('type', userType)
-                    .single();
+                    .maybeSingle();
 
-                if (error) {
-                    console.error('Supabase login error:', error);
-
-                    if (error.code === 'PGRST116') {
-                        showAlert('No account found with this phone number. Please register first.', 'error');
-                    } else {
-                        showAlert('Login failed: ' + error.message, 'error');
+                // If not found in primary table, check alternate table (unifying Volunteer and NGO)
+                if (!data) {
+                    const altTable = userType === 'ngo' ? 'volunteer_table' : 'ngo_table';
+                    const { data: altData } = await window.sb.from(altTable)
+                        .select('*')
+                        .eq('phone', identifier)
+                        .maybeSingle();
+                    if (altData) {
+                        data = altData;
                     }
-                    return;
                 }
 
                 if (!data) {
@@ -313,13 +321,10 @@ function setupForms() {
                 console.log('✅ User authenticated from Supabase:', data);
                 setCurrentUser(data);
 
-                const dashboard = userType === 'ngo'
-                    ? appPath('volunteer/ngo-dashboard.html')
-                    : appPath('volunteer/volunteer-dashboard.html');
-
+                // Unified Dashboard for both Volunteers and NGOs
                 showAlert('Login successful!', 'success');
                 setTimeout(() => {
-                    window.location.href = dashboard;
+                    window.location.href = appPath('volunteer/volunteer-dashboard.html');
                 }, 800);
 
             } catch (err) {
